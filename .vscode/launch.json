@@ -5,12 +5,16 @@
     "version": "0.2.0",
     "configurations": [
         {
-            "type": "node",
-            "request": "launch",
-            "name": "Launch Program",
-            "program": "${workspaceRoot}\\start",
-            "cwd": "${workspaceRoot}"
-        },
+			"name": "Chrome",
+			"type": "chrome",
+			"request": "launch",
+			"url": "http://localhost:3003",
+			"webRoot": "${workspaceRoot}/src",
+			"userDataDir": "${workspaceRoot}/.vscode/chrome",
+			"sourceMapPathOverrides": {
+				"webpack:///src/*": "${webRoot}/*"
+			}
+		},
         {
             "type": "node",
             "request": "attach",
