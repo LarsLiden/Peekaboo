@@ -1,6 +1,6 @@
 import axios from 'axios'
 
-import { QuizPerson } from '../models/models'
+import { QuizPerson, Tag } from '../models/models'
 
 export default class Client {
 
@@ -17,4 +17,17 @@ export default class Client {
             return []
         }
     }
+
+    public static async getTags(): Promise<Tag[]> {
+
+        try {
+            const response = await axios.get(`${this.baseUrl}/tags`)
+            return response.data as Tag[]
+        }
+        catch (err) {
+            console.log(JSON.stringify(err))
+            return []
+        }
+    }
+
 }
