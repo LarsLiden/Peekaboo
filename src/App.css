@@ -69,6 +69,13 @@
 
 .App {
   text-align: center;
+  background-color: black;
+  height: 1000px;
+}
+
+
+.AppPage {
+  padding-top: 200px;
 }
 
 .App-logo {
@@ -96,9 +103,79 @@
   to { transform: rotate(360deg); }
 }
 
+.FilterPage {
+  background-color: black;
+  padding-top: 15px;
+  height: 1000px;
+}
+
+.FilterList {
+  height: 300px;
+  overflow-y: scroll;
+  width: 250px;
+  overflow-x: hidden;
+  margin-left: auto;
+  margin-right: auto;
+}
+
+.FilterCheckbox {
+  display: inline-block !important;
+}
+
+.FilterCheckbox:checked {
+  background-color: #ff0000 !important
+}
+
+.FilterName {
+  display: inline-block;
+  width: 150px;
+  text-align: left;
+  margin-left: 5px;
+  color: white;
+}
+
+.FilterNumber {
+  display: inline-block;
+  width: 20px;
+  color: white;
+}
+
+.QuizTimer {
+    color: #ffffff;
+    background-color: #555555;
+    width: 200px;
+    margin-left: auto;
+    margin-right: auto;
+    margin-bottom: 15px;
+    font-size: 20px;
+    margin-top: 13px;
+    height: 30px;
+    border-radius: 5px;
+}
+
+.QuizButton {
+  margin: 20px;
+  height: 50px !important;
+  border-radius: 15px !important;
+  background-color: var(--color-themePrimary) !important;
+  color: white !important;
+}
+
+.QuizQuitButton {
+  display: block !important;
+  margin-left: auto;
+  margin-right: auto;
+  margin-top: 40px;
+  width: 100px;
+  border-radius: 10px !important;
+  background-color: var(--color-themeDarker) !important;
+  color: var(--color-themeTertiary) !important;
+}
+
 .QuizPage {
   background-color: black;
   height: 1000px;
+  padding-top: 15px;
 }
 
 .QuizImageHolder{
