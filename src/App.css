@@ -67,6 +67,14 @@
   --nav-link-padding: 1em 2em;
 }
 
+.ButtonThin {
+  margin: 20px;
+  height: 25px !important;
+  border-radius: 15px !important;
+  background-color: var(--color-themePrimary) !important;
+  color: white !important;
+}
+
 .App {
   text-align: center;
   background-color: black;
@@ -101,6 +109,22 @@
 @keyframes App-logo-spin {
   from { transform: rotate(0deg); }
   to { transform: rotate(360deg); }
+}
+
+.DetailText {
+  text-align: left
+}
+
+.DetailTitle {
+  text-transform: uppercase;
+  font-size: 10px;
+  color: var(--color-themeLight);
+}
+
+.DetailText {
+  font-size: 14px;
+  padding: 3px;
+  color: var(--color-white);
 }
 
 .FilterPage {
@@ -138,6 +162,61 @@
   display: inline-block;
   width: 20px;
   color: white;
+}
+
+.LibraryBody {
+  margin-left: auto;
+  margin-right: auto;
+}
+
+.LibraryImageColumn {
+  width: 200px;
+  display: inline-block;
+}
+
+.LibraryImageTitle {
+  color: white
+}
+
+.LibraryImageCount {
+  color: white;
+  font-size: 12px;
+  display: inline-block;
+  margin: 5px;
+  width: 50px;
+}
+
+.LibraryTagsColumn {
+  width: 150px;
+  display: inline-block;
+}
+
+.LibraryTagUnselected {
+  color: var(--color-neutralTertiary)
+}
+
+.LibraryTagSelected {
+  font-weight: bold;
+  color: var(--color-white)
+}
+
+.LibraryTagList {
+  height: 150px;
+  overflow-y: auto;
+  width: 80px;
+  overflow-x: hidden;
+  display: inline-block;
+  font-size: 12px;
+  color: white;
+  text-align: left;
+}
+
+.ImageButton {
+  height: 25px !important;
+  border-radius: 15px !important;
+  background-color: var(--color-themePrimary) !important;
+  color: white !important;
+  margin: 5px;
 }
 
 .QuizTimer {

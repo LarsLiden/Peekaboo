@@ -5,7 +5,6 @@ import { Tag, Filter } from './models/models'
 export interface ReceivedProps {
   tags: Tag[]
   filter: Filter
-  onQuiz: () => Promise<void>
   onClose: () => void
   onSetRequireTag: (tagName: string, value: boolean) => void
   onSetBlockTag: (tagName: string, value: boolean) => void
@@ -21,13 +20,8 @@ class FilterPage extends React.Component<ReceivedProps, ComponentState> {
   }
 
   @OF.autobind
-  onClickCancel() {
+  onClickClose() {
     this.props.onClose()
-  }
-
-  @OF.autobind
-  onClickQuiz() {
-    this.props.onQuiz()
   }
 
   @OF.autobind
@@ -70,14 +64,9 @@ class FilterPage extends React.Component<ReceivedProps, ComponentState> {
         />
         <OF.DefaultButton
             className="QuizButton"
-            onClick={this.onClickCancel}
-            text="Cancel"
+            onClick={this.onClickClose}
+            text="Close"
         />  
-        <OF.DefaultButton
-            className="QuizButton"
-            onClick={this.onClickQuiz}
-            text="Quiz"
-        />
       </div>
     );
   }

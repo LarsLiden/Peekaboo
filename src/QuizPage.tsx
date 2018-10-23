@@ -7,6 +7,7 @@ import { getRandomInt} from './Util'
 export interface ReceivedProps {
   quizSet: QuizSet | null
   onQuizDone: () => Promise<void>
+//TODO  onShowPerson: (quizPerson: QuizPerson) => void
 }
 
 const baseImage = "https://peekaboo.blob.core.windows.net/faces/"
@@ -20,7 +21,7 @@ interface ComponentState {
   timerValue: number
 }
 
-class Quiz extends React.Component<ReceivedProps, ComponentState> {
+class QuizPage extends React.Component<ReceivedProps, ComponentState> {
 
   state: ComponentState = {
     quizPerson: null,
@@ -192,4 +193,4 @@ class Quiz extends React.Component<ReceivedProps, ComponentState> {
   }
 }
 
-export default Quiz;
+export default QuizPage;

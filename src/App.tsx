@@ -3,20 +3,28 @@ import './App.css';
 import './fabric.css'
 import Client from './service/client'
 import * as OF from 'office-ui-fabric-react'
-import { QuizSet, Tag, Filter, PerfType } from './models/models'
-import Quiz from './Quiz';
+import { QuizSet, LibrarySet, Tag, Filter, PerfType } from './models/models'
+import { Person } from './models/person'
+import QuizPage from './QuizPage';
 import FilterPage from './FilterPage'
+import LibraryPage from './LibraryPage'
+import ViewPage from './ViewPage'
 
-enum Page {
+export enum Page {
   MENU = "MENU",
   FILTER = "FILTER",
-  QUIZ = "QUIZ"
+  LIBRARY = "LIBRARY",
+  QUIZ = "QUIZ",
+  VIEW = "VIEW"
 }
 
 interface ComponentState {
   page: Page
+  returnPage: Page
   quizSet: QuizSet | null
+  librarySet: LibrarySet | null
   tags: Tag[]
+  selectedPerson: Person | null
   filter: Filter
 }
 
@@ -24,8 +32,11 @@ class App extends React.Component<{}, ComponentState> {
 
   state: ComponentState = {
     quizSet: null,
+    librarySet: null,
     tags: [],
     page: Page.MENU,
+    returnPage: Page.MENU,
+    selectedPerson: null,
     filter: {required: [], blocked: [], perfType: PerfType.PHOTO}
   }
 
@@ -50,6 +61,26 @@ class App extends React.Component<{}, ComponentState> {
   }
 
   @OF.autobind 
+  private async onClickLibrary() {
+      let librarySet = await Client.getLibrarySet(this.state.filter)
+      this.setState({
+        librarySet,
+        page: Page.LIBRARY
+      })
+  }
+
+  @OF.autobind 
+  private async onClickPerson(guid: string, returnPage: Page) {
+      let selectedPerson = await Client.getPerson(guid)
+      this.setState({
+        selectedPerson,
+        page: Page.VIEW,
+        returnPage
+      })
+  }
+
+
+  @OF.autobind 
   private async onClickImport() {
       await Client.import()
   }
@@ -60,6 +91,7 @@ class App extends React.Component<{}, ComponentState> {
         tags: tags,
       })
   }
+
   @OF.autobind 
   private async onQuiz() {
       let quizSet = await Client.getQuizSet(this.state.filter)
@@ -70,17 +102,17 @@ class App extends React.Component<{}, ComponentState> {
   }
 
   @OF.autobind 
-  private async onCloseQuizPrep() {
+  private async onQuizDone() {
       this.setState({
-        page: Page.MENU
+        page: Page.LIBRARY
       })
   }
 
-  @OF.autobind 
-  private async onQuizDone() {
-      this.setState({
-        page: Page.MENU
-      })
+  @OF.autobind
+  private navigate(page: Page) {
+    this.setState(
+      { page }
+    )
   }
 
   @OF.autobind
@@ -147,8 +179,8 @@ class App extends React.Component<{}, ComponentState> {
             className="AppPage">
             <OF.DefaultButton
                 className="QuizButton"
-                onClick={this.onClickFilter}
-                text="Filter"
+                onClick={this.onClickLibrary}
+                text="Welcome"
             /> 
             <OF.DefaultButton
               className="QuizButton"
@@ -157,10 +189,27 @@ class App extends React.Component<{}, ComponentState> {
             />
           </div>
         }
+        {this.state.page === Page.LIBRARY &&
+          <LibraryPage
+            onClickQuiz={this.onQuiz}
+            onClickFilter={this.onClickFilter}
+            onClickPerson={(guid: string, returnPage: Page)=> this.onClickPerson(guid, returnPage)}
+            librarySet={this.state.librarySet}
+            filter={this.state.filter}
+            initialGuid={this.state.selectedPerson ? this.state.selectedPerson.guid : null }
+          />
+        }: 
+         {this.state.page === Page.VIEW && this.state.selectedPerson &&
+          <ViewPage
+            person={this.state.selectedPerson}
+            filter={this.state.filter}
+            returnPage={this.state.returnPage}
+            onClose={(returnPage: Page) => this.navigate(returnPage)}
+          />
+        }
         {this.state.page === Page.FILTER &&
           <FilterPage
-            onQuiz={this.onQuiz}
-            onClose={this.onCloseQuizPrep}
+            onClose={this.onClickLibrary}
             onSetRequireTag={(tagName, value) => this.onSetReqireTag(tagName, value)}
             onSetBlockTag={(tagName, value) => this.onSetBlockedTag(tagName, value)}
             tags={this.state.tags}
@@ -168,7 +217,7 @@ class App extends React.Component<{}, ComponentState> {
           />
         }
         {this.state.page === Page.QUIZ && 
-          <Quiz
+          <QuizPage
             quizSet={this.state.quizSet}
             onQuizDone={this.onQuizDone}
           />

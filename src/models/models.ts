@@ -1,3 +1,5 @@
+import { Performance } from './performance'
+
 export enum PerfType
 {
     PHOTO = "PHOTO",
@@ -6,28 +8,27 @@ export enum PerfType
     ALPHA = "ALPHA"
 }
 
-export interface Performance {
-    bestTime: number
-    avgTime: number
-    worstTime: number
-    numPresentations: number
-    frequency: number
-    rank: number
-    lastTested: number
-    familiarity: number
-    frequencyOffsetStart: number
-    frequencyOffsetEnd: number
-}
-
 export interface QuizSet {
     quizPeople: QuizPerson[]
     frequencyTotal: number
 }
 
 export interface QuizPerson {
+    guid: string
     blobNames: string[]
     fullName: string
     performance: Performance
+}
+
+export interface LibrarySet {
+    libraryPeople: LibraryPerson[]
+}
+
+export interface LibraryPerson {
+    guid: string
+    blobName: string
+    fullName: string
+    tags: string[]
 }
 
 export interface Tag {
@@ -37,6 +38,12 @@ export interface Tag {
 
 export interface Filter {
     perfType: PerfType
-    required: string[],
+    required: string[]
     blocked: string[]
+}
+
+export interface Event {
+    date: string
+    description: string
+    location: string
 }
