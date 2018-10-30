@@ -32,7 +32,7 @@ class DetailRelationships extends React.Component<ReceivedProps, ComponentState>
           <div className="DetailTitle">
             Relationships
           </div>
-          <div className="DetailBody">
+          <div className="DetailLongBody">
             <OF.List
                 className="DetailRelationshipList"
                 items={this.props.relationships}

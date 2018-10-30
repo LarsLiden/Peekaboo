@@ -67,6 +67,22 @@
   --nav-link-padding: 1em 2em;
 }
 
+.ms-DetailsRow {
+  background-color: #000000 !important;
+  color: white !important;
+  font-size: 10px
+}
+
+.ms-DetailsRow:hover {
+  background-color: #000000 !important;
+  color: white !important;
+}
+
+.ms-DetailsRow:focus {
+  background-color: #000000 !important;
+  color: white !important;
+}
+
 .ButtonThin {
   margin: 20px;
   height: 25px !important;
@@ -109,22 +125,6 @@
 @keyframes App-logo-spin {
   from { transform: rotate(0deg); }
   to { transform: rotate(360deg); }
-}
-
-.DetailText {
-  text-align: left
-}
-
-.DetailTitle {
-  text-transform: uppercase;
-  font-size: 10px;
-  color: var(--color-themeLight);
-}
-
-.DetailText {
-  font-size: 14px;
-  padding: 3px;
-  color: var(--color-white);
 }
 
 .FilterPage {
@@ -235,6 +235,15 @@
 .QuizButton {
   margin: 20px;
   height: 50px !important;
+  border-radius: 15px !important;
+  background-color: var(--color-themePrimary) !important;
+  color: white !important;
+}
+
+.IconButtonLarge {
+  margin: 20px;
+  height: 50px !important;
+  width: 50px !important;
   border-radius: 15px !important;
   background-color: var(--color-themePrimary) !important;
   color: white !important;

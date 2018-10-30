@@ -1,6 +1,7 @@
 import axios from 'axios'
 
 import { QuizPerson, QuizSet, LibrarySet, Tag, Filter } from '../models/models'
+import { TestResult } from '../models/performance'
 import { Person } from '../models/person'
 
 export default class Client {
@@ -80,6 +81,18 @@ export default class Client {
         catch (err) {
             console.log(JSON.stringify(err))
             return []
+        }
+    }
+
+    public static async postTestResults(testResults: TestResult[]): Promise<void> {
+
+        try {
+            await axios.post(`${this.baseUrl}/testresults`,
+                {testResults: testResults})
+            return
+        }
+        catch (err) {
+            console.log(JSON.stringify(err))
         }
     }
 

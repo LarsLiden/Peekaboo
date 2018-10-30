@@ -7,60 +7,27 @@ import { LibraryPerson, LibrarySet, Filter } from './models/models'
 export interface ReceivedProps {
   librarySet: LibrarySet | null
   filter: Filter
-  initialGuid: string | null
+  onNext: () => void
+  onPrev: () => void
   onClickQuiz: () => void
   onClickFilter: () => void
-  onClickPerson: (quid: string, returnPage: Page) => void
+  onViewLibraryPerson: (returnPage: Page) => void
 }
 
 const baseImage = "https://peekaboo.blob.core.windows.net/faces/"
 
 interface ComponentState { 
-  currentPerson: LibraryPerson | null,
-  personIndex: number
+  currentPerson: LibraryPerson | null
 }
 
 class LibraryPage extends React.Component<ReceivedProps, ComponentState> {
 
   state: ComponentState = {
-    currentPerson: null,
-    personIndex: 0,
+    currentPerson: null
   }
 
   componentDidMount() {
     
-  }
-
-  componentWillMount() {
-    if (this.props.initialGuid && this.props.librarySet) {
-        let personIndex = this.props.librarySet.libraryPeople.findIndex(p => p.guid === this.props.initialGuid)
-        if (personIndex < 0) {
-          personIndex = 0
-        }
-        this.setState({ personIndex } )
-    }
-  }
-
-  @OF.autobind
-  onClickNext(): void {
-    if (this.props.librarySet) {
-      let personIndex = this.state.personIndex + 1
-      if (personIndex >= this.props.librarySet.libraryPeople.length) {
-        personIndex = 0
-      }
-      this.setState({personIndex})
-    }
-  }
-
-  @OF.autobind
-  onClickPrevious(): void {
-    if (this.props.librarySet) {
-      let personIndex = this.state.personIndex - 1
-      if (personIndex <= 0) {
-        personIndex = this.props.librarySet.libraryPeople.length - 1
-      }
-      this.setState({personIndex})
-    }
   }
 
   @OF.autobind
@@ -83,7 +50,7 @@ class LibraryPage extends React.Component<ReceivedProps, ComponentState> {
       return null
     }
 
-    const libraryPerson = this.props.librarySet.libraryPeople[this.state.personIndex]
+    const libraryPerson = this.props.librarySet.libraryPeople[this.props.librarySet.selectedIndex]
     const imageFile = baseImage + libraryPerson.blobName
       return (
         <div className="QuizPage">
@@ -100,20 +67,20 @@ class LibraryPage extends React.Component<ReceivedProps, ComponentState> {
               />
               <OF.IconButton
                 className="ImageButton"
-                onClick={this.onClickPrevious}
+                onClick={this.props.onPrev}
                 iconProps={{ iconName: 'CaretLeftSolid8' }}
               />
               <div className="LibraryImageCount">
-                {`${this.state.personIndex+1}/${this.props.librarySet.libraryPeople.length}`}
+                {`${this.props.librarySet.selectedIndex+1}/${this.props.librarySet.libraryPeople.length}`}
               </div>
               <OF.IconButton
                 className="ImageButton"
-                onClick={this.onClickNext}
+                onClick={this.props.onNext}
                 iconProps={{ iconName: 'CaretRightSolid8' }}
               />
               <OF.DefaultButton
                 className="ButtonThin"
-                onClick={() => this.props.onClickPerson(libraryPerson.guid, Page.LIBRARY)}
+                onClick={() => this.props.onViewLibraryPerson(Page.LIBRARY)}
                 text="View"
               /> 
             </div>

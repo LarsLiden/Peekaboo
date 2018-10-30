@@ -4,15 +4,22 @@ import './fabric.css'
 import { Page } from './App'
 import { Person } from './models/person'
 import { Filter } from './models/models'
+import { LibrarySet} from './models/models'
 import DetailText from './DetailText'
-import DetailRelationship from './DetailRelationships'
+import DetailRelationships from './DetailRelationships'
+import DetailEvents from './DetailEvents'
+import DetailKeyValues from './DetailKeyValues'
+import DetailSocialNetworks from './DetailSocialNetworks'
 import "./ViewPage.css"
 
 export interface ReceivedProps {
+  librarySet: LibrarySet
   person: Person
   filter: Filter
   returnPage: Page
   onClose: (returnPage: Page) => void
+  onNextPerson: () => void
+  onPrevPerson: () => void
 }
 
 const baseImage = "https://peekaboo.blob.core.windows.net/faces/"
@@ -32,7 +39,7 @@ class ViewPage extends React.Component<ReceivedProps, ComponentState> {
   }
 
   @OF.autobind
-  onClickNext(): void {
+  onNextPhoto(): void {
   
     let photoIndex = this.state.photoIndex + 1
     if (photoIndex >= this.props.person.photoFilenames.length) {
@@ -43,7 +50,7 @@ class ViewPage extends React.Component<ReceivedProps, ComponentState> {
   }
 
   @OF.autobind
-  onClickPrevious(): void {
+  onPrevPhoto(): void {
       let photoIndex = this.state.photoIndex - 1
       if (photoIndex <= 0) {
         photoIndex = this.props.person.photoFilenames.length - 1
@@ -52,7 +59,7 @@ class ViewPage extends React.Component<ReceivedProps, ComponentState> {
   }
 
   public render() {
-
+    const description = `${this.props.person.description}\n${this.props.person.tags.join(", ")}`
     const imageFile = baseImage + this.props.person.photoFilenames[this.state.photoIndex]
       return (
         <div className="QuizPage">
@@ -72,7 +79,7 @@ class ViewPage extends React.Component<ReceivedProps, ComponentState> {
               />
               <OF.IconButton
                 className="ImageButton"
-                onClick={this.onClickPrevious}
+                onClick={this.onPrevPhoto}
                 iconProps={{ iconName: 'CaretLeftSolid8' }}
               />
               <div className="LibraryImageCount">
@@ -80,15 +87,27 @@ class ViewPage extends React.Component<ReceivedProps, ComponentState> {
               </div>
               <OF.IconButton
                 className="ImageButton"
-                onClick={this.onClickNext}
+                onClick={this.onNextPhoto}
                 iconProps={{ iconName: 'CaretRightSolid8' }}
               />
             
             </div>
           </div>
           <div className="ViewBodyBottom">
-            <DetailRelationship
+            <DetailText title="Description" text={description} isLong={true}/>
+          </div>
+          <div className="ViewBodyBottom">
+            <DetailRelationships
               relationships={this.props.person.relationships}
+            />
+            <DetailEvents
+              events={this.props.person.events}
+            />
+            <DetailKeyValues
+              keyValues={this.props.person.keyValues}
+            />
+             <DetailSocialNetworks
+              socialNets={this.props.person.socialNets}
             />
           </div>
         <div>
@@ -98,6 +117,19 @@ class ViewPage extends React.Component<ReceivedProps, ComponentState> {
             text="Close"
           />
         </div>
+        <OF.IconButton
+          className="ImageButton"
+          onClick={this.props.onPrevPerson}
+          iconProps={{ iconName: 'CaretLeftSolid8' }}
+        />
+        <div className="LibraryImageCount">
+          {`${this.props.librarySet.selectedIndex+1}/${this.props.librarySet.libraryPeople.length}`}
+        </div>
+        <OF.IconButton
+          className="ImageButton"
+          onClick={this.props.onNextPerson}
+          iconProps={{ iconName: 'CaretRightSolid8' }}
+        />
       </div>
     );
   }

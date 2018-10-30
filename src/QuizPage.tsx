@@ -3,22 +3,25 @@ import * as OF from 'office-ui-fabric-react'
 import './fabric.css'
 import { QuizPerson, QuizSet } from './models/models'
 import { getRandomInt} from './Util'
+import { TestResult } from './models/performance'
+import { MAX_TIME } from './models/const'
 
 export interface ReceivedProps {
   quizSet: QuizSet | null
-  onQuizDone: () => Promise<void>
+  onQuizDone: (testResults: TestResult[]) => Promise<void>
 //TODO  onShowPerson: (quizPerson: QuizPerson) => void
 }
 
 const baseImage = "https://peekaboo.blob.core.windows.net/faces/"
-//const timerInterval = 100
+const timerInterval = 100
 
 interface ComponentState {
   quizPerson: QuizPerson | null,
   imageIndex: number,
   showName: boolean,
   timerId: NodeJS.Timer | null,
-  timerValue: number
+  timerValue: number,
+  testResults: TestResult[]
 }
 
 class QuizPage extends React.Component<ReceivedProps, ComponentState> {
@@ -28,17 +31,12 @@ class QuizPage extends React.Component<ReceivedProps, ComponentState> {
     imageIndex: 0,
     showName: false,
     timerId: null,
-    timerValue: 0
+    timerValue: 0,
+    testResults: []
   }
 
   componentDidMount() {
-    
-  }
-
-  componentWillReceiveProps(newProps: ReceivedProps) {
-    if (this.props.quizSet != newProps.quizSet) {
-        this.setState({ quizPerson: null} )
-    }
+    this.selectNextPerson()
   }
 
   // Pick a random person from the test set based on testing frequency
@@ -70,7 +68,7 @@ class QuizPage extends React.Component<ReceivedProps, ComponentState> {
       personIndex = (personIndex > 0) ? personIndex - 1 : personIndex + 1
       quizPerson = this.props.quizSet.quizPeople[personIndex]
     }
-    console.log(`${randFreq}: ${quizPerson.performance.frequencyOffsetStart} / ${quizPerson.performance.frequencyOffsetEnd}`)
+    //DEBUG console.log(`${randFreq}: ${quizPerson.performance.frequencyOffsetStart} / ${quizPerson.performance.frequencyOffsetEnd}`)
     return quizPerson
   }
   
@@ -87,9 +85,27 @@ class QuizPage extends React.Component<ReceivedProps, ComponentState> {
     })
   }
 
+  addTestResult(result: number) {
+    const testResult: TestResult = {
+      guid: this.state.quizPerson!.guid,
+      result
+    }
+    this.setState({
+      testResults: [...this.state.testResults, testResult]
+    })
+  }
+
   @OF.autobind
   onClickKnow() {
+    this.addTestResult(this.state.timerValue)
     this.selectNextPerson()
+  }
+
+  @OF.autobind
+  onClickDontKnow() {
+    this.addTestResult(MAX_TIME)
+    this.selectNextPerson()
+    this.clearTimer()
   }
 
   @OF.autobind
@@ -101,15 +117,11 @@ class QuizPage extends React.Component<ReceivedProps, ComponentState> {
   }
 
   @OF.autobind
-  onClickDontKnow() {
-    this.selectNextPerson()
-    this.clearTimer()
-  }
-
-  @OF.autobind
   onClickQuit() {
     this.clearTimer()
-    this.props.onQuizDone()
+    this.state.testResults.map(tr =>
+      console.log(JSON.stringify(tr)))
+    this.props.onQuizDone(this.state.testResults/* PerfType*/)
   }
 
   clearTimer() {
@@ -127,21 +139,29 @@ class QuizPage extends React.Component<ReceivedProps, ComponentState> {
     this.setState({
       timerValue: 0
     })
- /*   const timerId = setInterval(()=> 
+    const timerId = setInterval(()=> 
     {
-      this.setState({
-        timerValue: this.state.timerValue + timerInterval
-      })
+      const newTime = this.state.timerValue + timerInterval
+      if (newTime <= MAX_TIME) {
+        this.setState({
+          timerValue: this.state.timerValue + timerInterval
+        })
+      }
+      else {
+        this.clearTimer()
+        this.setState({
+          showName: true
+        })
+      }
     }, timerInterval)
 
     this.setState({
       timerId
-    })*/
+    })
   }
 
   public render() {
     if (!this.state.quizPerson) {
-      this.selectNextPerson()
       return null
     }
     const imageFile = baseImage + this.state.quizPerson.blobNames[this.state.imageIndex]
@@ -149,7 +169,7 @@ class QuizPage extends React.Component<ReceivedProps, ComponentState> {
       <div className="QuizPage">
         <div
           className="QuizTimer">
-          {this.state.timerValue/1000.0}
+          {this.state.timerValue/100}
         </div>
         <OF.Image
           className="QuizImageHolder"
@@ -165,21 +185,23 @@ class QuizPage extends React.Component<ReceivedProps, ComponentState> {
             {this.state.quizPerson.fullName}
           </div>
         }
-        <OF.DefaultButton
-          className="QuizButton"
+        <OF.IconButton
+          className="IconButtonLarge"
           onClick={this.onClickKnow}
-          text="Y"
+          iconProps={{ iconName: 'SkypeCheck' }}
         />
-        <OF.DefaultButton
-          className="QuizButton"
-          onClick={this.onClickQuestion}
-          text="?"
-        />
-        <OF.DefaultButton
-          className="QuizButton"
+        {this.state.showName ? 
+        <OF.IconButton
+          className="IconButtonLarge"
           onClick={this.onClickDontKnow}
-          text="N"
+          iconProps={{ iconName: 'UnknownSolid' }}
+        /> :
+        <OF.IconButton
+          className="IconButtonLarge"
+          onClick={this.onClickQuestion}
+          iconProps={{ iconName: 'Unknown' }}
         />
+        }
         <OF.DefaultButton
           className="QuizQuitButton"
           onClick={this.onClickQuit}

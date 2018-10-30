@@ -3,8 +3,10 @@ import './App.css';
 import './fabric.css'
 import Client from './service/client'
 import * as OF from 'office-ui-fabric-react'
+import { setStatePromise } from './Util'
 import { QuizSet, LibrarySet, Tag, Filter, PerfType } from './models/models'
 import { Person } from './models/person'
+import { TestResult } from './models/performance'
 import QuizPage from './QuizPage';
 import FilterPage from './FilterPage'
 import LibraryPage from './LibraryPage'
@@ -63,6 +65,7 @@ class App extends React.Component<{}, ComponentState> {
   @OF.autobind 
   private async onClickLibrary() {
       let librarySet = await Client.getLibrarySet(this.state.filter)
+      librarySet!.selectedIndex = 0
       this.setState({
         librarySet,
         page: Page.LIBRARY
@@ -70,7 +73,8 @@ class App extends React.Component<{}, ComponentState> {
   }
 
   @OF.autobind 
-  private async onClickPerson(guid: string, returnPage: Page) {
+  private async viewLibraryPerson(returnPage: Page = this.state.returnPage) {
+      let guid = this.state.librarySet!.libraryPeople[this.state.librarySet!.selectedIndex].guid
       let selectedPerson = await Client.getPerson(guid)
       this.setState({
         selectedPerson,
@@ -78,7 +82,6 @@ class App extends React.Component<{}, ComponentState> {
         returnPage
       })
   }
-
 
   @OF.autobind 
   private async onClickImport() {
@@ -102,7 +105,8 @@ class App extends React.Component<{}, ComponentState> {
   }
 
   @OF.autobind 
-  private async onQuizDone() {
+  private async onQuizDone(testResults: TestResult[]) {
+      await Client.postTestResults(testResults)
       this.setState({
         page: Page.LIBRARY
       })
@@ -171,6 +175,34 @@ class App extends React.Component<{}, ComponentState> {
     }
   }
 
+  @OF.autobind
+  async onNextLibraryPage(): Promise<void> {
+    if (this.state.librarySet) {
+      let selectedIndex = this.state.librarySet.selectedIndex + 1
+      if (selectedIndex >= this.state.librarySet.libraryPeople.length) {
+        selectedIndex = 0
+      }
+      await setStatePromise(this, {librarySet: {...this.state.librarySet, selectedIndex}})
+      if (this.state.page === Page.VIEW ) {
+        this.viewLibraryPerson()
+      }
+    }
+  }
+
+  @OF.autobind
+  async onPrevLibraryPage(): Promise<void> {
+    if (this.state.librarySet) {
+      let selectedIndex = this.state.librarySet.selectedIndex - 1
+      if (selectedIndex <= 0) {
+        selectedIndex = this.state.librarySet.libraryPeople.length - 1
+      }
+      await setStatePromise(this, {librarySet: {...this.state.librarySet, selectedIndex}})
+      if (this.state.page === Page.VIEW ) {
+        this.viewLibraryPerson()
+      }
+    }
+  }
+
   public render() {
     return (
       <div className="App">
@@ -191,20 +223,24 @@ class App extends React.Component<{}, ComponentState> {
         }
         {this.state.page === Page.LIBRARY &&
           <LibraryPage
+            onNext={this.onNextLibraryPage}
+            onPrev={this.onPrevLibraryPage}
             onClickQuiz={this.onQuiz}
             onClickFilter={this.onClickFilter}
-            onClickPerson={(guid: string, returnPage: Page)=> this.onClickPerson(guid, returnPage)}
+            onViewLibraryPerson={(returnPage: Page)=> this.viewLibraryPerson(returnPage)}
             librarySet={this.state.librarySet}
             filter={this.state.filter}
-            initialGuid={this.state.selectedPerson ? this.state.selectedPerson.guid : null }
           />
-        }: 
+        } 
          {this.state.page === Page.VIEW && this.state.selectedPerson &&
           <ViewPage
+            librarySet={this.state.librarySet!}
             person={this.state.selectedPerson}
             filter={this.state.filter}
             returnPage={this.state.returnPage}
             onClose={(returnPage: Page) => this.navigate(returnPage)}
+            onNextPerson={this.onNextLibraryPage}
+            onPrevPerson={this.onPrevLibraryPage}
           />
         }
         {this.state.page === Page.FILTER &&
@@ -220,7 +256,7 @@ class App extends React.Component<{}, ComponentState> {
           <QuizPage
             quizSet={this.state.quizSet}
             onQuizDone={this.onQuizDone}
-          />
+            />
         }
       </div>
     );

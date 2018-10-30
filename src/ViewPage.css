@@ -1,6 +1,7 @@
 .ViewBodyTop {
   margin-left: auto;
   margin-right: auto;
+  height: 160px;
 }
 
 
@@ -17,4 +18,5 @@
 .ViewBodyBottom {
   margin-left: auto;
   margin-right: auto;
+  width: 350px;
 }

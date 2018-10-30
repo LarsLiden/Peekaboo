@@ -1,0 +1,30 @@
+.DetailBody {
+  height: 18px;
+  padding-left: 5px;
+}
+
+.DetailLongBody {
+  height: 45px;
+  overflow-y: auto;
+  font-size: 12px;
+  padding-left: 5px;
+}
+
+.DetailText {
+  text-align: left
+}
+
+.DetailTitle {
+  text-transform: uppercase;
+  font-size: 8px;
+  color: var(--color-themeLight);
+}
+
+.DetailText {
+  font-size: 14px;
+  padding: 3px;
+  color: var(--color-white);
+}
+
+
+
