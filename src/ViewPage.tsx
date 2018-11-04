@@ -6,6 +6,8 @@ import { Person } from './models/person'
 import { Filter } from './models/models'
 import { LibrarySet} from './models/models'
 import DetailText from './DetailText'
+import DetailTags from './DetailTags'
+import DetailIndexer from './DetailIndexer'
 import DetailRelationships from './DetailRelationships'
 import DetailEvents from './DetailEvents'
 import DetailKeyValues from './DetailKeyValues'
@@ -57,9 +59,20 @@ class ViewPage extends React.Component<ReceivedProps, ComponentState> {
       }
       this.setState({photoIndex})
   }
+  
+  @OF.autobind
+  onNextPerson(): void {
+    this.setState({photoIndex: 0})
+    this.props.onNextPerson()
+  }
+
+  @OF.autobind
+  onPrevPerson(): void {
+    this.setState({photoIndex: 0})
+    this.props.onPrevPerson()
+  }
 
   public render() {
-    const description = `${this.props.person.description}\n${this.props.person.tags.join(", ")}`
     const imageFile = baseImage + this.props.person.photoFilenames[this.state.photoIndex]
       return (
         <div className="QuizPage">
@@ -69,32 +82,28 @@ class ViewPage extends React.Component<ReceivedProps, ComponentState> {
               <DetailText title="Last Name" text={this.props.person.lastName}/>
               <DetailText title="Nickname" text={this.props.person.nickName}/>
               <DetailText title="Maiden Name" text={this.props.person.maidenName}/>
+              <DetailTags 
+                tags={this.props.person.tags}
+                filter={this.props.filter}
+              />
             </div>
             <div className="ViewImageColumn">
               <OF.Image
                 className="QuizImageHolder"
                 src={imageFile}
-                width={125}
-                height={125}
+                width={160}
+                height={160}
               />
-              <OF.IconButton
-                className="ImageButton"
-                onClick={this.onPrevPhoto}
-                iconProps={{ iconName: 'CaretLeftSolid8' }}
+              <DetailIndexer
+                onPrev={this.onPrevPhoto}
+                onNext={this.onNextPhoto}
+                currentIndex={this.state.photoIndex}
+                total={this.props.person.photoFilenames.length}
               />
-              <div className="LibraryImageCount">
-                {`${this.state.photoIndex+1}/${this.props.person.photoFilenames.length}`}
-              </div>
-              <OF.IconButton
-                className="ImageButton"
-                onClick={this.onNextPhoto}
-                iconProps={{ iconName: 'CaretRightSolid8' }}
-              />
-            
             </div>
           </div>
           <div className="ViewBodyBottom">
-            <DetailText title="Description" text={description} isLong={true}/>
+            <DetailText title="Description" text={this.props.person.description} isLong={true}/>
           </div>
           <div className="ViewBodyBottom">
             <DetailRelationships
@@ -111,24 +120,17 @@ class ViewPage extends React.Component<ReceivedProps, ComponentState> {
             />
           </div>
         <div>
-          <OF.DefaultButton
-            className="QuizButton"
+          <OF.IconButton
+            className="ButtonClose"
             onClick={() => this.props.onClose(this.props.returnPage)}
-            text="Close"
+            iconProps={{ iconName: 'ChromeClose' }}
           />
         </div>
-        <OF.IconButton
-          className="ImageButton"
-          onClick={this.props.onPrevPerson}
-          iconProps={{ iconName: 'CaretLeftSolid8' }}
-        />
-        <div className="LibraryImageCount">
-          {`${this.props.librarySet.selectedIndex+1}/${this.props.librarySet.libraryPeople.length}`}
-        </div>
-        <OF.IconButton
-          className="ImageButton"
-          onClick={this.props.onNextPerson}
-          iconProps={{ iconName: 'CaretRightSolid8' }}
+        <DetailIndexer
+          onPrev={this.onPrevPerson}
+          onNext={this.onNextPerson}
+          currentIndex={this.props.librarySet.selectedIndex}
+          total={this.props.librarySet.libraryPeople.length}
         />
       </div>
     );

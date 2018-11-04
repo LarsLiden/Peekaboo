@@ -17,7 +17,7 @@
 .DetailTitle {
   text-transform: uppercase;
   font-size: 8px;
-  color: var(--color-themeLight);
+  color: #777777;
 }
 
 .DetailText {

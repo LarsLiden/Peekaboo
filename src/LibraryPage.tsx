@@ -2,6 +2,7 @@ import * as React from 'react';
 import * as OF from 'office-ui-fabric-react'
 import './fabric.css'
 import { Page } from './App'
+import DetailIndexer from './DetailIndexer'
 import { LibraryPerson, LibrarySet, Filter } from './models/models'
 
 export interface ReceivedProps {
@@ -62,21 +63,14 @@ class LibraryPage extends React.Component<ReceivedProps, ComponentState> {
               <OF.Image
                 className="QuizImageHolder"
                 src={imageFile}
-                width={125}
-                height={125}
+                width={160}
+                height={160}
               />
-              <OF.IconButton
-                className="ImageButton"
-                onClick={this.props.onPrev}
-                iconProps={{ iconName: 'CaretLeftSolid8' }}
-              />
-              <div className="LibraryImageCount">
-                {`${this.props.librarySet.selectedIndex+1}/${this.props.librarySet.libraryPeople.length}`}
-              </div>
-              <OF.IconButton
-                className="ImageButton"
-                onClick={this.props.onNext}
-                iconProps={{ iconName: 'CaretRightSolid8' }}
+              <DetailIndexer
+                onPrev={this.props.onPrev}
+                onNext={this.props.onNext}
+                currentIndex={this.props.librarySet.selectedIndex}
+                total={this.props.librarySet.libraryPeople.length}
               />
               <OF.DefaultButton
                 className="ButtonThin"

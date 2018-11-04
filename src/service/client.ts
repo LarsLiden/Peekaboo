@@ -1,13 +1,13 @@
 import axios from 'axios'
 
-import { QuizPerson, QuizSet, LibrarySet, Tag, Filter } from '../models/models'
+import { QuizPerson, QuizSet, LibrarySet, Tag, Filter, StartState } from '../models/models'
 import { TestResult } from '../models/performance'
 import { Person } from '../models/person'
 
 export default class Client {
 
-    public static baseUrl = "https://peekabooserver.azurewebsites.net/api"
-    //public static baseUrl = "http://localhost:8080/api"
+    //public static baseUrl = "https://peekabooserver.azurewebsites.net/api"
+    public static baseUrl = "http://localhost:8080/api"
 
     public static async getPeople(): Promise<QuizPerson[]> {
 
@@ -30,6 +30,19 @@ export default class Client {
         catch (err) {
             console.log(JSON.stringify(err))
             return null
+        }
+    }
+
+    public static async start(name: string): Promise<StartState> {
+
+        try {
+            const response = await axios.post(`${this.baseUrl}/start`,
+            {name})
+            return response.data as StartState
+        }
+        catch (err) {
+            console.log(JSON.stringify(err))
+            return StartState.INVALID
         }
     }
     

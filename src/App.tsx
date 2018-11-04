@@ -4,7 +4,7 @@ import './fabric.css'
 import Client from './service/client'
 import * as OF from 'office-ui-fabric-react'
 import { setStatePromise } from './Util'
-import { QuizSet, LibrarySet, Tag, Filter, PerfType } from './models/models'
+import { QuizSet, LibrarySet, Tag, Filter, PerfType, StartState } from './models/models'
 import { Person } from './models/person'
 import { TestResult } from './models/performance'
 import QuizPage from './QuizPage';
@@ -20,7 +20,11 @@ export enum Page {
   VIEW = "VIEW"
 }
 
+const ALLOW_IMPORT = false
+
 interface ComponentState {
+  userLoginValue: string
+  waitingCalloutText: string | null
   page: Page
   returnPage: Page
   quizSet: QuizSet | null
@@ -32,7 +36,11 @@ interface ComponentState {
 
 class App extends React.Component<{}, ComponentState> {
 
+  private _startButtonElement = OF.createRef<HTMLElement>();
+
   state: ComponentState = {
+    userLoginValue: "",
+    waitingCalloutText: null,
     quizSet: null,
     librarySet: null,
     tags: [],
@@ -203,22 +211,83 @@ class App extends React.Component<{}, ComponentState> {
     }
   }
 
+  @OF.autobind
+  private async onClickStart(): Promise<void> {
+    let startState = await Client.start(this.state.userLoginValue)
+    if (startState === StartState.READY) {
+      this.onClickLibrary()
+    }
+    else if (startState === StartState.WAITING) {
+      this.setState({
+        waitingCalloutText: "Server is warming up"
+      })
+    }
+    else {
+      this.setState({
+        waitingCalloutText: "Not found"
+      })
+    }
+  }
+
+  @OF.autobind
+  private userNameChanged(text: string) {
+    this.setState({
+      userLoginValue: text
+    })
+  }
+
+  @OF.autobind
+  private onWaitCalloutDismiss(): void {
+    this.setState({waitingCalloutText: null})
+  }
+
+  @OF.autobind
+  onLoginKeyDown(event: React.KeyboardEvent<HTMLElement>) {
+      // On enter attempt to create the model if required fields are set
+      // Not on import as explicit button press is required to pick the file
+      if (event.key === 'Enter' && this.state.userLoginValue) {
+          this.onClickStart();
+      }
+  }
+
   public render() {
     return (
       <div className="App">
         {this.state.page === Page.MENU &&
           <div
             className="AppPage">
-            <OF.DefaultButton
-                className="QuizButton"
-                onClick={this.onClickLibrary}
-                text="Welcome"
-            /> 
-            <OF.DefaultButton
-              className="QuizButton"
-              onClick={this.onClickImport}
-              text="Import"
-            />
+            <div 
+              className="AppLogin"
+              ref={this._startButtonElement}>
+              <OF.TextField
+                  value={this.state.userLoginValue}
+                  onChanged={this.userNameChanged}
+                  onKeyDown={key => this.onLoginKeyDown(key)}
+              />
+            </div>
+            <OF.Callout
+                role={'aler]tdialog'}
+                gapSpace={0}
+                calloutWidth={200}
+                backgroundColor={'#555555'}
+                target={this._startButtonElement.current}
+                onDismiss={this.onWaitCalloutDismiss}
+                setInitialFocus={true}
+                hidden={this.state.waitingCalloutText === null}
+              >
+                <div className="ms-CalloutExample-header AppCallout">
+                  <p className="ms-CalloutExample-title" id={'callout-label-1'}>
+                    {this.state.waitingCalloutText}
+                  </p>
+                </div>
+              </OF.Callout>
+              {ALLOW_IMPORT &&
+                <OF.DefaultButton
+                  className="QuizButton"
+                  onClick={this.onClickImport}
+                  text="Import"
+                />
+              }
           </div>
         }
         {this.state.page === Page.LIBRARY &&

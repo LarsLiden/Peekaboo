@@ -86,7 +86,16 @@
 .ButtonThin {
   margin: 20px;
   height: 25px !important;
-  border-radius: 15px !important;
+  border-radius: 10px !important;
+  background-color: var(--color-themePrimary) !important;
+  color: white !important;
+}
+
+.ButtonClose {
+  position: absolute !important;
+  top: 0px;
+  left: 0px;
+  border-radius: 10px !important;
   background-color: var(--color-themePrimary) !important;
   color: white !important;
 }
@@ -100,6 +109,16 @@
 
 .AppPage {
   padding-top: 200px;
+}
+
+.AppLogin {
+  width: 200px;
+  margin-left: auto !important;
+  margin-right: auto !important;
+}
+
+.AppCallout {
+  margin: 10px;
 }
 
 .App-logo {
@@ -212,8 +231,9 @@
 }
 
 .ImageButton {
-  height: 25px !important;
-  border-radius: 15px !important;
+  height: 50px !important;
+  width: 50px !important;
+  border-radius: 10px !important;
   background-color: var(--color-themePrimary) !important;
   color: white !important;
   margin: 5px;
@@ -235,7 +255,7 @@
 .QuizButton {
   margin: 20px;
   height: 50px !important;
-  border-radius: 15px !important;
+  border-radius: 10px !important;
   background-color: var(--color-themePrimary) !important;
   color: white !important;
 }
@@ -244,7 +264,7 @@
   margin: 20px;
   height: 50px !important;
   width: 50px !important;
-  border-radius: 15px !important;
+  border-radius: 10px !important;
   background-color: var(--color-themePrimary) !important;
   color: white !important;
 }
