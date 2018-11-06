@@ -36,19 +36,28 @@ class FilterPage extends React.Component<ReceivedProps, ComponentState> {
 
   @OF.autobind
   private onRenderCell(item: Tag, index: number, isScrolling: boolean): JSX.Element {
+    let isRequired = this.props.filter.required.indexOf(item.name) > -1
+    let isBlocked = this.props.filter.blocked.indexOf(item.name) > -1
     return (
       <div className="FilterLine">
+        <div 
+          className={`FilterName${isBlocked ? ' StrikeThrough' : ''}`}
+          >
+          {item.name}
+        </div>
+        <div className="FilterNumber">{isBlocked ? "" : item.count}</div>
         <OF.Checkbox 
-          className="FilterCheckbox"
+          className={`FilterCheckbox FilterCheckboxInclude${isRequired ? ' FilterCheckboxIncludeSelected' : ''}`}
           onChange={(ev, isChecked) => this.onCheckboxRequireChange(isChecked, item)}
-          checked={this.props.filter.required.indexOf(item.name) > -1}
+          checked={isRequired}
         />
-        <div className="FilterName">{item.name}</div>
-        <div className="FilterNumber">{item.count}</div>
+        <div
+          className="FilterSpacer">
+        </div>
         <OF.Checkbox 
-          className="FilterCheckbox"
+          className={`FilterCheckbox FilterCheckboxBlock${isBlocked ? ' FilterCheckboxBlockSelected' : ''}`}
           onChange={(ev, isChecked) => this.onCheckboxBlockChange(isChecked, item)} 
-          checked={this.props.filter.blocked.indexOf(item.name) > -1}
+          checked={isBlocked}
         /> 
       </div>
     );
@@ -62,11 +71,14 @@ class FilterPage extends React.Component<ReceivedProps, ComponentState> {
           items={this.props.tags}
           onRenderCell={this.onRenderCell}
         />
-        <OF.DefaultButton
-            className="QuizButton"
-            onClick={this.onClickClose}
-            text="Close"
-        />  
+        <div
+          className="ViewFooter">
+          <OF.DefaultButton
+              className="QuizButton"
+              onClick={this.onClickClose}
+              text="Done"
+          />  
+        </div>
       </div>
     );
   }

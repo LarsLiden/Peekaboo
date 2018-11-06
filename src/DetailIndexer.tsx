@@ -24,7 +24,9 @@ class DetailText extends React.Component<ReceivedProps, ComponentState> {
   public render() {
 
     return (
-      <div>
+      <div
+        className="DetailIndexer"
+        >
         <OF.IconButton
           className="ImageButton"
           onClick={this.props.onPrev}

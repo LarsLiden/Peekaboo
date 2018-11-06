@@ -9,13 +9,11 @@ import { Person } from './models/person'
 import { TestResult } from './models/performance'
 import QuizPage from './QuizPage';
 import FilterPage from './FilterPage'
-import LibraryPage from './LibraryPage'
 import ViewPage from './ViewPage'
 
 export enum Page {
-  MENU = "MENU",
+  LOGIN = "MENU",
   FILTER = "FILTER",
-  LIBRARY = "LIBRARY",
   QUIZ = "QUIZ",
   VIEW = "VIEW"
 }
@@ -26,7 +24,6 @@ interface ComponentState {
   userLoginValue: string
   waitingCalloutText: string | null
   page: Page
-  returnPage: Page
   quizSet: QuizSet | null
   librarySet: LibrarySet | null
   tags: Tag[]
@@ -44,8 +41,7 @@ class App extends React.Component<{}, ComponentState> {
     quizSet: null,
     librarySet: null,
     tags: [],
-    page: Page.MENU,
-    returnPage: Page.MENU,
+    page: Page.LOGIN,
     selectedPerson: null,
     filter: {required: [], blocked: [], perfType: PerfType.PHOTO}
   }
@@ -71,23 +67,19 @@ class App extends React.Component<{}, ComponentState> {
   }
 
   @OF.autobind 
-  private async onClickLibrary() {
-      let librarySet = await Client.getLibrarySet(this.state.filter)
-      librarySet!.selectedIndex = 0
-      this.setState({
-        librarySet,
-        page: Page.LIBRARY
-      })
-  }
+  private async viewLibraryPerson() {
 
-  @OF.autobind 
-  private async viewLibraryPerson(returnPage: Page = this.state.returnPage) {
-      let guid = this.state.librarySet!.libraryPeople[this.state.librarySet!.selectedIndex].guid
+      let librarySet = this.state.librarySet
+      if (!librarySet) {
+          librarySet = await Client.getLibrarySet(this.state.filter)
+          librarySet!.selectedIndex = 0
+      }
+      let guid = librarySet!.libraryPeople[librarySet!.selectedIndex].guid
       let selectedPerson = await Client.getPerson(guid)
       this.setState({
+        librarySet,
         selectedPerson,
-        page: Page.VIEW,
-        returnPage
+        page: Page.VIEW
       })
   }
 
@@ -116,28 +108,22 @@ class App extends React.Component<{}, ComponentState> {
   private async onQuizDone(testResults: TestResult[]) {
       await Client.postTestResults(testResults)
       this.setState({
-        page: Page.LIBRARY
+        page: Page.VIEW
       })
-  }
-
-  @OF.autobind
-  private navigate(page: Page) {
-    this.setState(
-      { page }
-    )
   }
 
   @OF.autobind
   private onSetReqireTag(tagName: string, set: boolean) {
   
     if (set) {
-      if (this.state.filter.required.indexOf(tagName) < 0)
+      if (this.state.filter.required.indexOf(tagName) <= 0)
       {
+        let blocked = this.state.filter.blocked.filter(t => t != tagName)
         let required = [...this.state.filter.required, tagName] 
         this.setState({
           filter: {
             required,
-            blocked: [...this.state.filter.blocked],
+            blocked,
             perfType: PerfType.PHOTO
           }
         }, () => this.updateTags())
@@ -160,11 +146,12 @@ class App extends React.Component<{}, ComponentState> {
   
     if (set)
     { 
-      if (this.state.filter.blocked.indexOf(tagName) < 0) {
+      if (this.state.filter.blocked.indexOf(tagName) <= 0) {
         let blocked = [...this.state.filter.blocked, tagName] 
+        let required = this.state.filter.required.filter(t => t !== tagName)
         this.setState({
           filter: {
-            required: [...this.state.filter.required],
+            required,
             blocked,
             perfType: PerfType.PHOTO
           }
@@ -172,7 +159,7 @@ class App extends React.Component<{}, ComponentState> {
       }
     }
     else {
-      let blocked = this.state.filter.blocked.filter(t => t != tagName)
+      let blocked = this.state.filter.blocked.filter(t => t !== tagName)
       this.setState({
         filter: {
           required: [...this.state.filter.required],
@@ -212,10 +199,10 @@ class App extends React.Component<{}, ComponentState> {
   }
 
   @OF.autobind
-  private async onClickStart(): Promise<void> {
+  private async onClickLogin(): Promise<void> {
     let startState = await Client.start(this.state.userLoginValue)
     if (startState === StartState.READY) {
-      this.onClickLibrary()
+      this.viewLibraryPerson()
     }
     else if (startState === StartState.WAITING) {
       this.setState({
@@ -246,14 +233,14 @@ class App extends React.Component<{}, ComponentState> {
       // On enter attempt to create the model if required fields are set
       // Not on import as explicit button press is required to pick the file
       if (event.key === 'Enter' && this.state.userLoginValue) {
-          this.onClickStart();
+          this.onClickLogin();
       }
   }
 
   public render() {
     return (
       <div className="App">
-        {this.state.page === Page.MENU &&
+        {this.state.page === Page.LOGIN &&
           <div
             className="AppPage">
             <div 
@@ -266,7 +253,7 @@ class App extends React.Component<{}, ComponentState> {
               />
             </div>
             <OF.Callout
-                role={'aler]tdialog'}
+                role={'alertdialog'}
                 gapSpace={0}
                 calloutWidth={200}
                 backgroundColor={'#555555'}
@@ -290,31 +277,20 @@ class App extends React.Component<{}, ComponentState> {
               }
           </div>
         }
-        {this.state.page === Page.LIBRARY &&
-          <LibraryPage
-            onNext={this.onNextLibraryPage}
-            onPrev={this.onPrevLibraryPage}
-            onClickQuiz={this.onQuiz}
-            onClickFilter={this.onClickFilter}
-            onViewLibraryPerson={(returnPage: Page)=> this.viewLibraryPerson(returnPage)}
-            librarySet={this.state.librarySet}
-            filter={this.state.filter}
-          />
-        } 
-         {this.state.page === Page.VIEW && this.state.selectedPerson &&
+        {this.state.page === Page.VIEW && this.state.selectedPerson &&
           <ViewPage
             librarySet={this.state.librarySet!}
             person={this.state.selectedPerson}
             filter={this.state.filter}
-            returnPage={this.state.returnPage}
-            onClose={(returnPage: Page) => this.navigate(returnPage)}
+            onClickQuiz={this.onQuiz}
+            onClickFilter={this.onClickFilter}
             onNextPerson={this.onNextLibraryPage}
             onPrevPerson={this.onPrevLibraryPage}
           />
         }
         {this.state.page === Page.FILTER &&
           <FilterPage
-            onClose={this.onClickLibrary}
+            onClose={this.viewLibraryPerson}
             onSetRequireTag={(tagName, value) => this.onSetReqireTag(tagName, value)}
             onSetBlockTag={(tagName, value) => this.onSetBlockedTag(tagName, value)}
             tags={this.state.tags}

@@ -83,18 +83,13 @@
   color: white !important;
 }
 
+.StrikeThrough {
+  text-decoration: line-through;
+}
+
 .ButtonThin {
   margin: 20px;
   height: 25px !important;
-  border-radius: 10px !important;
-  background-color: var(--color-themePrimary) !important;
-  color: white !important;
-}
-
-.ButtonClose {
-  position: absolute !important;
-  top: 0px;
-  left: 0px;
   border-radius: 10px !important;
   background-color: var(--color-themePrimary) !important;
   color: white !important;
@@ -105,7 +100,6 @@
   background-color: black;
   height: 1000px;
 }
-
 
 .AppPage {
   padding-top: 200px;
@@ -149,16 +143,15 @@
 .FilterPage {
   background-color: black;
   padding-top: 15px;
-  height: 1000px;
 }
 
 .FilterList {
-  height: 300px;
-  overflow-y: scroll;
-  width: 250px;
+  overflow-y: auto;
+  width: 300px;
   overflow-x: hidden;
   margin-left: auto;
   margin-right: auto;
+  margin-bottom: 90px;
 }
 
 .FilterCheckbox {
@@ -167,6 +160,22 @@
 
 .FilterCheckbox:checked {
   background-color: #ff0000 !important
+}
+
+.FilterCheckboxInclude {
+  background-color: #005500 !important;
+}
+
+.FilterCheckboxBlock {
+  background-color: #550000 !important;
+}
+
+.FilterCheckboxIncludeSelected {
+  background-color: #00aa00 !important;
+}
+
+.FilterCheckboxBlockSelected {
+  background-color: #cc0000 !important;
 }
 
 .FilterName {
@@ -179,47 +188,25 @@
 
 .FilterNumber {
   display: inline-block;
-  width: 20px;
+  width: 35px;
   color: white;
 }
 
-.LibraryBody {
-  margin-left: auto;
-  margin-right: auto;
-}
-
-.LibraryImageColumn {
-  width: 200px;
+.FilterSpacer {
   display: inline-block;
+  width: 10px;
 }
 
-.LibraryImageTitle {
-  color: white
-}
-
-.LibraryImageCount {
-  color: white;
-  font-size: 12px;
-  display: inline-block;
-  margin: 5px;
-  width: 50px;
-}
-
-.LibraryTagsColumn {
-  width: 150px;
-  display: inline-block;
-}
-
-.LibraryTagUnselected {
+.TagUnselected {
   color: var(--color-neutralTertiary)
 }
 
-.LibraryTagSelected {
+.TagSelected {
   font-weight: bold;
   color: var(--color-white)
 }
 
-.LibraryTagList {
+.TagList {
   height: 150px;
   overflow-y: auto;
   width: 80px;
@@ -300,3 +287,15 @@
   padding-top: 7px;
   font-size: x-large;
 }
+
+.ms-Checkbox-checkbox {
+  width: 25px !important;
+  height: 25px !important;
+  border-color: #ffffff !important;
+  border-width: 1px !important;
+  BOX-SIZING: content-box !important;
+  outline: 4px solid #000000;
+  margin: 4px !important;
+  background-color: transparent !important;
+}
+

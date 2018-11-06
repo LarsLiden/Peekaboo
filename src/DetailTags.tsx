@@ -25,12 +25,12 @@ class DetailTags extends React.Component<ReceivedProps, ComponentState> {
     const isSelected = this.props.filter.required.find(r => r === tag)
     if (isSelected) {
       return (
-        <div className="LibraryTagSelected">{tag}</div>
+        <div className="TagSelected">{tag}</div>
       )
     }
     else {
       return (
-        <div className="LibraryTagUnselected">{tag}</div>
+        <div className="TagUnselected">{tag}</div>
       )
     }
   }
@@ -43,7 +43,7 @@ class DetailTags extends React.Component<ReceivedProps, ComponentState> {
             Tags
           </div>
           <OF.List
-              className="LibraryTagList"
+              className="TagList"
               items={this.props.tags}
               onRenderCell={this.onRenderCell}
           />

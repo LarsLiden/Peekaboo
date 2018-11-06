@@ -11,6 +11,18 @@
   display: inline-block;
 }
 
+.ViewFooter {
+  position: fixed;
+  bottom: 0px;
+  margin-left: auto;
+  margin-right: auto;
+  width: 100%;
+  background: #000000;
+  border-top: white;
+  border-width: 1px;
+  border-top-style: solid;
+}
+
 .ViewImageColumn {
   height: 220px;
   width: 200px;

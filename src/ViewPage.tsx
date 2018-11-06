@@ -1,7 +1,6 @@
 import * as React from 'react';
 import * as OF from 'office-ui-fabric-react'
 import './fabric.css'
-import { Page } from './App'
 import { Person } from './models/person'
 import { Filter } from './models/models'
 import { LibrarySet} from './models/models'
@@ -18,8 +17,8 @@ export interface ReceivedProps {
   librarySet: LibrarySet
   person: Person
   filter: Filter
-  returnPage: Page
-  onClose: (returnPage: Page) => void
+  onClickQuiz: () => void
+  onClickFilter: () => void
   onNextPerson: () => void
   onPrevPerson: () => void
 }
@@ -120,18 +119,26 @@ class ViewPage extends React.Component<ReceivedProps, ComponentState> {
             />
           </div>
         <div>
+        </div>
+        <div
+          className="ViewFooter">
           <OF.IconButton
-            className="ButtonClose"
-            onClick={() => this.props.onClose(this.props.returnPage)}
-            iconProps={{ iconName: 'ChromeClose' }}
+              className="ImageButton"
+              onClick={() => this.props.onClickFilter()}
+              iconProps={{ iconName: 'Filter' }}
+          />
+          <DetailIndexer
+            onPrev={this.onPrevPerson}
+            onNext={this.onNextPerson}
+            currentIndex={this.props.librarySet.selectedIndex}
+            total={this.props.librarySet.libraryPeople.length}
+          />
+          <OF.IconButton
+              className="ImageButton"
+              onClick={() => this.props.onClickQuiz()}
+              iconProps={{ iconName: 'Unknown' }}
           />
         </div>
-        <DetailIndexer
-          onPrev={this.onPrevPerson}
-          onNext={this.onNextPerson}
-          currentIndex={this.props.librarySet.selectedIndex}
-          total={this.props.librarySet.libraryPeople.length}
-        />
       </div>
     );
   }
