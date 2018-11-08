@@ -4,18 +4,21 @@ import './fabric.css'
 import Client from './service/client'
 import * as OF from 'office-ui-fabric-react'
 import { setStatePromise } from './Util'
-import { QuizSet, LibrarySet, Tag, Filter, PerfType, StartState } from './models/models'
+import { QuizSet, QuizPerson, LibrarySet, Tag, Filter, PerfType, StartState } from './models/models'
 import { Person } from './models/person'
 import { TestResult } from './models/performance'
 import QuizPage from './QuizPage';
 import FilterPage from './FilterPage'
 import ViewPage from './ViewPage'
+import EditPage from './EditPage'
 
 export enum Page {
   LOGIN = "MENU",
   FILTER = "FILTER",
   QUIZ = "QUIZ",
-  VIEW = "VIEW"
+  VIEW = "VIEW",
+  VIEWQUIZ = "VIEWQUIZ",
+  EDIT = "EDIT"
 }
 
 const ALLOW_IMPORT = false
@@ -67,6 +70,13 @@ class App extends React.Component<{}, ComponentState> {
   }
 
   @OF.autobind 
+  private async onEdit() {
+    this.setState({
+      page: Page.EDIT
+    })
+  }
+
+  @OF.autobind 
   private async viewLibraryPerson() {
 
       let librarySet = this.state.librarySet
@@ -80,6 +90,16 @@ class App extends React.Component<{}, ComponentState> {
         librarySet,
         selectedPerson,
         page: Page.VIEW
+      })
+  }
+
+  @OF.autobind 
+  private async viewQuizDetail(quizPerson: QuizPerson) {
+
+      let selectedPerson = await Client.getPerson(quizPerson.guid)
+      this.setState({
+        selectedPerson,
+        page: Page.VIEWQUIZ
       })
   }
 
@@ -100,6 +120,29 @@ class App extends React.Component<{}, ComponentState> {
       let quizSet = await Client.getQuizSet(this.state.filter)
       this.setState({
         quizSet,
+        page: Page.QUIZ
+      })
+  }
+
+  @OF.autobind 
+  private async onCloseEditPage() {
+      this.setState({
+        page: Page.VIEW
+      })
+  }
+
+  @OF.autobind 
+  private async onSaveEditPage(person: Person) {
+      await Client.putPerson(person)
+      this.setState({
+        selectedPerson: person,
+        page: Page.VIEW
+      })
+  }
+
+  @OF.autobind 
+  private async onContinueQuiz() {
+      this.setState({
         page: Page.QUIZ
       })
   }
@@ -188,7 +231,7 @@ class App extends React.Component<{}, ComponentState> {
   async onPrevLibraryPage(): Promise<void> {
     if (this.state.librarySet) {
       let selectedIndex = this.state.librarySet.selectedIndex - 1
-      if (selectedIndex <= 0) {
+      if (selectedIndex < 0) {
         selectedIndex = this.state.librarySet.libraryPeople.length - 1
       }
       await setStatePromise(this, {librarySet: {...this.state.librarySet, selectedIndex}})
@@ -277,15 +320,26 @@ class App extends React.Component<{}, ComponentState> {
               }
           </div>
         }
-        {this.state.page === Page.VIEW && this.state.selectedPerson &&
+        {(this.state.page === Page.VIEW || this.state.page === Page.VIEWQUIZ) 
+          && this.state.selectedPerson &&
           <ViewPage
-            librarySet={this.state.librarySet!}
+            librarySet={this.state.page === Page.VIEW ? this.state.librarySet! : null}
             person={this.state.selectedPerson}
             filter={this.state.filter}
             onClickQuiz={this.onQuiz}
+            onContinueQuiz={this.onContinueQuiz}
             onClickFilter={this.onClickFilter}
+            onEdit={this.onEdit}
             onNextPerson={this.onNextLibraryPage}
             onPrevPerson={this.onPrevLibraryPage}
+          />
+        }
+        {this.state.page === Page.EDIT && this.state.selectedPerson &&
+          <EditPage
+            person={this.state.selectedPerson}
+            filter={this.state.filter}
+            onClose={this.onCloseEditPage}
+            onSave={this.onSaveEditPage}
           />
         }
         {this.state.page === Page.FILTER &&
@@ -301,7 +355,8 @@ class App extends React.Component<{}, ComponentState> {
           <QuizPage
             quizSet={this.state.quizSet}
             onQuizDone={this.onQuizDone}
-            />
+            onViewDetail={this.viewQuizDetail}
+          />
         }
       </div>
     );

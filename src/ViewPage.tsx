@@ -14,10 +14,12 @@ import DetailSocialNetworks from './DetailSocialNetworks'
 import "./ViewPage.css"
 
 export interface ReceivedProps {
-  librarySet: LibrarySet
+  librarySet: LibrarySet | null
   person: Person
   filter: Filter
   onClickQuiz: () => void
+  onContinueQuiz: () => void
+  onEdit: () => void
   onClickFilter: () => void
   onNextPerson: () => void
   onPrevPerson: () => void
@@ -120,25 +122,42 @@ class ViewPage extends React.Component<ReceivedProps, ComponentState> {
           </div>
         <div>
         </div>
-        <div
-          className="ViewFooter">
-          <OF.IconButton
-              className="ImageButton"
-              onClick={() => this.props.onClickFilter()}
-              iconProps={{ iconName: 'Filter' }}
-          />
-          <DetailIndexer
-            onPrev={this.onPrevPerson}
-            onNext={this.onNextPerson}
-            currentIndex={this.props.librarySet.selectedIndex}
-            total={this.props.librarySet.libraryPeople.length}
-          />
-          <OF.IconButton
-              className="ImageButton"
-              onClick={() => this.props.onClickQuiz()}
-              iconProps={{ iconName: 'Unknown' }}
-          />
-        </div>
+        {this.props.librarySet 
+        ?
+          <div
+            className="ViewFooter">
+            <OF.IconButton
+                className="ImageButton"
+                onClick={() => this.props.onClickFilter()}
+                iconProps={{ iconName: 'Filter' }}
+            />
+            <DetailIndexer
+              onPrev={this.onPrevPerson}
+              onNext={this.onNextPerson}
+              currentIndex={this.props.librarySet.selectedIndex}
+              total={this.props.librarySet.libraryPeople.length}
+            />
+            <OF.IconButton
+                className="ImageButton"
+                onClick={() => this.props.onClickQuiz()}
+                iconProps={{ iconName: 'Unknown' }}
+            />
+          </div>
+        :
+          <div
+            className="ViewFooter">
+            <OF.IconButton
+              className="IconButtonLarge"
+              onClick={this.props.onContinueQuiz}
+              iconProps={{ iconName: 'ChromeClose' }}
+            />
+          </div>
+        }
+        <OF.IconButton
+          className="IconButtonLarge ButtonCorner"
+          onClick={this.props.onEdit}
+          iconProps={{ iconName: 'EditSolid12' }}
+        />
       </div>
     );
   }

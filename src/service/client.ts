@@ -97,6 +97,17 @@ export default class Client {
         }
     }
 
+    public static async putPerson(person: Person): Promise<void> {
+        try {
+            await axios.put(`${this.baseUrl}/person`,
+                {person})
+            return
+        }
+        catch (err) {
+            console.log(JSON.stringify(err))
+        }
+    }
+
     public static async postTestResults(testResults: TestResult[]): Promise<void> {
 
         try {

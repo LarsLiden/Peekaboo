@@ -9,7 +9,7 @@ import { MAX_TIME } from './models/const'
 export interface ReceivedProps {
   quizSet: QuizSet | null
   onQuizDone: (testResults: TestResult[]) => Promise<void>
-//TODO  onShowPerson: (quizPerson: QuizPerson) => void
+  onViewDetail: (quizperson: QuizPerson) => void
 }
 
 const baseImage = "https://peekaboo.blob.core.windows.net/faces/"
@@ -160,7 +160,52 @@ class QuizPage extends React.Component<ReceivedProps, ComponentState> {
     })
   }
 
+  private TimerFontColor(timerValue: number): string
+  {
+      const color = 255*((timerValue-25)/100)
+      return `rgb(${color}, ${color}, ${color})`
+  }
+
+  private TimerBackgroundColor(timerValue: number): string
+  {
+      let r: number
+      let g: number
+
+      if (timerValue <= 50)
+      {
+          r = 255;
+      }
+      else
+      {
+          r = (255*(1-(timerValue-50.0)/50))
+      }
+
+      if (timerValue > 50)
+      {
+          g = 255
+      }
+      else
+      {
+          g = (255*(timerValue/50))
+      }
+
+      return `rgb(${r}, ${g}, 0)`
+  }
+
   public render() {
+    const overrideStyles = OF.mergeStyles({
+      backgroundColor: this.TimerBackgroundColor(100-(this.state.timerValue/100)),
+      color: this.TimerFontColor(this.state.timerValue/100),
+      width: "50px",
+      marginLeft: "auto",
+      marginRight: "auto",
+      marginBottom: "15px",
+      fontSize: "20px",
+      marginTop: "13px",
+      height: "30px",
+      borderRadius: "5px"
+    });
+
     if (!this.state.quizPerson) {
       return null
     }
@@ -168,7 +213,7 @@ class QuizPage extends React.Component<ReceivedProps, ComponentState> {
     return (
       <div className="QuizPage">
         <div
-          className="QuizTimer">
+          className={overrideStyles}>
           {this.state.timerValue/100}
         </div>
         <OF.Image
@@ -180,38 +225,49 @@ class QuizPage extends React.Component<ReceivedProps, ComponentState> {
           onLoad={this.onImageLoaded}
         />
         {this.state.showName && 
-          <div
-            className='QuizNameOverlay'>
-            {this.state.quizPerson.fullName}
+          <div>
+            <div
+              className='QuizName'>
+              {this.state.quizPerson.fullName}
+            </div>
+            <div
+              className='QuizDescription'>
+              {this.state.quizPerson.description}
+            </div>
+            <OF.IconButton
+              className="IconButtonLarge"
+              onClick={()=> this.props.onViewDetail(this.state.quizPerson!)}
+              iconProps={{ iconName: 'DrillDownSolid' }}
+            />
           </div>
         }
-        <OF.IconButton
-          className="IconButtonLarge"
-          onClick={this.onClickKnow}
-          iconProps={{ iconName: 'SkypeCheck' }}
-        />
-        {this.state.showName ? 
-        <OF.IconButton
-          className="IconButtonLarge"
-          onClick={this.onClickDontKnow}
-          iconProps={{ iconName: 'UnknownSolid' }}
-        /> :
-        <OF.IconButton
-          className="IconButtonLarge"
-          onClick={this.onClickQuestion}
-          iconProps={{ iconName: 'Unknown' }}
-        />
-        }
-        <OF.DefaultButton
-          className="QuizQuitButton"
-          onClick={this.onClickQuit}
-          text="Quit"
-        />
-      }
-
-
+        <div
+          className="ViewFooter">
+          <OF.IconButton
+            className="IconButtonLarge FloatLeft"
+            onClick={this.onClickKnow}
+            iconProps={{ iconName: 'LikeSolid' }}
+          />
+          <OF.IconButton
+              className="IconButtonLarge"
+              onClick={this.onClickQuit}
+              iconProps={{ iconName: 'ChromeClose' }}
+            />
+          {this.state.showName ? 
+            <OF.IconButton
+              className="IconButtonLarge FloatRight"
+              onClick={this.onClickDontKnow}
+              iconProps={{ iconName: 'DislikeSolid' }}
+            /> :
+            <OF.IconButton
+              className="IconButtonLarge FloatRight"
+              onClick={this.onClickQuestion}
+              iconProps={{ iconName: 'UnknownSolid' }}
+            />
+          }
+        </div>
       </div>
-    );
+    )
   }
 }
 

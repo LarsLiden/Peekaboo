@@ -1,6 +1,6 @@
 import { Performance } from "./performance";
 import { Relationship } from "./relationship"
-import { PerfType, QuizPerson, LibraryPerson, Event, KeyValue, SocialNet } from './models'
+import { PerfType, Event, KeyValue, SocialNet } from './models'
 
 export class Person {
     photoFilenames: string[] = []
@@ -18,7 +18,6 @@ export class Person {
     isArchived: boolean = false
     firstName: string = ""
     lastName: string = ""
-    fullName: string = ""
     fullMaidenName: string = ""
     fullNickName: string = ""
     alternateName: string = ""
@@ -39,22 +38,8 @@ export class Person {
         }
     }
 
-    public toQuizPerson(perfType: PerfType): QuizPerson {
-        return {
-            guid: this.guid,
-            fullName: `${this.firstName} ${this.lastName}`,
-            blobNames: this.photoFilenames,
-            performance: this.performance(perfType)
-          } as QuizPerson
-    }
-
-    public toLibraryPerson(perfType: PerfType): LibraryPerson {
-        return {
-            guid: this.guid,
-            fullName: this.fullName,
-            blobName: this.photoFilenames[0],
-            tags: this.tags
-          } as LibraryPerson 
+    public fullName() {
+        return `${this.firstName} ${this.lastName}`
     }
 
     public performance(perfType: PerfType): Performance {
@@ -78,7 +63,7 @@ export class Person {
             case PerfType.PHOTO:
                 return (this.photoFilenames.length > 0);
             case PerfType.NAME:
-                return (this.fullName != "");
+                return (this.fullName() != "");
             case PerfType.DESC:
                 return (this.description != "");
             case PerfType.ALPHA:
