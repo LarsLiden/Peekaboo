@@ -3,8 +3,11 @@ import * as OF from 'office-ui-fabric-react'
 import './fabric.css'
 import { Person } from './models/person'
 import { Filter } from './models/models'
+import CropPage from './CropPage'
 import DetailTags from './DetailTags'
+import ReactCrop from 'react-image-crop'
 import DetailIndexer from './DetailIndexer'
+import { FilePicker } from 'react-file-picker'
 import "./ViewPage.css"
 
 export interface ReceivedProps {
@@ -24,7 +27,12 @@ interface ComponentState {
   nickName: string,
   maidenName: string,
   alternateName: string,
-  description: string
+  description: string,
+  showCropPage: boolean,
+
+  imageURL: string | null
+  crop: ReactCrop.Crop
+  file: File | null
 }
 
 class EditPage extends React.Component<ReceivedProps, ComponentState> {
@@ -37,7 +45,11 @@ class EditPage extends React.Component<ReceivedProps, ComponentState> {
     nickName: "",
     maidenName: "",
     alternateName: "",
-    description: ""
+    description: "",
+    showCropPage: false,
+    imageURL: null,
+    crop: {aspect: 1/1, x:0, y:0, width: 50, height: 50},
+    file: null
   }
 
   componentDidMount() {
@@ -133,77 +145,130 @@ class EditPage extends React.Component<ReceivedProps, ComponentState> {
     this.props.onClose()
   }
 
+  @OF.autobind
+  onClickSaveImage(): void {
+    this.setState({imageURL: null})
+  }
+
+  @OF.autobind
+  onCloseCropper(): void {
+    this.setState({imageURL: null})
+  }
+
+  @OF.autobind
+  onChangeFile(file: File) {
+    this.setState({file})
+
+    try {
+      const imageURL = URL.createObjectURL(file);
+      this.setState({imageURL})
+    }
+    catch (error) {
+      console.log(error)
+    }
+  }
+
+  @OF.autobind
+  onCropChange(crop: ReactCrop.Crop) {
+    this.setState({ crop });  
+  }
+
   public render() {
     const imageFile = baseImage + this.props.person.photoFilenames[this.state.photoIndex]
       return (
         <div className="QuizPage">
-          <div className="ViewBodyTop">
-            <OF.TextField
-              label="First Name"
-              onChanged={text => this.onFirstNameChanged(text)}
-              value={this.state.firstName}
+          {this.state.imageURL &&
+            <CropPage
+              imageURL={this.state.imageURL}
+              onClose={this.onCloseCropper}
+              onSave={()=>{}}
             />
-            <OF.TextField
-              label="Last Name"
-              onChanged={text => this.onLastNameChanged(text)}
-              value={this.state.lastName}
-            />
-            <OF.TextField
-              label="Nickname"
-              onChanged={text => this.onNickNameChanged(text)}
-              value={this.state.nickName}
-            />    
-            <OF.TextField
-              label="Maiden Name"
-              onChanged={text => this.onMaidenNameChanged(text)}
-              value={this.state.maidenName}
-            />
-            <OF.TextField
-              label="Alternate Name"
-              onChanged={text => this.onAlternativeNameChanged(text)}
-              value={this.state.alternateName}
-            />
-            <OF.TextField
-              multiline={true}
-              rows={4}
-              label="Description"
-              onChanged={text => this.onDescriptionNameChanged(text)}
-              value={this.state.description}
-            />
+          }
+          {!this.state.imageURL &&
+            <div>
+              <div className="ViewImageColumn">
+                <OF.Image
+                  className="QuizImageHolder"
+                  src={imageFile}
+                  width={160}
+                  height={160}
+                />
+                <DetailIndexer
+                  onPrev={this.onPrevPhoto}
+                  onNext={this.onNextPhoto}
+                  currentIndex={this.state.photoIndex}
+                  total={this.props.person.photoFilenames.length}
+                />
+                <FilePicker
+                  extensions={['png', 'jpeg', 'jpg']}
+                  onChange={this.onChangeFile}
+                  //TODO onError={(error: string) => this.props.setErrorDisplay(ErrorType.Error, error, [], null)}
+                  maxSize={10}
+                >
+                  <div className="cl-action-creator-file-picker">
+                      <OF.PrimaryButton
+                          data-testid="model-creator-locate-file-button"
+                          className="cl-action-creator-file-button"
+                          ariaDescription="Choose a File"
+                          text="Choose a File"
+                      />
+                  </div>
+                </FilePicker>
+              </div>
+              <div className="ViewBodyTop">
+                <OF.TextField
+                  label="First Name"
+                  onChanged={text => this.onFirstNameChanged(text)}
+                  value={this.state.firstName}
+                />
+                <OF.TextField
+                  label="Last Name"
+                  onChanged={text => this.onLastNameChanged(text)}
+                  value={this.state.lastName}
+                />
+                <OF.TextField
+                  label="Nickname"
+                  onChanged={text => this.onNickNameChanged(text)}
+                  value={this.state.nickName}
+                />    
+                <OF.TextField
+                  label="Maiden Name"
+                  onChanged={text => this.onMaidenNameChanged(text)}
+                  value={this.state.maidenName}
+                />
+                <OF.TextField
+                  label="Alternate Name"
+                  onChanged={text => this.onAlternativeNameChanged(text)}
+                  value={this.state.alternateName}
+                />
+                <OF.TextField
+                  multiline={true}
+                  rows={4}
+                  label="Description"
+                  onChanged={text => this.onDescriptionNameChanged(text)}
+                  value={this.state.description}
+                />
 
-            <DetailTags 
-              tags={this.props.person.tags}
-              filter={this.props.filter}
-            />
-
-            <div className="ViewImageColumn">
-              <OF.Image
-                className="QuizImageHolder"
-                src={imageFile}
-                width={160}
-                height={160}
-              />
-              <DetailIndexer
-                onPrev={this.onPrevPhoto}
-                onNext={this.onNextPhoto}
-                currentIndex={this.state.photoIndex}
-                total={this.props.person.photoFilenames.length}
-              />
+                <DetailTags 
+                  tags={this.props.person.tags}
+                  filter={this.props.filter}
+                />
+              </div>
+              <div
+                className="ViewFooter">
+                <OF.IconButton
+                    className="ImageButton"
+                    onClick={this.onClickSave}
+                    iconProps={{ iconName: 'Save' }}
+                />
+                <OF.IconButton
+                    className="ImageButton"
+                    onClick={this.onClickCancel}
+                    iconProps={{ iconName: 'Cancel' }}
+                />
+              </div>
             </div>
-          </div>
-          <div
-            className="ViewFooter">
-            <OF.IconButton
-                className="ImageButton"
-                onClick={this.onClickSave}
-                iconProps={{ iconName: 'Save' }}
-            />
-            <OF.IconButton
-                className="ImageButton"
-                onClick={this.onClickCancel}
-                iconProps={{ iconName: 'Cancel' }}
-            />
-          </div>
+          }
       </div>
     );
   }
