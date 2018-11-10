@@ -5,7 +5,7 @@ import 'react-image-crop/dist/ReactCrop.css'
 
 export interface ReceivedProps {
   imageURL: string
-  onSave: () => void
+  onSave: (blob: Blob) => void
   onClose: () => void
 }
 
@@ -21,29 +21,32 @@ class CropPage extends React.Component<ReceivedProps, ComponentState> {
     crop: {aspect: 1/1, x:0, y:0}
   }
 
-  /**
-   * @param {File} image - Image File Object
-   * @param {Object} pixelCrop - pixelCrop Object from the 2nd argument of onChange or onComplete
-   * @param {String} fileName - Name of the returned file in Promise
-   */
-  getCroppedImg(image: HTMLImageElement, pixelCrop: ReactCrop.PixelCrop, fileName: string) {
+  @OF.autobind
+  onSave() {
   
+    const image = document.createElement('img');
+
     const canvas = document.createElement('canvas');
-    canvas.width = pixelCrop.width;
-    canvas.height = pixelCrop.height;
+    canvas.width = this.state.crop.width!;
+    canvas.height = this.state.crop.height!;
     const ctx = canvas.getContext('2d');
   
     ctx!.drawImage(
       image,
-      pixelCrop.x,
-      pixelCrop.y,
-      pixelCrop.width,
-      pixelCrop.height,
+      this.state.crop.x,
+      this.state.crop.y,
+      this.state.crop.width!,
+      this.state.crop.height!,
       0,
       0,
-      pixelCrop.width,
-      pixelCrop.height
+      this.state.crop.width!,
+      this.state.crop.height!
     )
+
+
+    canvas.toBlob(blob =>{
+      this.props.onSave(blob!)
+    })
   }
 
   @OF.autobind
@@ -71,7 +74,7 @@ class CropPage extends React.Component<ReceivedProps, ComponentState> {
             className="ViewFooter">
               <OF.IconButton
                   className="ImageButton"
-                  onClick={this.props.onSave}
+                  onClick={this.onSave}
                   iconProps={{ iconName: 'Save' }}
               />
               <OF.IconButton

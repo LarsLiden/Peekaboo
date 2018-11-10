@@ -28,7 +28,7 @@ export interface QuizPerson {
     performance: Performance
 }
 
-export interface LibrarySet {
+export interface FilterSet {
     libraryPeople: LibraryPerson[]
     selectedIndex: number
 }

@@ -3,7 +3,7 @@ import * as OF from 'office-ui-fabric-react'
 import './fabric.css'
 import { Person } from './models/person'
 import { Filter } from './models/models'
-import { LibrarySet} from './models/models'
+import { FilterSet} from './models/models'
 import DetailText from './DetailText'
 import DetailTags from './DetailTags'
 import DetailIndexer from './DetailIndexer'
@@ -14,7 +14,7 @@ import DetailSocialNetworks from './DetailSocialNetworks'
 import "./ViewPage.css"
 
 export interface ReceivedProps {
-  librarySet: LibrarySet | null
+  filterSet: FilterSet | null
   person: Person
   filter: Filter
   onClickQuiz: () => void
@@ -122,7 +122,7 @@ class ViewPage extends React.Component<ReceivedProps, ComponentState> {
           </div>
         <div>
         </div>
-        {this.props.librarySet 
+        {this.props.filterSet 
         ?
           <div
             className="ViewFooter">
@@ -134,8 +134,8 @@ class ViewPage extends React.Component<ReceivedProps, ComponentState> {
             <DetailIndexer
               onPrev={this.onPrevPerson}
               onNext={this.onNextPerson}
-              currentIndex={this.props.librarySet.selectedIndex}
-              total={this.props.librarySet.libraryPeople.length}
+              currentIndex={this.props.filterSet.selectedIndex}
+              total={this.props.filterSet.libraryPeople.length}
             />
             <OF.IconButton
                 className="ImageButton"

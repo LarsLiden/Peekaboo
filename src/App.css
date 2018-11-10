@@ -145,6 +145,17 @@
   padding-top: 15px;
 }
 
+.LoadTitle {
+  margin-top: 100px !important;
+  font-size: 20px;
+}
+
+.LoadCount {
+  color: var(--color-themePrimary) !important;
+  font-size: 60px;
+  font-style: bold !important;
+}
+
 .FilterList {
   overflow-y: auto;
   width: 300px;

@@ -39,6 +39,7 @@ class QuizPage extends React.Component<ReceivedProps, ComponentState> {
     this.selectNextPerson()
   }
 
+  
   // Pick a random person from the test set based on testing frequency
   getRandomPerson(): QuizPerson
   {

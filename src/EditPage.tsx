@@ -13,6 +13,7 @@ import "./ViewPage.css"
 export interface ReceivedProps {
   person: Person
   filter: Filter
+  onSaveImage: (person: Person, blob: Blob) => void
   onSave: (person: Person) => void
   onClose: () => void
 }
@@ -54,7 +55,8 @@ class EditPage extends React.Component<ReceivedProps, ComponentState> {
 
   componentDidMount() {
     this.updateAppState(this.props.person)
-}
+  }
+  
   componentDidUpdate() {
 
     if (this.state.edited === false && 
@@ -82,7 +84,7 @@ class EditPage extends React.Component<ReceivedProps, ComponentState> {
 
   @OF.autobind
   onFirstNameChanged(text: string) {
-      this.setState({firstName: text, edited: true})
+    this.setState({firstName: text, edited: true})
   }
 
   @OF.autobind
@@ -92,22 +94,22 @@ class EditPage extends React.Component<ReceivedProps, ComponentState> {
 
   @OF.autobind
   onNickNameChanged(text: string) {
-      this.setState({nickName: text, edited: true})
+    this.setState({nickName: text, edited: true})
   }
 
   @OF.autobind
   onMaidenNameChanged(text: string) {
-      this.setState({maidenName: text, edited: true})
+    this.setState({maidenName: text, edited: true})
   }
 
   @OF.autobind
   onAlternativeNameChanged(text: string) {
-      this.setState({alternateName: text, edited: true})
+    this.setState({alternateName: text, edited: true})
   }
 
   @OF.autobind
   onDescriptionNameChanged(text: string) {
-      this.setState({description: text, edited: true})
+    this.setState({description: text, edited: true})
   }
   
   @OF.autobind
@@ -121,11 +123,11 @@ class EditPage extends React.Component<ReceivedProps, ComponentState> {
 
   @OF.autobind
   onPrevPhoto(): void {
-      let photoIndex = this.state.photoIndex - 1
-      if (photoIndex <= 0) {
-        photoIndex = this.props.person.photoFilenames.length - 1
-      }
-      this.setState({photoIndex})
+    let photoIndex = this.state.photoIndex - 1
+    if (photoIndex <= 0) {
+      photoIndex = this.props.person.photoFilenames.length - 1
+    }
+    this.setState({photoIndex})
   }
 
   @OF.autobind
@@ -146,7 +148,8 @@ class EditPage extends React.Component<ReceivedProps, ComponentState> {
   }
 
   @OF.autobind
-  onClickSaveImage(): void {
+  onSaveCrop(blob: Blob): void {
+    this.props.onSaveImage(this.props.person, blob)
     this.setState({imageURL: null})
   }
 
@@ -181,7 +184,7 @@ class EditPage extends React.Component<ReceivedProps, ComponentState> {
             <CropPage
               imageURL={this.state.imageURL}
               onClose={this.onCloseCropper}
-              onSave={()=>{}}
+              onSave={(blob)=>this.onSaveCrop(blob)}
             />
           }
           {!this.state.imageURL &&

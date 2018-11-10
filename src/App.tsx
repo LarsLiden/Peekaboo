@@ -4,16 +4,19 @@ import './fabric.css'
 import Client from './service/client'
 import * as OF from 'office-ui-fabric-react'
 import { setStatePromise } from './Util'
-import { QuizSet, QuizPerson, LibrarySet, Tag, Filter, PerfType, StartState } from './models/models'
+import { QuizSet, QuizPerson, FilterSet, Tag, Filter, PerfType, StartState } from './models/models'
 import { Person } from './models/person'
 import { TestResult } from './models/performance'
+import * as Convert from './convert'
 import QuizPage from './QuizPage';
+import LoadPage from './LoadPage'
 import FilterPage from './FilterPage'
 import ViewPage from './ViewPage'
 import EditPage from './EditPage'
 
 export enum Page {
   LOGIN = "MENU",
+  LOAD ="LOAD",
   FILTER = "FILTER",
   QUIZ = "QUIZ",
   VIEW = "VIEW",
@@ -24,12 +27,16 @@ export enum Page {
 const ALLOW_IMPORT = false
 
 interface ComponentState {
+  people: Person[],
+  allTags: Tag[],
+  loadletter: string,
+  loadlettercount: number,
   userLoginValue: string
   waitingCalloutText: string | null
   page: Page
   quizSet: QuizSet | null
-  librarySet: LibrarySet | null
-  tags: Tag[]
+  filterSet: FilterSet | null
+  filteredTags: Tag[]
   selectedPerson: Person | null
   filter: Filter
 }
@@ -39,11 +46,15 @@ class App extends React.Component<{}, ComponentState> {
   private _startButtonElement = OF.createRef<HTMLElement>();
 
   state: ComponentState = {
+    people: [],
+    allTags: [],
+    loadletter: "",
+    loadlettercount: 0,
     userLoginValue: "",
     waitingCalloutText: null,
     quizSet: null,
-    librarySet: null,
-    tags: [],
+    filterSet: null,
+    filteredTags: [],
     page: Page.LOGIN,
     selectedPerson: null,
     filter: {required: [], blocked: [], perfType: PerfType.PHOTO}
@@ -55,10 +66,10 @@ class App extends React.Component<{}, ComponentState> {
 
   @OF.autobind 
   private async onClickFilter() {
-    if (this.state.tags.length === 0) {
-      let tags = await Client.getTags()
+    if (this.state.filteredTags.length === 0) {
+      let tags = Convert.filteredTags(this.state.people, this.state.filter)
       this.setState({
-        tags: tags,
+        filteredTags: tags,
         page: Page.FILTER
       })
     }
@@ -78,29 +89,61 @@ class App extends React.Component<{}, ComponentState> {
 
   @OF.autobind 
   private async viewLibraryPerson() {
-
-      let librarySet = this.state.librarySet
-      if (!librarySet) {
-          librarySet = await Client.getLibrarySet(this.state.filter)
-          librarySet!.selectedIndex = 0
+      let filterSet = this.state.filterSet
+      if (!filterSet) {
+        filterSet = Convert.getFilterSet(this.state.people, this.state.filter)
+        filterSet!.selectedIndex = 0
       }
-      let guid = librarySet!.libraryPeople[librarySet!.selectedIndex].guid
-      let selectedPerson = await Client.getPerson(guid)
+      let guid = filterSet!.libraryPeople[filterSet!.selectedIndex].guid
+      let selectedPerson = Convert.getPerson(this.state.people, guid) || null
       this.setState({
-        librarySet,
+        filterSet,
         selectedPerson,
         page: Page.VIEW
       })
   }
 
   @OF.autobind 
-  private async viewQuizDetail(quizPerson: QuizPerson) {
+  private viewQuizDetail(quizPerson: QuizPerson) {
 
-      let selectedPerson = await Client.getPerson(quizPerson.guid)
+      let selectedPerson = Convert.getPerson(this.state.people, quizPerson.guid) || null
       this.setState({
         selectedPerson,
         page: Page.VIEWQUIZ
       })
+  }
+
+  @OF.autobind 
+  private async loadPeople() {
+      this.setState({page: Page.LOAD})
+
+      var letters = "ABCD"/*EFGHIJKLMNOPQRSTUVWXYZ"*/.split("")
+      for (let letter of letters) {
+        Client.getPeopleStartingWith(letter, async (people) => {
+          console.log(`GOT ${letter}`)
+          await setStatePromise(this, {
+            people: [...this.state.people, ...people],
+            loadletter: letter,
+            loadlettercount: this.state.loadlettercount + 1
+          })
+
+          // When all are loaded
+          if (this.state.loadlettercount >= letters.length-1) { 
+
+            // Extact tags
+            let allTags = Convert.extractTags(this.state.people)
+            allTags = allTags.sort((a, b) => {
+                if (a.name.toLowerCase() < b.name.toLowerCase()) return -1
+                else if (b.name.toLowerCase() < a.name.toLowerCase()) return 1
+                else return 0
+            })
+            await setStatePromise(this, {allTags})
+
+            // Open library
+            this.viewLibraryPerson()
+          }
+        })
+      }
   }
 
   @OF.autobind 
@@ -109,15 +152,15 @@ class App extends React.Component<{}, ComponentState> {
   }
 
   private async updateTags() {
-    let tags = await Client.getFilteredTags(this.state.filter)
+    let tags = Convert.filteredTags(this.state.people, this.state.filter)
       this.setState({
-        tags: tags,
+        filteredTags: tags,
       })
   }
 
   @OF.autobind 
   private async onQuiz() {
-      let quizSet = await Client.getQuizSet(this.state.filter)
+      let quizSet = Convert.quizSet(this.state.people, this.state.filter) 
       this.setState({
         quizSet,
         page: Page.QUIZ
@@ -138,6 +181,11 @@ class App extends React.Component<{}, ComponentState> {
         selectedPerson: person,
         page: Page.VIEW
       })
+  }
+
+  @OF.autobind 
+  private async onSaveImage(person: Person, newImage: Blob) {
+      await Client.putImage(person.guid, newImage)
   }
 
   @OF.autobind 
@@ -215,12 +263,12 @@ class App extends React.Component<{}, ComponentState> {
 
   @OF.autobind
   async onNextLibraryPage(): Promise<void> {
-    if (this.state.librarySet) {
-      let selectedIndex = this.state.librarySet.selectedIndex + 1
-      if (selectedIndex >= this.state.librarySet.libraryPeople.length) {
+    if (this.state.filterSet) {
+      let selectedIndex = this.state.filterSet.selectedIndex + 1
+      if (selectedIndex >= this.state.filterSet.libraryPeople.length) {
         selectedIndex = 0
       }
-      await setStatePromise(this, {librarySet: {...this.state.librarySet, selectedIndex}})
+      await setStatePromise(this, {filterSet: {...this.state.filterSet, selectedIndex}})
       if (this.state.page === Page.VIEW ) {
         this.viewLibraryPerson()
       }
@@ -229,12 +277,12 @@ class App extends React.Component<{}, ComponentState> {
 
   @OF.autobind
   async onPrevLibraryPage(): Promise<void> {
-    if (this.state.librarySet) {
-      let selectedIndex = this.state.librarySet.selectedIndex - 1
+    if (this.state.filterSet) {
+      let selectedIndex = this.state.filterSet.selectedIndex - 1
       if (selectedIndex < 0) {
-        selectedIndex = this.state.librarySet.libraryPeople.length - 1
+        selectedIndex = this.state.filterSet.libraryPeople.length - 1
       }
-      await setStatePromise(this, {librarySet: {...this.state.librarySet, selectedIndex}})
+      await setStatePromise(this, {filterSet: {...this.state.filterSet, selectedIndex}})
       if (this.state.page === Page.VIEW ) {
         this.viewLibraryPerson()
       }
@@ -242,10 +290,16 @@ class App extends React.Component<{}, ComponentState> {
   }
 
   @OF.autobind
+  private async onCloseFliterPage() {
+    await setStatePromise(this, {filterSet: null})
+    this.viewLibraryPerson()
+  }
+
+  @OF.autobind
   private async onClickLogin(): Promise<void> {
     let startState = await Client.start(this.state.userLoginValue)
     if (startState === StartState.READY) {
-      this.viewLibraryPerson()
+      this.loadPeople()
     }
     else if (startState === StartState.WAITING) {
       this.setState({
@@ -320,10 +374,16 @@ class App extends React.Component<{}, ComponentState> {
               }
           </div>
         }
+        {this.state.page === Page.LOAD &&
+          <LoadPage
+            letter={this.state.loadletter}
+            count={this.state.people.length}
+          />
+        }
         {(this.state.page === Page.VIEW || this.state.page === Page.VIEWQUIZ) 
           && this.state.selectedPerson &&
           <ViewPage
-            librarySet={this.state.page === Page.VIEW ? this.state.librarySet! : null}
+            filterSet={this.state.page === Page.VIEW ? this.state.filterSet! : null}
             person={this.state.selectedPerson}
             filter={this.state.filter}
             onClickQuiz={this.onQuiz}
@@ -340,14 +400,15 @@ class App extends React.Component<{}, ComponentState> {
             filter={this.state.filter}
             onClose={this.onCloseEditPage}
             onSave={this.onSaveEditPage}
+            onSaveImage={this.onSaveImage}
           />
         }
         {this.state.page === Page.FILTER &&
           <FilterPage
-            onClose={this.viewLibraryPerson}
+            onClose={this.onCloseFliterPage}
             onSetRequireTag={(tagName, value) => this.onSetReqireTag(tagName, value)}
             onSetBlockTag={(tagName, value) => this.onSetBlockedTag(tagName, value)}
-            tags={this.state.tags}
+            tags={this.state.filteredTags}
             filter={this.state.filter}
           />
         }
