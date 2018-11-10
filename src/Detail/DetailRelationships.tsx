@@ -1,5 +1,5 @@
 import * as React from 'react';
-import { Relationship } from './models/relationship'
+import { Relationship } from '../models/relationship'
 import * as OF from 'office-ui-fabric-react'
 import './fabric.css'
 

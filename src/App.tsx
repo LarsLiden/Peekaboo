@@ -8,11 +8,11 @@ import { QuizSet, QuizPerson, FilterSet, Tag, Filter, PerfType, StartState } fro
 import { Person } from './models/person'
 import { TestResult } from './models/performance'
 import * as Convert from './convert'
-import QuizPage from './QuizPage';
-import LoadPage from './LoadPage'
-import FilterPage from './FilterPage'
-import ViewPage from './ViewPage'
-import EditPage from './EditPage'
+import QuizPage from './Pages/QuizPage';
+import LoadPage from './Pages/LoadPage'
+import FilterPage from './Pages/FilterPage'
+import ViewPage from './Pages/ViewPage'
+import EditPage from './Pages/EditPage'
 
 export enum Page {
   LOGIN = "MENU",

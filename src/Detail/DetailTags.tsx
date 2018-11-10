@@ -1,6 +1,6 @@
 import * as React from 'react';
 import * as OF from 'office-ui-fabric-react'
-import { Filter } from './models/models'
+import { Filter } from '../models/models'
 import './fabric.css'
 import './Detail.css'
 

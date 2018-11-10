@@ -1,10 +1,10 @@
 import * as React from 'react';
 import * as OF from 'office-ui-fabric-react'
 import './fabric.css'
-import { QuizPerson, QuizSet } from './models/models'
-import { getRandomInt} from './Util'
-import { TestResult } from './models/performance'
-import { MAX_TIME } from './models/const'
+import { QuizPerson, QuizSet } from '../models/models'
+import { getRandomInt} from '../Util'
+import { TestResult } from '../models/performance'
+import { MAX_TIME } from '../models/const'
 
 export interface ReceivedProps {
   quizSet: QuizSet | null

@@ -1,12 +1,12 @@
 import * as React from 'react';
 import * as OF from 'office-ui-fabric-react'
 import './fabric.css'
-import { Person } from './models/person'
-import { Filter } from './models/models'
+import { Person } from '../models/person'
+import { Filter } from '../models/models'
 import CropPage from './CropPage'
-import DetailTags from './DetailTags'
+import DetailTags from '../Detail/DetailTags'
 import ReactCrop from 'react-image-crop'
-import DetailIndexer from './DetailIndexer'
+import DetailIndexer from '../Detail/DetailIndexer'
 import { FilePicker } from 'react-file-picker'
 import "./ViewPage.css"
 
@@ -56,7 +56,7 @@ class EditPage extends React.Component<ReceivedProps, ComponentState> {
   componentDidMount() {
     this.updateAppState(this.props.person)
   }
-  
+
   componentDidUpdate() {
 
     if (this.state.edited === false && 

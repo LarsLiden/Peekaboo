@@ -1,5 +1,5 @@
 import * as React from 'react';
-import { KeyValue } from './models/models'
+import { KeyValue } from '../models/models'
 import * as OF from 'office-ui-fabric-react'
 import "./DetailEvents.css"
 import './fabric.css'

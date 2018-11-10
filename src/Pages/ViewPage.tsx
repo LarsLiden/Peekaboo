@@ -1,16 +1,16 @@
 import * as React from 'react';
 import * as OF from 'office-ui-fabric-react'
 import './fabric.css'
-import { Person } from './models/person'
-import { Filter } from './models/models'
-import { FilterSet} from './models/models'
-import DetailText from './DetailText'
-import DetailTags from './DetailTags'
-import DetailIndexer from './DetailIndexer'
-import DetailRelationships from './DetailRelationships'
-import DetailEvents from './DetailEvents'
-import DetailKeyValues from './DetailKeyValues'
-import DetailSocialNetworks from './DetailSocialNetworks'
+import { Person } from '../models/person'
+import { Filter } from '../models/models'
+import { FilterSet} from '../models/models'
+import DetailText from '../Detail/DetailText'
+import DetailTags from '../Detail/DetailTags'
+import DetailIndexer from '../Detail/DetailIndexer'
+import DetailRelationships from '../Detail/DetailRelationships'
+import DetailEvents from '../Detail/DetailEvents'
+import DetailKeyValues from '../Detail/DetailKeyValues'
+import DetailSocialNetworks from '../Detail/DetailSocialNetworks'
 import "./ViewPage.css"
 
 export interface ReceivedProps {

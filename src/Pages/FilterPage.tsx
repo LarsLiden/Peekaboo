@@ -1,6 +1,6 @@
 import * as React from 'react';
 import * as OF from 'office-ui-fabric-react'
-import { Tag, Filter } from './models/models'
+import { Tag, Filter } from '../models/models'
 
 export interface ReceivedProps {
   tags: Tag[]

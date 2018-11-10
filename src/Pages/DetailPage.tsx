@@ -1,6 +1,6 @@
 import * as React from 'react';
 import * as OF from 'office-ui-fabric-react'
-import { Person } from './models/person'
+import { Person } from '../models/person'
 
 export interface ReceivedProps {
   person: Person
