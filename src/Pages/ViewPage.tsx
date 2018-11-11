@@ -1,6 +1,6 @@
 import * as React from 'react';
 import * as OF from 'office-ui-fabric-react'
-import './fabric.css'
+import '../fabric.css'
 import { Person } from '../models/person'
 import { Filter } from '../models/models'
 import { FilterSet} from '../models/models'
@@ -55,7 +55,7 @@ class ViewPage extends React.Component<ReceivedProps, ComponentState> {
   @OF.autobind
   onPrevPhoto(): void {
       let photoIndex = this.state.photoIndex - 1
-      if (photoIndex <= 0) {
+      if (photoIndex < 0) {
         photoIndex = this.props.person.photoFilenames.length - 1
       }
       this.setState({photoIndex})
@@ -76,17 +76,18 @@ class ViewPage extends React.Component<ReceivedProps, ComponentState> {
   public render() {
     const imageFile = baseImage + this.props.person.photoFilenames[this.state.photoIndex]
       return (
-        <div className="QuizPage">
+        <div className="ViewPage">
           <div className="ViewBodyTop">
+            <OF.IconButton
+              className="IconButtonLarge ButtonCorner"
+              onClick={this.props.onEdit}
+              iconProps={{ iconName: 'EditSolid12' }}
+            />
             <div className="ViewBodyNameColumn">
-              <DetailText title="First Name" text={this.props.person.firstName}/>
-              <DetailText title="Last Name" text={this.props.person.lastName}/>
-              <DetailText title="Nickname" text={this.props.person.nickName}/>
-              <DetailText title="Maiden Name" text={this.props.person.maidenName}/>
-              <DetailTags 
-                tags={this.props.person.tags}
-                filter={this.props.filter}
-              />
+              <DetailText title="First Name" alignRight={true} text={this.props.person.firstName}/>
+              <DetailText title="Last Name" alignRight={true} text={this.props.person.lastName}/>
+              <DetailText title="Nickname" alignRight={true} text={this.props.person.nickName}/>
+              <DetailText title="Maiden Name" alignRight={true} text={this.props.person.maidenName}/>
             </div>
             <div className="ViewImageColumn">
               <OF.Image
@@ -96,6 +97,7 @@ class ViewPage extends React.Component<ReceivedProps, ComponentState> {
                 height={160}
               />
               <DetailIndexer
+                isVertical={true}
                 onPrev={this.onPrevPhoto}
                 onNext={this.onNextPhoto}
                 currentIndex={this.state.photoIndex}
@@ -104,9 +106,11 @@ class ViewPage extends React.Component<ReceivedProps, ComponentState> {
             </div>
           </div>
           <div className="ViewBodyBottom">
+            <DetailTags 
+              tags={this.props.person.tags}
+              filter={this.props.filter}
+            />
             <DetailText title="Description" text={this.props.person.description} isLong={true}/>
-          </div>
-          <div className="ViewBodyBottom">
             <DetailRelationships
               relationships={this.props.person.relationships}
             />
@@ -132,6 +136,7 @@ class ViewPage extends React.Component<ReceivedProps, ComponentState> {
                 iconProps={{ iconName: 'Filter' }}
             />
             <DetailIndexer
+              isVertical={false}
               onPrev={this.onPrevPerson}
               onNext={this.onNextPerson}
               currentIndex={this.props.filterSet.selectedIndex}
@@ -153,11 +158,6 @@ class ViewPage extends React.Component<ReceivedProps, ComponentState> {
             />
           </div>
         }
-        <OF.IconButton
-          className="IconButtonLarge ButtonCorner"
-          onClick={this.props.onEdit}
-          iconProps={{ iconName: 'EditSolid12' }}
-        />
       </div>
     );
   }

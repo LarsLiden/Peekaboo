@@ -2,7 +2,7 @@ import * as React from 'react';
 import { Event } from '../models/models'
 import * as OF from 'office-ui-fabric-react'
 import "./DetailEvents.css"
-import './fabric.css'
+import '../fabric.css'
 
 export interface ReceivedProps {
   events: Event[]
@@ -57,7 +57,9 @@ class DetailEvents extends React.Component<ReceivedProps, ComponentState> {
   }
 
   public render() {
-
+      if (this.props.events.length === 0) {
+        return null
+      }
       return (
         <div className="DetailText">
           <div className="DetailTitle">

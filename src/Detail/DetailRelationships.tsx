@@ -1,7 +1,7 @@
 import * as React from 'react';
 import { Relationship } from '../models/relationship'
 import * as OF from 'office-ui-fabric-react'
-import './fabric.css'
+import '../fabric.css'
 
 export interface ReceivedProps {
   relationships: Relationship[]
@@ -26,7 +26,9 @@ class DetailRelationships extends React.Component<ReceivedProps, ComponentState>
   }
 
   public render() {
-
+    if (this.props.relationships.length === 0) {
+      return null
+    }
       return (
         <div className="DetailText">
           <div className="DetailTitle">

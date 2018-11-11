@@ -1,11 +1,22 @@
+.ViewPage {
+  background-color: black;
+}
+
 .ViewBodyTop {
   margin-left: auto;
   margin-right: auto;
-  height: 220px;
+  padding-top: 20px;
+  top: 0px;
+  height: 175px;
+  border-bottom: white 1px solid;
+  margin-bottom: 10px;
+  position: fixed;
+  background-color: black;
+  z-index: 10;
+  width: 100%;
 }
 
 .ViewBodyNameColumn {
-  height: 220px;
   width: 150px;
   vertical-align: top;
   display: inline-block;
@@ -25,7 +36,7 @@
 
 .ViewImageColumn {
   height: 220px;
-  width: 200px;
+  width: 280px;
   display: inline-block;
 }
 
@@ -33,4 +44,6 @@
   margin-left: auto;
   margin-right: auto;
   width: 350px;
+  margin-top: 195px;
+  padding-top: 10px;
 }

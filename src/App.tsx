@@ -4,13 +4,14 @@ import './fabric.css'
 import Client from './service/client'
 import * as OF from 'office-ui-fabric-react'
 import { setStatePromise } from './Util'
-import { QuizSet, QuizPerson, FilterSet, Tag, Filter, PerfType, StartState } from './models/models'
+import { QuizSet, QuizPerson, FilterSet, Tag, Filter, PerfType } from './models/models'
 import { Person } from './models/person'
 import { TestResult } from './models/performance'
 import * as Convert from './convert'
 import QuizPage from './Pages/QuizPage';
 import LoadPage from './Pages/LoadPage'
 import FilterPage from './Pages/FilterPage'
+import LoginPage from './Pages/LoginPage'
 import ViewPage from './Pages/ViewPage'
 import EditPage from './Pages/EditPage'
 
@@ -24,15 +25,11 @@ export enum Page {
   EDIT = "EDIT"
 }
 
-const ALLOW_IMPORT = false
-
 interface ComponentState {
   people: Person[],
   allTags: Tag[],
   loadletter: string,
   loadlettercount: number,
-  userLoginValue: string
-  waitingCalloutText: string | null
   page: Page
   quizSet: QuizSet | null
   filterSet: FilterSet | null
@@ -43,15 +40,11 @@ interface ComponentState {
 
 class App extends React.Component<{}, ComponentState> {
 
-  private _startButtonElement = OF.createRef<HTMLElement>();
-
   state: ComponentState = {
     people: [],
     allTags: [],
     loadletter: "",
     loadlettercount: 0,
-    userLoginValue: "",
-    waitingCalloutText: null,
     quizSet: null,
     filterSet: null,
     filteredTags: [],
@@ -117,7 +110,7 @@ class App extends React.Component<{}, ComponentState> {
   private async loadPeople() {
       this.setState({page: Page.LOAD})
 
-      var letters = "ABCD"/*EFGHIJKLMNOPQRSTUVWXYZ"*/.split("")
+      var letters = "ABCDE"/*FGHIJKLMNOPQRSTUVWXYZ"*/.split("")
       for (let letter of letters) {
         Client.getPeopleStartingWith(letter, async (people) => {
           console.log(`GOT ${letter}`)
@@ -146,10 +139,12 @@ class App extends React.Component<{}, ComponentState> {
       }
   }
 
+  /*
   @OF.autobind 
   private async onClickImport() {
       await Client.import()
   }
+  */
 
   private async updateTags() {
     let tags = Convert.filteredTags(this.state.people, this.state.filter)
@@ -295,84 +290,13 @@ class App extends React.Component<{}, ComponentState> {
     this.viewLibraryPerson()
   }
 
-  @OF.autobind
-  private async onClickLogin(): Promise<void> {
-    let startState = await Client.start(this.state.userLoginValue)
-    if (startState === StartState.READY) {
-      this.loadPeople()
-    }
-    else if (startState === StartState.WAITING) {
-      this.setState({
-        waitingCalloutText: "Server is warming up"
-      })
-    }
-    else {
-      this.setState({
-        waitingCalloutText: "Not found"
-      })
-    }
-  }
-
-  @OF.autobind
-  private userNameChanged(text: string) {
-    this.setState({
-      userLoginValue: text
-    })
-  }
-
-  @OF.autobind
-  private onWaitCalloutDismiss(): void {
-    this.setState({waitingCalloutText: null})
-  }
-
-  @OF.autobind
-  onLoginKeyDown(event: React.KeyboardEvent<HTMLElement>) {
-      // On enter attempt to create the model if required fields are set
-      // Not on import as explicit button press is required to pick the file
-      if (event.key === 'Enter' && this.state.userLoginValue) {
-          this.onClickLogin();
-      }
-  }
-
   public render() {
     return (
       <div className="App">
         {this.state.page === Page.LOGIN &&
-          <div
-            className="AppPage">
-            <div 
-              className="AppLogin"
-              ref={this._startButtonElement}>
-              <OF.TextField
-                  value={this.state.userLoginValue}
-                  onChanged={this.userNameChanged}
-                  onKeyDown={key => this.onLoginKeyDown(key)}
-              />
-            </div>
-            <OF.Callout
-                role={'alertdialog'}
-                gapSpace={0}
-                calloutWidth={200}
-                backgroundColor={'#555555'}
-                target={this._startButtonElement.current}
-                onDismiss={this.onWaitCalloutDismiss}
-                setInitialFocus={true}
-                hidden={this.state.waitingCalloutText === null}
-              >
-                <div className="ms-CalloutExample-header AppCallout">
-                  <p className="ms-CalloutExample-title" id={'callout-label-1'}>
-                    {this.state.waitingCalloutText}
-                  </p>
-                </div>
-              </OF.Callout>
-              {ALLOW_IMPORT &&
-                <OF.DefaultButton
-                  className="QuizButton"
-                  onClick={this.onClickImport}
-                  text="Import"
-                />
-              }
-          </div>
+         <LoginPage
+          onLoginComplete={this.loadPeople}
+         />
         }
         {this.state.page === Page.LOAD &&
           <LoadPage

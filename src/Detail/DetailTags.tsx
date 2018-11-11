@@ -1,7 +1,6 @@
 import * as React from 'react';
-import * as OF from 'office-ui-fabric-react'
 import { Filter } from '../models/models'
-import './fabric.css'
+import '../fabric.css'
 import './Detail.css'
 
 export interface ReceivedProps {
@@ -19,37 +18,45 @@ class DetailTags extends React.Component<ReceivedProps, ComponentState> {
   state: ComponentState = {
     inEditMode: false
   }
-
+/*
   @OF.autobind
-  private onRenderCell(tag: string, index: number, isScrolling: boolean): JSX.Element {
+  private onRenderTag(tag: string): JSX.Element {
     const isSelected = this.props.filter.required.find(r => r === tag)
     if (isSelected) {
       return (
-        <div className="TagSelected">{tag}</div>
+        <span className="TagSelected">{tag}</span>
       )
     }
     else {
       return (
-        <div className="TagUnselected">{tag}</div>
+        <span className="TagUnselected">{tag}</span>
       )
     }
-  }
+  }*/
 
   public render() {
-
+      if (this.props.tags.length === 0) {
+        return null
+      }
       return (
         <div className="DetailText">
           <div className="DetailTitle">
             Tags
-          </div>
-          <OF.List
-              className="TagList"
-              items={this.props.tags}
-              onRenderCell={this.onRenderCell}
-          />
+          </div>          
+          <div>
+              {this.props.tags.map(tag => {
+                const isSelected = this.props.filter.required.find(r => r === tag)
+                if (isSelected) { 
+                    return (<span className="TagSelected">{`${tag}  `}</span>)
+                }
+                else {
+                    return (<span className="TagUnselected">{`${tag}  `}</span>)
+                }
+              })
+            }
+          </div>         
         </div>
-
-    );
+    )
   }
 }
 

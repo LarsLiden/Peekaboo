@@ -1,6 +1,6 @@
 import * as React from 'react';
 import * as OF from 'office-ui-fabric-react'
-import './fabric.css'
+import '../fabric.css'
 import { Person } from '../models/person'
 import { Filter } from '../models/models'
 import CropPage from './CropPage'
@@ -197,6 +197,7 @@ class EditPage extends React.Component<ReceivedProps, ComponentState> {
                   height={160}
                 />
                 <DetailIndexer
+                  isVertical={true}
                   onPrev={this.onPrevPhoto}
                   onNext={this.onNextPhoto}
                   currentIndex={this.state.photoIndex}

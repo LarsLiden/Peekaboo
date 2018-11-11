@@ -1,8 +1,18 @@
+.DetailCounterHorizontal {
+  margin-top: 12px;
+  display: inline-block
+}
+
+.DetailCounterVertical {
+  display: block
+}
+
 .DetailCount {
   color: white;
   font-size: 12px;
   display: inline-block;
-  margin-top: 15px
+  margin-top: auto;
+  margin-bottom: auto;
 }
 
 .DetailCountDivider {

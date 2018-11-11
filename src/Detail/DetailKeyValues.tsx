@@ -2,7 +2,7 @@ import * as React from 'react';
 import { KeyValue } from '../models/models'
 import * as OF from 'office-ui-fabric-react'
 import "./DetailEvents.css"
-import './fabric.css'
+import '../fabric.css'
 
 export interface ReceivedProps {
   keyValues: KeyValue[]
@@ -18,8 +18,8 @@ const columns: OF.IColumn[] = [
     key: 'key',
     name: 'key',
     fieldName: 'key',
-    minWidth: 50,
-    maxWidth: 50,
+    minWidth: 80,
+    maxWidth: 80,
     //onColumnClick: this._onColumnClick,
     onRender: (item: KeyValue) => {
       return <div className="TableCell">{item.key}</div>
@@ -46,7 +46,9 @@ class DetailKeyValues extends React.Component<ReceivedProps, ComponentState> {
   }
 
   public render() {
-
+    if (this.props.keyValues.length === 0) {
+      return null
+    }
       return (
         <div className="DetailText">
           <div className="DetailTitle">

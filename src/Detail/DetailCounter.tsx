@@ -1,5 +1,5 @@
 import * as React from 'react';
-import './fabric.css'
+import '../fabric.css'
 import "./DetailCounter.css"
 
 export interface ReceivedProps {

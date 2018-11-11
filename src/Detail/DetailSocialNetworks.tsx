@@ -2,7 +2,7 @@ import * as React from 'react';
 import { SocialNet } from '../models/models'
 import * as OF from 'office-ui-fabric-react'
 import "./DetailEvents.css"
-import './fabric.css'
+import '../fabric.css'
 
 export interface ReceivedProps {
   socialNets: SocialNet[]
@@ -36,7 +36,9 @@ class DetailSocialNetworks extends React.Component<ReceivedProps, ComponentState
   }
 
   public render() {
-
+    if (this.props.socialNets.length === 0) {
+      return null
+    }
       return (
         <div className="DetailText">
           <div className="DetailTitle">

@@ -70,7 +70,7 @@
 .ms-DetailsRow {
   background-color: #000000 !important;
   color: white !important;
-  font-size: 10px
+  font-size: 14px
 }
 
 .ms-DetailsRow:hover {
@@ -87,6 +87,22 @@
   text-decoration: line-through;
 }
 
+.FloatLeft {
+  float: left;
+}
+
+.FloatRight {
+  float: right;
+}
+
+.AlignLeft {
+  text-align: left !important;
+}
+
+.AlignRight {
+  text-align: right !important;
+}
+
 .ButtonThin {
   margin: 20px;
   height: 25px !important;
@@ -98,17 +114,24 @@
 .App {
   text-align: center;
   background-color: black;
-  height: 1000px;
 }
 
-.AppPage {
-  padding-top: 200px;
+.LoginPage {
+  margin-left: auto !important;
+  margin-right: auto !important;
 }
 
-.AppLogin {
+.LoginImage {
+  opacity: 0.45;
+  height: 500px !important;
+}
+
+.LoginTextInput {
   width: 200px;
   margin-left: auto !important;
   margin-right: auto !important;
+  position: relative !important;
+  top: -130px;
 }
 
 .AppCallout {
@@ -239,8 +262,8 @@
 
 .ButtonCorner {
   position: fixed !important;
-  top: 0px;
-  right: 0px;
+  top: 15px;
+  left: 15px;
   margin: 3px !important;
   padding: 0px !important;
 }
@@ -275,23 +298,16 @@
   color: white !important;
 }
 
-.FloatLeft {
-  float: left;
-}
-
-.FloatRight {
-  float: right;
-}
-
 .QuizPage {
   background-color: black;
-  height: 1000px;
   padding-top: 15px;
 }
 
 .QuizImageHolder{
   margin-left: auto;
   margin-right: auto;
+  display: inline-block;
+  vertical-align: top;
 }
 
 .QuizName{

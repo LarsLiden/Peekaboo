@@ -1,6 +1,6 @@
 import * as React from 'react';
 import * as OF from 'office-ui-fabric-react'
-import './fabric.css'
+import '../fabric.css'
 import { QuizPerson, QuizSet } from '../models/models'
 import { getRandomInt} from '../Util'
 import { TestResult } from '../models/performance'
