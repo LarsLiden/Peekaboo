@@ -1,3 +1,7 @@
+/**
+ * Copyright (c) Lars Liden. All rights reserved.  
+ * Licensed under the MIT License.
+ */
 import axios from 'axios'
 import { StartState } from '../models/models'
 import { TestResult } from '../models/performance'

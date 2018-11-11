@@ -1,8 +1,12 @@
-.ViewPage {
+/**
+ * Copyright (c) Lars Liden. All rights reserved.  
+ * Licensed under the MIT License.
+ */
+ .ViewPage {
   background-color: black;
 }
 
-.ViewBodyTop {
+.ContentHeader {
   margin-left: auto;
   margin-right: auto;
   padding-top: 20px;
@@ -22,7 +26,7 @@
   display: inline-block;
 }
 
-.ViewFooter {
+.ContentFooter {
   position: fixed;
   bottom: 0px;
   margin-left: auto;
@@ -40,10 +44,11 @@
   display: inline-block;
 }
 
-.ViewBodyBottom {
+.ContentBody {
   margin-left: auto;
   margin-right: auto;
   width: 350px;
   margin-top: 195px;
+  margin-bottom: 90px;
   padding-top: 10px;
 }

@@ -1,5 +1,8 @@
+/**
+ * Copyright (c) Lars Liden. All rights reserved.  
+ * Licensed under the MIT License.
+ */
 import * as React from 'react';
-//import * as OF from 'office-ui-fabric-react'
 import './fabric.css'
 import './Detail.css'
 

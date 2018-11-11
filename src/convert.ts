@@ -1,3 +1,7 @@
+/**
+ * Copyright (c) Lars Liden. All rights reserved.  
+ * Licensed under the MIT License.
+ */
 import { Person } from "./models/person";
 import { PerfType, QuizPerson, LibraryPerson, Filter, FilterSet, Tag, QuizSet } from './models/models'
 import { MAX_TIME, BIAS } from './models/const'
@@ -101,9 +105,8 @@ export function extractTags(people: Person[]) : Tag[] {
 }
 
 // Return list of tags in filterd people and blocked tags
-export function filteredTags(people: Person[], filter: Filter): Tag[] {
-    let filteredPeeps = filteredPeople(people, filter)
-    let tags = [...extractTags(filteredPeeps), ...extractBlockedTags(filteredPeeps, filter.blocked)]
+export function filteredTags(filteredPeople: Person[], filter: Filter): Tag[] {
+    let tags = [...extractTags(filteredPeople), ...extractBlockedTags(filteredPeople, filter.blocked)]
     tags = tags.sort((a, b) => {
         if (a.name.toLowerCase() < b.name.toLowerCase()) return -1
         else if (b.name.toLowerCase() < a.name.toLowerCase()) return 1

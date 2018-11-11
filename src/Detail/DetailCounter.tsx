@@ -1,3 +1,7 @@
+/**
+ * Copyright (c) Lars Liden. All rights reserved.  
+ * Licensed under the MIT License.
+ */
 import * as React from 'react';
 import '../fabric.css'
 import "./DetailCounter.css"

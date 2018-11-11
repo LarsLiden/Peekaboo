@@ -1,3 +1,7 @@
+/**
+ * Copyright (c) Lars Liden. All rights reserved.  
+ * Licensed under the MIT License.
+ */
 import * as React from 'react';
 import './App.css';
 import './fabric.css'
@@ -34,6 +38,7 @@ interface ComponentState {
   quizSet: QuizSet | null
   filterSet: FilterSet | null
   filteredTags: Tag[]
+  filteredPeopleCount: number
   selectedPerson: Person | null
   filter: Filter
 }
@@ -48,6 +53,7 @@ class App extends React.Component<{}, ComponentState> {
     quizSet: null,
     filterSet: null,
     filteredTags: [],
+    filteredPeopleCount: 0,
     page: Page.LOGIN,
     selectedPerson: null,
     filter: {required: [], blocked: [], perfType: PerfType.PHOTO}
@@ -60,9 +66,11 @@ class App extends React.Component<{}, ComponentState> {
   @OF.autobind 
   private async onClickFilter() {
     if (this.state.filteredTags.length === 0) {
-      let tags = Convert.filteredTags(this.state.people, this.state.filter)
+      let filteredPeople = Convert.filteredPeople(this.state.people, this.state.filter)
+      let tags = Convert.filteredTags(filteredPeople, this.state.filter)
       this.setState({
         filteredTags: tags,
+        filteredPeopleCount: filteredPeople.length,
         page: Page.FILTER
       })
     }
@@ -147,9 +155,11 @@ class App extends React.Component<{}, ComponentState> {
   */
 
   private async updateTags() {
-    let tags = Convert.filteredTags(this.state.people, this.state.filter)
+    let filteredPeople = Convert.filteredPeople(this.state.people, this.state.filter)
+    let tags = Convert.filteredTags(filteredPeople, this.state.filter)
       this.setState({
         filteredTags: tags,
+        filteredPeopleCount: filteredPeople.length
       })
   }
 
@@ -334,6 +344,7 @@ class App extends React.Component<{}, ComponentState> {
             onSetBlockTag={(tagName, value) => this.onSetBlockedTag(tagName, value)}
             tags={this.state.filteredTags}
             filter={this.state.filter}
+            peopleCount={this.state.filteredPeopleCount}
           />
         }
         {this.state.page === Page.QUIZ && 

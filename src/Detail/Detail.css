@@ -1,4 +1,8 @@
-.DetailBody {
+/**
+ * Copyright (c) Lars Liden. All rights reserved.  
+ * Licensed under the MIT License.
+ */
+ .DetailBody {
   height: 18px;
   padding-left: 5px;
 }

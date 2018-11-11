@@ -1,3 +1,7 @@
+/**
+ * Copyright (c) Lars Liden. All rights reserved.  
+ * Licensed under the MIT License.
+ */
 import * as React from 'react';
 import * as OF from 'office-ui-fabric-react'
 import { Tag, Filter } from '../models/models'
@@ -5,6 +9,7 @@ import { Tag, Filter } from '../models/models'
 export interface ReceivedProps {
   tags: Tag[]
   filter: Filter
+  peopleCount: number
   onClose: () => void
   onSetRequireTag: (tagName: string, value: boolean) => void
   onSetBlockTag: (tagName: string, value: boolean) => void
@@ -14,10 +19,6 @@ interface ComponentState {
 }
 
 class FilterPage extends React.Component<ReceivedProps, ComponentState> {
-
-  componentDidMount() {
-    
-  }
 
   @OF.autobind
   onClickClose() {
@@ -66,13 +67,16 @@ class FilterPage extends React.Component<ReceivedProps, ComponentState> {
   
     return (
       <div className="FilterPage">
+        <div className="ContentHeader FilterHeader">
+          {this.props.peopleCount} People Selected
+        </div>
         <OF.List
           className="FilterList"
           items={this.props.tags}
           onRenderCell={this.onRenderCell}
         />
         <div
-          className="ViewFooter">
+          className="ContentFooter">
           <OF.DefaultButton
               className="QuizButton"
               onClick={this.onClickClose}

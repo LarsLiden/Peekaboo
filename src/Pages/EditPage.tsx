@@ -1,3 +1,7 @@
+/**
+ * Copyright (c) Lars Liden. All rights reserved.  
+ * Licensed under the MIT License.
+ */
 import * as React from 'react';
 import * as OF from 'office-ui-fabric-react'
 import '../fabric.css'
@@ -189,7 +193,28 @@ class EditPage extends React.Component<ReceivedProps, ComponentState> {
           }
           {!this.state.imageURL &&
             <div>
-              <div className="ViewImageColumn">
+              <div className="ContentHeader">
+              <div className="EditImageColumn">
+                  <FilePicker
+                    extensions={['png', 'jpeg', 'jpg']}
+                    onChange={this.onChangeFile}
+                    //TODO onError={(error: string) => this.props.setErrorDisplay(ErrorType.Error, error, [], null)}
+                    maxSize={10}
+                  >
+                    <div>
+                        <OF.IconButton
+                          className="ImageButton"
+                          iconProps={{ iconName: 'Delete' }}
+                        />
+                    </div>
+                  </FilePicker>
+                  <div className='EditButtonSpacer'/>
+                  <OF.IconButton
+                    className="ImageButton"
+              //      onClick={this.props.onPrev}
+                    iconProps={{ iconName: 'CircleAddition' }}
+                  />
+                </div>
                 <OF.Image
                   className="QuizImageHolder"
                   src={imageFile}
@@ -203,23 +228,8 @@ class EditPage extends React.Component<ReceivedProps, ComponentState> {
                   currentIndex={this.state.photoIndex}
                   total={this.props.person.photoFilenames.length}
                 />
-                <FilePicker
-                  extensions={['png', 'jpeg', 'jpg']}
-                  onChange={this.onChangeFile}
-                  //TODO onError={(error: string) => this.props.setErrorDisplay(ErrorType.Error, error, [], null)}
-                  maxSize={10}
-                >
-                  <div className="cl-action-creator-file-picker">
-                      <OF.PrimaryButton
-                          data-testid="model-creator-locate-file-button"
-                          className="cl-action-creator-file-button"
-                          ariaDescription="Choose a File"
-                          text="Choose a File"
-                      />
-                  </div>
-                </FilePicker>
               </div>
-              <div className="ViewBodyTop">
+              <div className="ContentBody">
                 <OF.TextField
                   label="First Name"
                   onChanged={text => this.onFirstNameChanged(text)}
@@ -259,7 +269,7 @@ class EditPage extends React.Component<ReceivedProps, ComponentState> {
                 />
               </div>
               <div
-                className="ViewFooter">
+                className="ContentFooter">
                 <OF.IconButton
                     className="ImageButton"
                     onClick={this.onClickSave}

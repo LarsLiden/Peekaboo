@@ -1,4 +1,8 @@
-.DetailEventList {
+/**
+ * Copyright (c) Lars Liden. All rights reserved.  
+ * Licensed under the MIT License.
+ */
+ .DetailEventList {
   margin-left: auto;
   margin-right: auto;
 }

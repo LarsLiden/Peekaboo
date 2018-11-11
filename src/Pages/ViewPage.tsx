@@ -77,7 +77,7 @@ class ViewPage extends React.Component<ReceivedProps, ComponentState> {
     const imageFile = baseImage + this.props.person.photoFilenames[this.state.photoIndex]
       return (
         <div className="ViewPage">
-          <div className="ViewBodyTop">
+          <div className="ContentHeader">
             <OF.IconButton
               className="IconButtonLarge ButtonCorner"
               onClick={this.props.onEdit}
@@ -105,7 +105,7 @@ class ViewPage extends React.Component<ReceivedProps, ComponentState> {
               />
             </div>
           </div>
-          <div className="ViewBodyBottom">
+          <div className="ContentBody">
             <DetailTags 
               tags={this.props.person.tags}
               filter={this.props.filter}
@@ -129,7 +129,7 @@ class ViewPage extends React.Component<ReceivedProps, ComponentState> {
         {this.props.filterSet 
         ?
           <div
-            className="ViewFooter">
+            className="ContentFooter">
             <OF.IconButton
                 className="ImageButton"
                 onClick={() => this.props.onClickFilter()}
@@ -150,7 +150,7 @@ class ViewPage extends React.Component<ReceivedProps, ComponentState> {
           </div>
         :
           <div
-            className="ViewFooter">
+            className="ContentFooter">
             <OF.IconButton
               className="IconButtonLarge"
               onClick={this.props.onContinueQuiz}

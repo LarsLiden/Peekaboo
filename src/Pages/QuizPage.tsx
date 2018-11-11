@@ -1,3 +1,7 @@
+/**
+ * Copyright (c) Lars Liden. All rights reserved.  
+ * Licensed under the MIT License.
+ */
 import * as React from 'react';
 import * as OF from 'office-ui-fabric-react'
 import '../fabric.css'
@@ -243,7 +247,7 @@ class QuizPage extends React.Component<ReceivedProps, ComponentState> {
           </div>
         }
         <div
-          className="ViewFooter">
+          className="ContentFooter">
           <OF.IconButton
             className="IconButtonLarge FloatLeft"
             onClick={this.onClickKnow}
