@@ -105,8 +105,8 @@ export function extractTags(people: Person[]) : Tag[] {
 }
 
 // Return list of tags in filterd people and blocked tags
-export function filteredTags(filteredPeople: Person[], filter: Filter): Tag[] {
-    let tags = [...extractTags(filteredPeople), ...extractBlockedTags(filteredPeople, filter.blocked)]
+export function filteredTags(filteredPeople: Person[], allPeople: Person[], filter: Filter): Tag[] {
+    let tags = [...extractTags(filteredPeople), ...extractBlockedTags(allPeople, filter.blocked)]
     tags = tags.sort((a, b) => {
         if (a.name.toLowerCase() < b.name.toLowerCase()) return -1
         else if (b.name.toLowerCase() < a.name.toLowerCase()) return 1

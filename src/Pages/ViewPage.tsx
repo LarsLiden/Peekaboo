@@ -4,6 +4,7 @@ import '../fabric.css'
 import { Person } from '../models/person'
 import { Filter } from '../models/models'
 import { FilterSet} from '../models/models'
+import Search from '../modals/Search'
 import DetailText from '../Detail/DetailText'
 import DetailTags from '../Detail/DetailTags'
 import DetailIndexer from '../Detail/DetailIndexer'
@@ -16,6 +17,7 @@ import "./ViewPage.css"
 export interface ReceivedProps {
   filterSet: FilterSet | null
   person: Person
+  allPeople: Person[]
   filter: Filter
   onClickQuiz: () => void
   onContinueQuiz: () => void
@@ -23,23 +25,41 @@ export interface ReceivedProps {
   onClickFilter: () => void
   onNextPerson: () => void
   onPrevPerson: () => void
+  onSelectPerson: (person: Person) => void
 }
 
 const baseImage = "https://peekaboo.blob.core.windows.net/faces/"
 
 interface ComponentState { 
   photoIndex: number
+  isSearchOpen: boolean
 }
 
 class ViewPage extends React.Component<ReceivedProps, ComponentState> {
 
   state: ComponentState = {
-    photoIndex: 0
+    photoIndex: 0,
+    isSearchOpen: false
   }
 
-  componentDidMount() {
-    
-  }
+// --- Search ---
+@OF.autobind
+onCloseSearch(): void {
+  this.setState({isSearchOpen: false})
+}
+
+@OF.autobind
+onSelectSearch(person:  Person): void {
+  this.setState({
+    isSearchOpen: false
+  })
+  this.props.onSelectPerson(person)
+}
+
+@OF.autobind
+onClickSearch(): void {
+  this.setState({isSearchOpen: true})
+}
 
   @OF.autobind
   onNextPhoto(): void {
@@ -76,88 +96,100 @@ class ViewPage extends React.Component<ReceivedProps, ComponentState> {
   public render() {
     const imageFile = baseImage + this.props.person.photoFilenames[this.state.photoIndex]
       return (
-        <div className="ViewPage">
-          <div className="ContentHeader">
-            <OF.IconButton
-              className="IconButtonLarge ButtonCorner"
-              onClick={this.props.onEdit}
-              iconProps={{ iconName: 'EditSolid12' }}
-            />
-            <div className="ViewBodyNameColumn">
-              <DetailText title="First Name" alignRight={true} text={this.props.person.firstName}/>
-              <DetailText title="Last Name" alignRight={true} text={this.props.person.lastName}/>
-              <DetailText title="Nickname" alignRight={true} text={this.props.person.nickName}/>
-              <DetailText title="Maiden Name" alignRight={true} text={this.props.person.maidenName}/>
-            </div>
-            <div className="ViewImageColumn">
-              <OF.Image
-                className="QuizImageHolder"
-                src={imageFile}
-                width={160}
-                height={160}
-              />
-              <DetailIndexer
-                isVertical={true}
-                onPrev={this.onPrevPhoto}
-                onNext={this.onNextPhoto}
-                currentIndex={this.state.photoIndex}
-                total={this.props.person.photoFilenames.length}
-              />
-            </div>
-          </div>
-          <div className="ContentBody">
-            <DetailTags 
-              tags={this.props.person.tags}
-              filter={this.props.filter}
-            />
-            <DetailText title="Description" text={this.props.person.description} isLong={true}/>
-            <DetailRelationships
-              relationships={this.props.person.relationships}
-            />
-            <DetailEvents
-              events={this.props.person.events}
-            />
-            <DetailKeyValues
-              keyValues={this.props.person.keyValues}
-            />
-             <DetailSocialNetworks
-              socialNets={this.props.person.socialNets}
-            />
-          </div>
         <div>
-        </div>
-        {this.props.filterSet 
-        ?
-          <div
-            className="ContentFooter">
-            <OF.IconButton
-                className="ImageButton"
-                onClick={() => this.props.onClickFilter()}
-                iconProps={{ iconName: 'Filter' }}
-            />
-            <DetailIndexer
-              isVertical={false}
-              onPrev={this.onPrevPerson}
-              onNext={this.onNextPerson}
-              currentIndex={this.props.filterSet.selectedIndex}
-              total={this.props.filterSet.libraryPeople.length}
-            />
-            <OF.IconButton
-                className="ImageButton"
-                onClick={() => this.props.onClickQuiz()}
-                iconProps={{ iconName: 'Unknown' }}
-            />
+          <div className="ViewPage">
+            <div className="ContentHeader">
+              <OF.IconButton
+                className="ButtonIcon ButtonCorner ButtonDark"
+                onClick={this.props.onEdit}
+                iconProps={{ iconName: 'EditSolid12' }}
+              />
+              <div className="ViewBodyNameColumn">
+                <DetailText title="First Name" alignRight={true} text={this.props.person.firstName}/>
+                <DetailText title="Last Name" alignRight={true} text={this.props.person.lastName}/>
+                <DetailText title="Nickname" alignRight={true} text={this.props.person.nickName}/>
+                <DetailText title="Maiden Name" alignRight={true} text={this.props.person.maidenName}/>
+              </div>
+              <div className="ViewImageColumn">
+                <OF.Image
+                  className="QuizImageHolder"
+                  src={imageFile}
+                  width={160}
+                  height={160}
+                />
+                <DetailIndexer
+                  isVertical={true}
+                  onPrev={this.onPrevPhoto}
+                  onNext={this.onNextPhoto}
+                  currentIndex={this.state.photoIndex}
+                  total={this.props.person.photoFilenames.length}
+                />
+              </div>
+            </div>
+            <div className="ContentBody">
+              <DetailText title="Description" text={this.props.person.description} isLong={true}/>
+              <DetailTags 
+                tags={this.props.person.tags}
+                filter={this.props.filter}
+              />
+              <DetailRelationships
+                relationships={this.props.person.relationships}
+              />
+              <DetailEvents
+                events={this.props.person.events}
+              />
+              <DetailKeyValues
+                keyValues={this.props.person.keyValues}
+              />
+              <DetailSocialNetworks
+                socialNets={this.props.person.socialNets}
+              />
+            </div>
+            {this.props.filterSet 
+            ?
+              <div
+                className="ContentFooter">
+                <OF.IconButton
+                    className="ButtonIcon ButtonPrimary"
+                    onClick={() => this.props.onClickFilter()}
+                    iconProps={{ iconName: 'Filter' }}
+                />
+                <DetailIndexer
+                  isVertical={false}
+                  onPrev={this.onPrevPerson}
+                  onNext={this.onNextPerson}
+                  currentIndex={this.props.filterSet.selectedIndex}
+                  total={this.props.filterSet.libraryPeople.length}
+                />
+                <OF.IconButton
+                    className="ButtonIcon ButtonPrimary"
+                    onClick={() => this.onClickSearch()}
+                    iconProps={{ iconName: 'Search' }}
+                />
+                <OF.IconButton
+                    className="ButtonIcon ButtonPrimary"
+                    onClick={() => this.props.onClickQuiz()}
+                    iconProps={{ iconName: 'Unknown' }}
+                />
+              </div>
+            :
+              <div
+                className="ContentFooter">
+                <OF.IconButton
+                  className="ButtonIcon ButtonPrimary"
+                  onClick={this.props.onContinueQuiz}
+                  iconProps={{ iconName: 'ChromeClose' }}
+                />
+              </div>
+            }
           </div>
-        :
-          <div
-            className="ContentFooter">
-            <OF.IconButton
-              className="IconButtonLarge"
-              onClick={this.props.onContinueQuiz}
-              iconProps={{ iconName: 'ChromeClose' }}
+          {this.state.isSearchOpen &&
+              <Search
+              people={this.props.allPeople}
+              onCancel={this.onCloseSearch}
+              onSelect={this.onSelectSearch}
             />
-          </div>
-        }
+          }
       </div>
     );
   }

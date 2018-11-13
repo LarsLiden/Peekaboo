@@ -10,12 +10,8 @@ import '../fabric.css'
 
 export interface ReceivedProps {
   keyValues: KeyValue[]
+  inEdit?: boolean
 }
-
-interface ComponentState { 
-  inEditMode: boolean
-}
-
 
 const columns: OF.IColumn[] = [
   {
@@ -33,8 +29,8 @@ const columns: OF.IColumn[] = [
     key: 'value',
     name: 'value',
     fieldName: 'value',
-    minWidth: 200,
-    maxWidth: 200,
+    minWidth: 150,
+    maxWidth: 150,
     isMultiline: true,
     //onColumnClick: this._onColumnClick,
     onRender: (item: KeyValue) => {
@@ -43,19 +39,15 @@ const columns: OF.IColumn[] = [
   }
 ]
 
-class DetailKeyValues extends React.Component<ReceivedProps, ComponentState> {
-
-  state: ComponentState = {
-    inEditMode: false
-  }
+class DetailKeyValues extends React.Component<ReceivedProps, {}> {
 
   public render() {
-    if (this.props.keyValues.length === 0) {
+    if (!this.props.inEdit && this.props.keyValues.length === 0) {
       return null
     }
       return (
-        <div className="DetailText">
-          <div className="DetailTitle">
+        <div className={`DetailText ${this.props.inEdit ? 'DetailEdit'  : ''}`}>
+          <div className={`DetailTitle ${this.props.inEdit ? 'DetailEditTitle'  : ''}`}>
             INFO
           </div>
           <div className="DetailLongBody">

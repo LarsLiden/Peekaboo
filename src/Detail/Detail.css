@@ -28,11 +28,27 @@
   color: #777777;
 }
 
+.DetailEditTitle {
+  text-transform: uppercase;
+  font-size: 10px;
+  color: var(--color-themeTertiary);
+}
+
 .DetailText {
   font-size: 14px;
   padding: 3px;
   color: var(--color-white);
   text-align: left
+}
+
+.DetailTags {
+  margin-left: 5px;
+}
+
+.DetailEdit {
+  display: inline-block;
+  margin-top: 5px;
+  width: 284px;
 }
 
 

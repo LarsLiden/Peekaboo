@@ -6,17 +6,26 @@ import * as React from 'react';
 import * as OF from 'office-ui-fabric-react'
 import '../fabric.css'
 import { Person } from '../models/person'
-import { Filter } from '../models/models'
+import { Filter, Tag } from '../models/models'
 import CropPage from './CropPage'
 import DetailTags from '../Detail/DetailTags'
 import ReactCrop from 'react-image-crop'
+import ConfirmModal from '../modals/Confirm'
+import EditTags from '../modals/EditTags'
 import DetailIndexer from '../Detail/DetailIndexer'
+import DetailRelationships from '../Detail/DetailRelationships'
+import DetailEvents from '../Detail/DetailEvents'
+import DetailKeyValues from '../Detail/DetailKeyValues'
+import DetailSocialNetworks from '../Detail/DetailSocialNetworks'
+import DetailEditText from '../Detail/DetailEditText'
+
 import { FilePicker } from 'react-file-picker'
 import "./ViewPage.css"
 
 export interface ReceivedProps {
   person: Person
   filter: Filter
+  allTags: Tag[]
   onSaveImage: (person: Person, blob: Blob) => void
   onSave: (person: Person) => void
   onClose: () => void
@@ -33,11 +42,14 @@ interface ComponentState {
   maidenName: string,
   alternateName: string,
   description: string,
+  tags: string[]
   showCropPage: boolean,
-
   imageURL: string | null
   crop: ReactCrop.Crop
   file: File | null
+  isEditTagsOpen: boolean
+  isConfirmDeletePhotoOpen: boolean
+  isConfirmDeleteOpen: boolean
 }
 
 class EditPage extends React.Component<ReceivedProps, ComponentState> {
@@ -51,10 +63,14 @@ class EditPage extends React.Component<ReceivedProps, ComponentState> {
     maidenName: "",
     alternateName: "",
     description: "",
+    tags: [],
     showCropPage: false,
     imageURL: null,
     crop: {aspect: 1/1, x:0, y:0, width: 50, height: 50},
-    file: null
+    file: null,
+    isEditTagsOpen: false,
+    isConfirmDeletePhotoOpen: false,
+    isConfirmDeleteOpen: false
   }
 
   componentDidMount() {
@@ -62,14 +78,14 @@ class EditPage extends React.Component<ReceivedProps, ComponentState> {
   }
 
   componentDidUpdate() {
-
     if (this.state.edited === false && 
       (this.state.firstName !== this.props.person.firstName ||
         this.state.lastName !== this.props.person.lastName ||
         this.state.nickName !== this.props.person.nickName ||
         this.state.maidenName !== this.props.person.maidenName ||
         this.state.alternateName !== this.props.person.alternateName ||
-        this.state.description !== this.props.person.description
+        this.state.description !== this.props.person.description ||
+        this.state.tags !== this.props.person.tags
        )) {  
         this.updateAppState(this.props.person)
     }
@@ -83,11 +99,66 @@ class EditPage extends React.Component<ReceivedProps, ComponentState> {
         maidenName: person.maidenName,
         alternateName: person.alternateName,
         description: person.description,
+        tags: person.tags
+    })
+  }
+
+  // --- EDIT TAGS ---
+  @OF.autobind
+  onCancelEditTags(): void {
+    this.setState({isEditTagsOpen: false})
+  }
+
+  @OF.autobind
+  onSaveEditTags(tagNames: string[]): void {
+    this.setState({
+      isEditTagsOpen: false,
+      tags: tagNames,
+      edited: true
     })
   }
 
   @OF.autobind
+  onEditTags(): void {
+    this.setState({isEditTagsOpen: true})
+  }
+
+  // --- DELETE PHOTO ---
+  @OF.autobind
+  onDeletePhoto(): void {
+    this.setState({isConfirmDeletePhotoOpen: true})
+  }
+
+  @OF.autobind
+  onCancelDeletePhoto(): void {
+    this.setState({isConfirmDeletePhotoOpen: false})
+  }
+
+  @OF.autobind
+  onConfirmDeletePhoto(): void {
+    //TODO - delete
+    this.setState({isConfirmDeletePhotoOpen: false})
+  }
+
+  // --- DELETE PERSON ---
+  @OF.autobind
+  onCancelDelete(): void {
+    this.setState({isConfirmDeleteOpen: false})
+  }
+
+  @OF.autobind
+  onClickDelete(): void {
+    this.setState({isConfirmDeleteOpen: true})
+  }
+
+  @OF.autobind
+  onConfirmDelete(): void {
+    this.setState({isConfirmDeleteOpen: false})
+  }
+
+  @OF.autobind
   onFirstNameChanged(text: string) {
+    //TODO - delete
     this.setState({firstName: text, edited: true})
   }
 
@@ -143,6 +214,7 @@ class EditPage extends React.Component<ReceivedProps, ComponentState> {
     newPerson.maidenName = this.state.maidenName
     newPerson.alternateName = this.state.alternateName
     newPerson.description = this.state.description
+    newPerson.tags = this.state.tags
     this.props.onSave(newPerson)
   }
 
@@ -203,16 +275,16 @@ class EditPage extends React.Component<ReceivedProps, ComponentState> {
                   >
                     <div>
                         <OF.IconButton
-                          className="ImageButton"
-                          iconProps={{ iconName: 'Delete' }}
+                          className="ButtonIcon ButtonDark"
+                          iconProps={{ iconName: 'CircleAddition' }}
                         />
                     </div>
                   </FilePicker>
                   <div className='EditButtonSpacer'/>
                   <OF.IconButton
-                    className="ImageButton"
-              //      onClick={this.props.onPrev}
-                    iconProps={{ iconName: 'CircleAddition' }}
+                    className="ButtonIcon ButtonDark"
+                    onClick={this.onDeletePhoto}
+                    iconProps={{ iconName: 'Delete' }}
                   />
                 </div>
                 <OF.Image
@@ -229,59 +301,140 @@ class EditPage extends React.Component<ReceivedProps, ComponentState> {
                   total={this.props.person.photoFilenames.length}
                 />
               </div>
-              <div className="ContentBody">
-                <OF.TextField
+              <div className="ContentBody EditContent">
+                <DetailEditText
                   label="First Name"
                   onChanged={text => this.onFirstNameChanged(text)}
                   value={this.state.firstName}
                 />
-                <OF.TextField
+                <DetailEditText
                   label="Last Name"
                   onChanged={text => this.onLastNameChanged(text)}
                   value={this.state.lastName}
                 />
-                <OF.TextField
+                <DetailEditText
                   label="Nickname"
                   onChanged={text => this.onNickNameChanged(text)}
                   value={this.state.nickName}
                 />    
-                <OF.TextField
+                <DetailEditText
                   label="Maiden Name"
                   onChanged={text => this.onMaidenNameChanged(text)}
                   value={this.state.maidenName}
                 />
-                <OF.TextField
+                <DetailEditText
                   label="Alternate Name"
                   onChanged={text => this.onAlternativeNameChanged(text)}
                   value={this.state.alternateName}
                 />
-                <OF.TextField
-                  multiline={true}
-                  rows={4}
+                <DetailEditText
+                 // multiline={true}
+                 // rows={4}
                   label="Description"
                   onChanged={text => this.onDescriptionNameChanged(text)}
                   value={this.state.description}
                 />
-
-                <DetailTags 
-                  tags={this.props.person.tags}
-                  filter={this.props.filter}
-                />
+                <div className='EditSection'>
+                  <DetailTags 
+                    inEdit={true}
+                    tags={this.state.tags}
+                    filter={this.props.filter}
+                  />
+                  <OF.IconButton
+                      className="ButtonIcon ButtonDark"
+                      onClick={this.onEditTags}
+                      iconProps={{ iconName: 'Edit' }}
+                  />
+                </div>
+                <div className='EditSection'>
+                  <DetailRelationships
+                    inEdit={true}
+                    relationships={this.props.person.relationships}
+                  />
+                  <OF.IconButton
+                      className="ButtonIcon ButtonDark"
+                     // onClick={this.onEditTags}
+                      iconProps={{ iconName: 'Edit' }}
+                  />
+                </div>
+                <div className='EditSection'>
+                  <DetailEvents
+                    inEdit={true}
+                    events={this.props.person.events}
+                  />
+                  <OF.IconButton
+                    className="ButtonIcon ButtonDark"
+                    // onClick={this.onEditTags}
+                    iconProps={{ iconName: 'Edit' }}
+                  />
+                </div>
+                <div className='EditSection'>
+                  <DetailKeyValues
+                    inEdit={true}
+                    keyValues={this.props.person.keyValues}
+                  />
+                  <OF.IconButton
+                      className="ButtonIcon ButtonDark"
+                     // onClick={this.onEditTags}
+                      iconProps={{ iconName: 'Edit' }}
+                  />
+                </div>
+                <div className='EditSection'>
+                  <DetailSocialNetworks
+                    inEdit={true}
+                    socialNets={this.props.person.socialNets}
+                  />
+                  <OF.IconButton
+                      className="ButtonIcon ButtonDark"
+                     // onClick={this.onEditTags}
+                      iconProps={{ iconName: 'Edit' }}
+                  />
+                </div>
               </div>
               <div
                 className="ContentFooter">
                 <OF.IconButton
-                    className="ImageButton"
+                    className="ButtonIcon ButtonPrimary"
                     onClick={this.onClickSave}
                     iconProps={{ iconName: 'Save' }}
                 />
                 <OF.IconButton
-                    className="ImageButton"
+                    className="ButtonIcon ButtonPrimary"
                     onClick={this.onClickCancel}
                     iconProps={{ iconName: 'Cancel' }}
                 />
+                <OF.IconButton
+                    className="ButtonIcon ButtonPrimary"
+                    onClick={this.onClickDelete}
+                    iconProps={{ iconName: 'Trash' }}
+                />
               </div>
             </div>
+          }
+          {this.state.isEditTagsOpen &&
+            <EditTags
+              allTags={this.props.allTags}
+              personTags={this.state.tags}
+              onCancel={this.onCancelEditTags}
+              onSave={this.onSaveEditTags}
+            >
+            </EditTags>
+          }
+          {this.state.isConfirmDeleteOpen &&
+            <ConfirmModal
+              title="Are you sure you want to delete this person?"
+              onCancel={this.onCancelDelete}
+              onConfirm={this.onConfirmDelete}
+            >
+            </ConfirmModal>
+          }
+          {this.state.isConfirmDeletePhotoOpen &&
+            <ConfirmModal
+              title="Are you sure you want to delete this photo?"
+              onCancel={this.onCancelDeletePhoto}
+              onConfirm={this.onConfirmDeletePhoto}
+            >
+            </ConfirmModal>
           }
       </div>
     );

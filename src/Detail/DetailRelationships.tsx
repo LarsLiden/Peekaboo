@@ -9,17 +9,10 @@ import '../fabric.css'
 
 export interface ReceivedProps {
   relationships: Relationship[]
+  inEdit?: boolean
 }
 
-interface ComponentState { 
-  inEditMode: boolean
-}
-
-class DetailRelationships extends React.Component<ReceivedProps, ComponentState> {
-
-  state: ComponentState = {
-    inEditMode: false
-  }
+class DetailRelationships extends React.Component<ReceivedProps, {}> {
 
   @OF.autobind
   private onRenderCell(relationship: Relationship, index: number, isScrolling: boolean): JSX.Element {
@@ -30,12 +23,12 @@ class DetailRelationships extends React.Component<ReceivedProps, ComponentState>
   }
 
   public render() {
-    if (this.props.relationships.length === 0) {
+    if (!this.props.inEdit && this.props.relationships.length === 0) {
       return null
     }
       return (
-        <div className="DetailText">
-          <div className="DetailTitle">
+        <div className={`DetailText ${this.props.inEdit ? 'DetailEdit'  : ''}`}>
+          <div className={`DetailTitle ${this.props.inEdit ? 'DetailEditTitle'  : ''}`}>
             Relationships
           </div>
           <div className="DetailLongBody">

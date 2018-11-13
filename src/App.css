@@ -69,6 +69,9 @@
   --color-wc-bot: #eceff1;
   --gutter-width: 100px;
   --nav-link-padding: 1em 2em;
+
+  /* Vars */
+  --modal-thin-height: 30px;
 }
 
 .ms-DetailsRow {
@@ -107,6 +110,36 @@
   text-align: right !important;
 }
 
+.InlineBlock {
+  display: inline-block;
+}
+
+.ButtonIcon {
+  height: 50px !important;
+  width: 50px !important;
+  border-radius: 10px !important;
+  color: white !important;
+  margin: 5px;
+}
+
+.ButtonCorner {
+  position: fixed !important;
+  top: 15px;
+  left: 15px;
+  margin: 3px !important;
+  padding: 0px !important;
+}
+
+.ButtonDark {
+  display: inline-block !important;
+  background-color: #333333 !important;
+}
+
+.ButtonPrimary {
+  background-color: var(--color-themePrimary) !important;
+
+}
+
 .ButtonThin {
   margin: 20px;
   height: 25px !important;
@@ -125,8 +158,26 @@
   margin-right: auto !important;
 }
 
+.SearchInput {
+  text-align: center;
+}
+
+.SearchLabel {
+  text-transform: uppercase;
+  font-size: 15px;
+}
+
+.SearchBold {
+  font-weight: bold;
+  color: var(--color-themeTertiary);
+}
+
+.SearchText {
+  font-size: 20px !important;
+}
+
 .LoginImage {
-  opacity: 0.45;
+  opacity: 0.7;
   height: 500px !important;
 }
 
@@ -140,12 +191,48 @@
   height: 35px;
 }
 
+.EditContent {
+  text-align: left;
+}
+
+.EditSection {
+  border-top: solid 1px #555555;
+}
+
 .LoginTextInput {
   width: 200px;
   margin-left: auto !important;
   margin-right: auto !important;
   position: relative !important;
   top: -130px;
+}
+
+.ModalPage {
+  width: 100%;
+  height: 100%;
+  position: fixed;
+  top: 0px;
+  left: 0px;
+  background-color: #000000;
+  z-index: 100;
+}
+
+.ModalBody {
+  height: 100%;
+  overflow-y: auto;
+  margin-top: 10px;
+}
+
+.ModalBodyThin {
+  margin-top: var(--modal-thin-height)
+}
+
+.ModalBodyText {
+  margin-top: 200px;
+  font-size: 20px;
+  width: 300px;
+  margin-left: auto;
+  margin-right: auto;
 }
 
 .AppCallout {
@@ -252,7 +339,7 @@
 }
 
 .TagUnselected {
-  color: var(--color-neutralTertiary)
+  color: var(--color-white)
 }
 
 .TagSelected {
@@ -271,23 +358,6 @@
   text-align: left;
 }
 
-.ImageButton {
-  height: 50px !important;
-  width: 50px !important;
-  border-radius: 10px !important;
-  background-color: var(--color-themePrimary) !important;
-  color: white !important;
-  margin: 5px;
-}
-
-.ButtonCorner {
-  position: fixed !important;
-  top: 15px;
-  left: 15px;
-  margin: 3px !important;
-  padding: 0px !important;
-}
-
 .QuizTimer {
     color: #ffffff;
     background-color: #555555;
@@ -304,15 +374,6 @@
 .QuizButton {
   margin: 20px;
   height: 50px !important;
-  border-radius: 10px !important;
-  background-color: var(--color-themePrimary) !important;
-  color: white !important;
-}
-
-.IconButtonLarge {
-  margin: 20px;
-  height: 50px !important;
-  width: 50px !important;
   border-radius: 10px !important;
   background-color: var(--color-themePrimary) !important;
   color: white !important;

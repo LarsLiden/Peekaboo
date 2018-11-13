@@ -20,6 +20,10 @@
   width: 100%;
 }
 
+.ContentHeaderThin {
+  height: var(--modal-thin-height)
+}
+
 .ViewBodyNameColumn {
   width: 150px;
   vertical-align: top;

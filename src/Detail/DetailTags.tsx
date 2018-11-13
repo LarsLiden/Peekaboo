@@ -11,50 +11,29 @@ export interface ReceivedProps {
   tags: string[]
   filter: Filter
   isLong?: boolean
+  inEdit?: boolean
 }
 
-interface ComponentState { 
-  inEditMode: boolean
-}
-
-class DetailTags extends React.Component<ReceivedProps, ComponentState> {
-
-  state: ComponentState = {
-    inEditMode: false
-  }
-/*
-  @OF.autobind
-  private onRenderTag(tag: string): JSX.Element {
-    const isSelected = this.props.filter.required.find(r => r === tag)
-    if (isSelected) {
-      return (
-        <span className="TagSelected">{tag}</span>
-      )
-    }
-    else {
-      return (
-        <span className="TagUnselected">{tag}</span>
-      )
-    }
-  }*/
+class DetailTags extends React.Component<ReceivedProps, {}> {
 
   public render() {
-      if (this.props.tags.length === 0) {
+      if (!this.props.inEdit && this.props.tags.length === 0) {
         return null
       }
       return (
-        <div className="DetailText">
-          <div className="DetailTitle">
+        <div className={`DetailText ${this.props.inEdit ? 'DetailEdit'  : ''}`}>
+          <div className={`DetailTitle ${this.props.inEdit ? 'DetailEditTitle'  : ''}`}>
             Tags
           </div>          
-          <div>
+          <div className="DetailTags">
               {this.props.tags.map(tag => {
+                const delimeter = tag !== this.props.tags[this.props.tags.length -1] ? ",  " : ""
                 const isSelected = this.props.filter.required.find(r => r === tag)
                 if (isSelected) { 
-                    return (<span className="TagSelected">{`${tag}  `}</span>)
+                    return (<span className="TagSelected">{`${tag}${delimeter}`}</span>)
                 }
                 else {
-                    return (<span className="TagUnselected">{`${tag}  `}</span>)
+                    return (<span className="TagUnselected">{`${tag}${delimeter}`}</span>)
                 }
               })
             }
