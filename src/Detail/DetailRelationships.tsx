@@ -4,11 +4,13 @@
  */
 import * as React from 'react';
 import { Relationship } from '../models/relationship'
+import { Person } from '../models/person'
 import * as OF from 'office-ui-fabric-react'
 import '../fabric.css'
 
 export interface ReceivedProps {
   relationships: Relationship[]
+  allPeople: Person[]
   inEdit?: boolean
 }
 
@@ -16,9 +18,10 @@ class DetailRelationships extends React.Component<ReceivedProps, {}> {
 
   @OF.autobind
   private onRenderCell(relationship: Relationship, index: number, isScrolling: boolean): JSX.Element {
-
+    const person = this.props.allPeople.find(p => p.guid === relationship.guid)
+    const name = person ? person.fullName() : "MISSING PERSON"
     return (
-      <div className="DetailRelationship">{`${relationship.type.from} ${relationship.name}`}</div>
+      <div className="DetailRelationship">{`${relationship.type.from} ${name}`}</div>
     )
   }
 

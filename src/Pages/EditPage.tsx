@@ -6,12 +6,14 @@ import * as React from 'react';
 import * as OF from 'office-ui-fabric-react'
 import '../fabric.css'
 import { Person } from '../models/person'
+import { Relationship } from '../models/relationship'
 import { Filter, Tag } from '../models/models'
 import CropPage from './CropPage'
 import DetailTags from '../Detail/DetailTags'
 import ReactCrop from 'react-image-crop'
 import ConfirmModal from '../modals/Confirm'
 import EditTags from '../modals/EditTags'
+import EditRelationships from '../modals/EditRelationships'
 import DetailIndexer from '../Detail/DetailIndexer'
 import DetailRelationships from '../Detail/DetailRelationships'
 import DetailEvents from '../Detail/DetailEvents'
@@ -26,6 +28,7 @@ export interface ReceivedProps {
   person: Person
   filter: Filter
   allTags: Tag[]
+  allPeople: Person[]
   onSaveImage: (person: Person, blob: Blob) => void
   onSave: (person: Person) => void
   onClose: () => void
@@ -34,20 +37,22 @@ export interface ReceivedProps {
 const baseImage = "https://peekaboo.blob.core.windows.net/faces/"
 
 interface ComponentState { 
-  edited: boolean,
-  photoIndex: number,
-  firstName: string,
-  lastName: string,
-  nickName: string,
-  maidenName: string,
-  alternateName: string,
-  description: string,
+  edited: boolean
+  photoIndex: number
+  firstName: string
+  lastName: string
+  nickName: string
+  maidenName: string
+  alternateName: string
+  description: string
   tags: string[]
-  showCropPage: boolean,
+  relationships: Relationship[]
+  showCropPage: boolean
   imageURL: string | null
   crop: ReactCrop.Crop
   file: File | null
   isEditTagsOpen: boolean
+  isEditRelationshipsOpen: boolean
   isConfirmDeletePhotoOpen: boolean
   isConfirmDeleteOpen: boolean
 }
@@ -64,11 +69,13 @@ class EditPage extends React.Component<ReceivedProps, ComponentState> {
     alternateName: "",
     description: "",
     tags: [],
+    relationships: [],
     showCropPage: false,
     imageURL: null,
     crop: {aspect: 1/1, x:0, y:0, width: 50, height: 50},
     file: null,
     isEditTagsOpen: false,
+    isEditRelationshipsOpen: false,
     isConfirmDeletePhotoOpen: false,
     isConfirmDeleteOpen: false
   }
@@ -85,7 +92,8 @@ class EditPage extends React.Component<ReceivedProps, ComponentState> {
         this.state.maidenName !== this.props.person.maidenName ||
         this.state.alternateName !== this.props.person.alternateName ||
         this.state.description !== this.props.person.description ||
-        this.state.tags !== this.props.person.tags
+        this.state.tags !== this.props.person.tags ||
+        this.state.relationships !== this.props.person.relationships
        )) {  
         this.updateAppState(this.props.person)
     }
@@ -99,7 +107,8 @@ class EditPage extends React.Component<ReceivedProps, ComponentState> {
         maidenName: person.maidenName,
         alternateName: person.alternateName,
         description: person.description,
-        tags: person.tags
+        tags: person.tags,
+        relationships: person.relationships
     })
   }
 
@@ -121,6 +130,26 @@ class EditPage extends React.Component<ReceivedProps, ComponentState> {
   @OF.autobind
   onEditTags(): void {
     this.setState({isEditTagsOpen: true})
+  }
+
+  // --- EDIT REPLATIONSHIPS ---
+  @OF.autobind
+  onCancelEditRelationships(): void {
+    this.setState({isEditRelationshipsOpen: false})
+  }
+
+  @OF.autobind
+  onSaveEditRelationships(relationships: Relationship[]): void {
+    this.setState({
+      isEditRelationshipsOpen: false,
+      relationships,
+      edited: true
+    })
+  }
+
+  @OF.autobind
+  onEditRelationships(): void {
+    this.setState({isEditRelationshipsOpen: true})
   }
 
   // --- DELETE PHOTO ---
@@ -350,10 +379,11 @@ class EditPage extends React.Component<ReceivedProps, ComponentState> {
                   <DetailRelationships
                     inEdit={true}
                     relationships={this.props.person.relationships}
+                    allPeople={this.props.allPeople}
                   />
                   <OF.IconButton
                       className="ButtonIcon ButtonDark"
-                     // onClick={this.onEditTags}
+                      onClick={this.onEditRelationships}
                       iconProps={{ iconName: 'Edit' }}
                   />
                 </div>
@@ -419,6 +449,15 @@ class EditPage extends React.Component<ReceivedProps, ComponentState> {
               onSave={this.onSaveEditTags}
             >
             </EditTags>
+          }
+          {this.state.isEditRelationshipsOpen &&
+            <EditRelationships
+              relationships={this.state.relationships}
+              allPeople={this.props.allPeople}
+              onCancel={this.onCancelEditRelationships}
+              onSave={this.onSaveEditRelationships}
+            >
+            </EditRelationships>
           }
           {this.state.isConfirmDeleteOpen &&
             <ConfirmModal

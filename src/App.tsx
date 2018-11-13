@@ -113,7 +113,7 @@ class App extends React.Component<{}, ComponentState> {
   private async loadPeople() {
       this.setState({page: Page.LOAD})
 
-      var letters = "ABCDE"/*FGHIJKLMNOPQRSTUVWXYZ"*/.split("")
+      var letters = "ABCDEFGHIJKLM"/*NOPQRSTUVWXYZ"*/.split("")
       for (let letter of letters) {
         Client.getPeopleStartingWith(letter, async (people) => {
           console.log(`GOT ${letter}`)
@@ -344,6 +344,7 @@ class App extends React.Component<{}, ComponentState> {
             person={this.state.selectedPerson}
             filter={this.state.filter}
             allTags={this.state.allTags}
+            allPeople={this.state.people}
             onClose={this.onCloseEditPage}
             onSave={this.onSaveEditPage}
             onSaveImage={this.onSaveImage}

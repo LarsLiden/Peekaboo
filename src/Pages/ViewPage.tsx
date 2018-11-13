@@ -134,6 +134,7 @@ onClickSearch(): void {
               />
               <DetailRelationships
                 relationships={this.props.person.relationships}
+                allPeople={this.props.allPeople}
               />
               <DetailEvents
                 events={this.props.person.events}
