@@ -12,6 +12,7 @@ export interface ReceivedProps {
   relationships: Relationship[]
   allPeople: Person[]
   inEdit?: boolean
+  onSelectPerson: (guid: string) => void
 }
 
 class DetailRelationships extends React.Component<ReceivedProps, {}> {
@@ -21,7 +22,14 @@ class DetailRelationships extends React.Component<ReceivedProps, {}> {
     const person = this.props.allPeople.find(p => p.guid === relationship.guid)
     const name = person ? person.fullName() : "MISSING PERSON"
     return (
-      <div className="DetailRelationship">{`${relationship.type.from} ${name}`}</div>
+      <div className="DetailRelationship">{`${relationship.type.from}`}
+        <OF.Button className={this.props.inEdit ? "DetailRelationshipPlain" : "DetailRelationshipLink"}
+            onClick={()=>this.props.onSelectPerson(relationship.guid)}
+          >
+          {name}
+        </OF.Button>
+       
+      </div>
     )
   }
 

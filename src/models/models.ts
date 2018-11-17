@@ -3,7 +3,9 @@
  * Licensed under the MIT License.
  */
 import { Performance } from './performance'
+import { Person } from './person'
 
+// Separate stuff needed by server and client into two files LARS
 export enum PerfType
 {
     PHOTO = "PHOTO",
@@ -33,15 +35,8 @@ export interface QuizPerson {
 }
 
 export interface FilterSet {
-    libraryPeople: LibraryPerson[]
+    people: Person[]
     selectedIndex: number
-}
-
-export interface LibraryPerson {
-    guid: string
-    blobName: string
-    fullName: string
-    tags: string[]
 }
 
 export interface Tag {

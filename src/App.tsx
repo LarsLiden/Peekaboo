@@ -30,10 +30,11 @@ export enum Page {
 }
 
 interface ComponentState {
-  people: Person[],
+  allPeople: Person[],
   allTags: Tag[],
   loadletter: string,
   loadlettercount: number,
+  loadpeoplecount: number,
   page: Page
   quizSet: QuizSet | null
   filterSet: FilterSet | null
@@ -46,10 +47,11 @@ interface ComponentState {
 class App extends React.Component<{}, ComponentState> {
 
   state: ComponentState = {
-    people: [],
+    allPeople: [],
     allTags: [],
     loadletter: "",
     loadlettercount: 0,
+    loadpeoplecount: 0,
     quizSet: null,
     filterSet: null,
     filteredTags: [],
@@ -62,8 +64,8 @@ class App extends React.Component<{}, ComponentState> {
   @OF.autobind 
   private async onClickFilter() {
     if (this.state.filteredTags.length === 0) {
-      let filteredPeople = Convert.filteredPeople(this.state.people, this.state.filter)
-      let tags = Convert.filteredTags(filteredPeople, this.state.people, this.state.filter)
+      let filteredPeople = Convert.filteredPeople(this.state.allPeople, this.state.filter)
+      let tags = Convert.filteredTags(filteredPeople, this.state.allPeople, this.state.filter)
       this.setState({
         filteredTags: tags,
         filteredPeopleCount: filteredPeople.length,
@@ -88,11 +90,11 @@ class App extends React.Component<{}, ComponentState> {
   private async viewLibraryPerson() {
       let filterSet = this.state.filterSet
       if (!filterSet) {
-        filterSet = Convert.getFilterSet(this.state.people, this.state.filter)
+        filterSet = Convert.getFilterSet(this.state.allPeople, this.state.filter)
         filterSet!.selectedIndex = 0
       }
-      let guid = filterSet!.libraryPeople[filterSet!.selectedIndex].guid
-      let selectedPerson = Convert.getPerson(this.state.people, guid) || null
+      let guid = filterSet!.people[filterSet!.selectedIndex].guid
+      let selectedPerson = Convert.getPerson(this.state.allPeople, guid) || null
       this.setState({
         filterSet,
         selectedPerson,
@@ -102,7 +104,7 @@ class App extends React.Component<{}, ComponentState> {
 
   @OF.autobind 
   private viewQuizDetail(quizPerson: QuizPerson) {
-      let selectedPerson = Convert.getPerson(this.state.people, quizPerson.guid) || null
+      let selectedPerson = Convert.getPerson(this.state.allPeople, quizPerson.guid) || null
       this.setState({
         selectedPerson,
         page: Page.VIEWQUIZ
@@ -111,29 +113,37 @@ class App extends React.Component<{}, ComponentState> {
 
   @OF.autobind 
   private async loadPeople() {
+      let loaded: Person[][] = []
       this.setState({page: Page.LOAD})
 
       var letters = "ABCDEFGHIJKLM"/*NOPQRSTUVWXYZ"*/.split("")
       for (let letter of letters) {
         Client.getPeopleStartingWith(letter, async (people) => {
           console.log(`GOT ${letter}`)
-          await setStatePromise(this, {
-            people: [...this.state.people, ...people],
+          loaded.push(people)
+          this.setState({
             loadletter: letter,
-            loadlettercount: this.state.loadlettercount + 1
+            loadlettercount: loaded.length,
+            loadpeoplecount: loaded.reduce((acc, people) => acc + people.length, 0)
           })
 
           // When all are loaded
-          if (this.state.loadlettercount >= letters.length-1) { 
+          if (loaded.length >= letters.length) { 
+
+            let allPeople: Person[] = []
+            loaded.forEach(people => allPeople = [...allPeople, ...people])
 
             // Extact tags
-            let allTags = Convert.extractTags(this.state.people)
+            let allTags = Convert.extractTags(allPeople)
             allTags = allTags.sort((a, b) => {
                 if (a.name.toLowerCase() < b.name.toLowerCase()) return -1
                 else if (b.name.toLowerCase() < a.name.toLowerCase()) return 1
                 else return 0
             })
-            await setStatePromise(this, {allTags})
+            await setStatePromise(this, {
+              allPeople,
+              allTags
+            })
 
             // Open library
             this.viewLibraryPerson()
@@ -150,8 +160,8 @@ class App extends React.Component<{}, ComponentState> {
   */
 
   private async updateTags() {
-    let filteredPeople = Convert.filteredPeople(this.state.people, this.state.filter)
-    let tags = Convert.filteredTags(filteredPeople, this.state.people, this.state.filter)
+    let filteredPeople = Convert.filteredPeople(this.state.allPeople, this.state.filter)
+    let tags = Convert.filteredTags(filteredPeople, this.state.allPeople, this.state.filter)
       this.setState({
         filteredTags: tags,
         filteredPeopleCount: filteredPeople.length
@@ -160,7 +170,7 @@ class App extends React.Component<{}, ComponentState> {
 
   @OF.autobind 
   private async onQuiz() {
-      let quizSet = Convert.quizSet(this.state.people, this.state.filter) 
+      let quizSet = Convert.quizSet(this.state.allPeople, this.state.filter) 
       this.setState({
         quizSet,
         page: Page.QUIZ
@@ -168,19 +178,33 @@ class App extends React.Component<{}, ComponentState> {
   }
 
   @OF.autobind 
-  private async onCloseEditPage() {
+  private async onCloseEditPage(person?: Person) {
+    if (person) {
+      // Replace local
+      let people = this.state.allPeople.filter(p => p.guid !== person.guid)
       this.setState({
-        page: Page.VIEW
-      })
-  }
-
-  @OF.autobind 
-  private async onSaveEditPage(person: Person) {
-      await Client.putPerson(person)
-      this.setState({
+        allPeople: [...people, person],
         selectedPerson: person,
         page: Page.VIEW
       })
+      await Client.putPerson(person)
+    }
+    else {
+      this.setState({
+        page: Page.VIEW
+      })
+    }
+  }
+
+  @OF.autobind 
+  private async onSavePerson(person: Person) {
+    // Replace local
+    let people = this.state.allPeople.filter(p => p.guid !== person.guid)
+    this.setState({
+      allPeople: [...people, person]
+    })
+    // Save
+    await Client.putPerson(person)
   }
 
   @OF.autobind 
@@ -265,7 +289,7 @@ class App extends React.Component<{}, ComponentState> {
   async onNextLibraryPage(): Promise<void> {
     if (this.state.filterSet) {
       let selectedIndex = this.state.filterSet.selectedIndex + 1
-      if (selectedIndex >= this.state.filterSet.libraryPeople.length) {
+      if (selectedIndex >= this.state.filterSet.people.length) {
         selectedIndex = 0
       }
       await setStatePromise(this, {filterSet: {...this.state.filterSet, selectedIndex}})
@@ -280,7 +304,7 @@ class App extends React.Component<{}, ComponentState> {
     if (this.state.filterSet) {
       let selectedIndex = this.state.filterSet.selectedIndex - 1
       if (selectedIndex < 0) {
-        selectedIndex = this.state.filterSet.libraryPeople.length - 1
+        selectedIndex = this.state.filterSet.people.length - 1
       }
       await setStatePromise(this, {filterSet: {...this.state.filterSet, selectedIndex}})
       if (this.state.page === Page.VIEW ) {
@@ -290,16 +314,19 @@ class App extends React.Component<{}, ComponentState> {
   }
 
   @OF.autobind
-  async onSelectPerson(person: Person): Promise<void> {
+  async onSelectPerson(guid: string): Promise<void> {
     if (this.state.filterSet) {
-      let selectedIndex = this.state.filterSet.libraryPeople.findIndex(p => p.guid === person.guid)
+      let selectedIndex = this.state.filterSet.people.findIndex(p => p.guid === guid)
       if (selectedIndex < 0) {
-        selectedIndex = 0
+        selectedIndex = this.state.allPeople.findIndex(p => p.guid === guid)
+        // Clear filter set
+        let filterSet: FilterSet = {people: this.state.allPeople, selectedIndex}
+        await setStatePromise(this, {filterSet})
       }
-      await setStatePromise(this, {filterSet: {...this.state.filterSet, selectedIndex}})
-      if (this.state.page === Page.VIEW ) {
-        this.viewLibraryPerson()
+      else {
+        await setStatePromise(this, {filterSet: {...this.state.filterSet, selectedIndex}})
       }
+      this.viewLibraryPerson()
     }
   }
 
@@ -320,7 +347,7 @@ class App extends React.Component<{}, ComponentState> {
         {this.state.page === Page.LOAD &&
           <LoadPage
             letter={this.state.loadletter}
-            count={this.state.people.length}
+            count={this.state.allPeople.length}
           />
         }
         {(this.state.page === Page.VIEW || this.state.page === Page.VIEWQUIZ) 
@@ -329,7 +356,7 @@ class App extends React.Component<{}, ComponentState> {
             filterSet={this.state.page === Page.VIEW ? this.state.filterSet! : null}
             person={this.state.selectedPerson}
             filter={this.state.filter}
-            allPeople={this.state.people}
+            allPeople={this.state.allPeople}
             onClickQuiz={this.onQuiz}
             onContinueQuiz={this.onContinueQuiz}
             onClickFilter={this.onClickFilter}
@@ -344,9 +371,9 @@ class App extends React.Component<{}, ComponentState> {
             person={this.state.selectedPerson}
             filter={this.state.filter}
             allTags={this.state.allTags}
-            allPeople={this.state.people}
+            allPeople={this.state.allPeople}
             onClose={this.onCloseEditPage}
-            onSave={this.onSaveEditPage}
+            onSavePerson={this.onSavePerson}
             onSaveImage={this.onSaveImage}
           />
         }

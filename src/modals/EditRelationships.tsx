@@ -5,11 +5,13 @@
 import * as React from 'react';
 import * as OF from 'office-ui-fabric-react'
 import { Person } from '../models/person'
-import { Relationship, RType } from '../models/relationship'
+import Search from '../modals/Search'
+import { Relationship, RType, RelationshipType } from '../models/relationship'
 
 export interface ReceivedProps {
   relationships: Relationship[]
   allPeople: Person[]
+  person: Person
   onSave: (relationships: Relationship[]) => void
   onCancel: () => void
 }
@@ -17,6 +19,7 @@ export interface ReceivedProps {
 interface ComponentState {
   relationships: Relationship[]
   types: { key: string; text: any; }[]
+  searchTarget: Relationship | null
 }
 
 class EditRelationships extends React.Component<ReceivedProps, ComponentState> {
@@ -25,7 +28,8 @@ class EditRelationships extends React.Component<ReceivedProps, ComponentState> {
     relationships: [],
     types: Object.keys(RType).map(e => {
       return {key: RType[e], text: RType[e]}
-    })
+    }),
+    searchTarget: null
   }
 
   componentDidMount() {
@@ -37,31 +41,95 @@ class EditRelationships extends React.Component<ReceivedProps, ComponentState> {
     }
   }
 
+  // --- Search ---
+  @OF.autobind
+  onCloseSearch(): void {
+    this.setState({searchTarget: null})
+  }
+
+  @OF.autobind
+  onSelectSearch(person:  Person): void {
+
+    let relationships = this.state.relationships.filter(r => r !== this.state.searchTarget)
+    let changedRelationship: Relationship = {...this.state.searchTarget!, guid: person.guid }
+    relationships.push(changedRelationship)
+
+    this.setState({
+      relationships,
+      searchTarget: null
+    })
+  }
+
+  @OF.autobind 
+  onTypeChange(option: OF.IDropdownOption, relationship: Relationship) {
+    let relationships = this.state.relationships.filter(r => r !== relationship)
+    let type = RelationshipType.getRelationshipType(option.text)
+    let changedRelationship: Relationship = {...relationship, type: type} 
+    relationships.push(changedRelationship)
+
+    this.setState({
+      relationships
+    })
+  }
+
+  @OF.autobind
+  onClickSearch(relationship: Relationship): void {
+    this.setState({searchTarget: relationship})
+  }
+  
+  @OF.autobind
+  private onClickDelete(relationship: Relationship) {
+    this.setState({
+      relationships: this.state.relationships.filter(r => r.guid !== relationship.guid)
+    }) 
+  }
+
   @OF.autobind
   private onClickSave() {
     this.props.onSave(this.state.relationships)
   }
 
   @OF.autobind
+  private onClickAdd() {
+    const newRelationship: Relationship = 
+      {   type: RelationshipType.getRelationshipType(RType.BOSS_OF),
+          guid: "none"
+      }
+    this.setState({
+      relationships: [...this.state.relationships, newRelationship]
+    }) 
+  }
+
+  @OF.autobind
   private onRenderCell(relationship: Relationship, index: number, isScrolling: boolean): JSX.Element {
     const person = this.props.allPeople.find(p => p.guid === relationship.guid)
-    const name = person ? person.fullName() : "MISSING PERSON"
+    const name = person ? person.fullName() : "--"
     return (
       <div className="FilterLine">
-        <div className='EditSection'>
-          <OF.Dropdown
-            className="EditRelationshipDropdown"
-            defaultSelectedKey={relationship.type.from}
-            options={this.state.types}
-          />
-          <OF.Label className="EditRelationshipLabel">
-            {name}
-          </OF.Label>
-          <OF.IconButton
-              className="ButtonIcon ButtonDark"
-        //LARS      onClick={this.onEditRelationships}
-              iconProps={{ iconName: 'Search' }}
-          />
+        <div className='EditSection EditRelationshipSection'>
+          <div>
+            <OF.Dropdown
+              className="EditRelationshipDropdown"
+              defaultSelectedKey={relationship.type.from}
+              options={this.state.types}
+              onChanged={(obj) => this.onTypeChange(obj, relationship)}
+            />
+            <OF.IconButton
+              className="ButtonIcon ButtonDark FloatRight"
+              onClick={() => this.onClickDelete(relationship)}
+              iconProps={{ iconName: 'Delete' }}
+            />
+          </div>
+          <div>
+            <OF.Label className="EditRelationshipLabel">
+              {name}
+            </OF.Label>
+            <OF.IconButton
+                className="ButtonIcon ButtonDark FloatRight"
+                onClick={() => this.onClickSearch(relationship)}
+                iconProps={{ iconName: 'Search' }}
+            />
+          </div>
         </div>
       </div>
     );
@@ -72,7 +140,12 @@ class EditRelationships extends React.Component<ReceivedProps, ComponentState> {
     return (
       <div className="ModalPage">
         <div className="ContentHeader FilterHeader">
-          Tags
+          <OF.IconButton
+              className="ButtonIcon ButtonPrimary ButtonTopLeft"
+              onClick={this.onClickAdd}
+              iconProps={{ iconName: 'CircleAddition' }}
+          />
+          Relationships
         </div>
         <div className="ModalBody">
           <OF.List
@@ -94,6 +167,14 @@ class EditRelationships extends React.Component<ReceivedProps, ComponentState> {
               iconProps={{ iconName: 'Cancel' }}
           />
         </div>
+        {this.state.searchTarget &&
+            <Search
+              people={this.props.allPeople}
+              exclude={this.props.person}
+              onCancel={this.onCloseSearch}
+              onSelect={this.onSelectSearch}
+            />
+        }
       </div>
     );
   }

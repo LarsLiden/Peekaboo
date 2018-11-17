@@ -6,7 +6,7 @@ import * as React from 'react';
 import * as OF from 'office-ui-fabric-react'
 import '../fabric.css'
 import { Person } from '../models/person'
-import { Relationship } from '../models/relationship'
+import { Relationship, RelationshipType } from '../models/relationship'
 import { Filter, Tag } from '../models/models'
 import CropPage from './CropPage'
 import DetailTags from '../Detail/DetailTags'
@@ -20,7 +20,6 @@ import DetailEvents from '../Detail/DetailEvents'
 import DetailKeyValues from '../Detail/DetailKeyValues'
 import DetailSocialNetworks from '../Detail/DetailSocialNetworks'
 import DetailEditText from '../Detail/DetailEditText'
-
 import { FilePicker } from 'react-file-picker'
 import "./ViewPage.css"
 
@@ -30,8 +29,8 @@ export interface ReceivedProps {
   allTags: Tag[]
   allPeople: Person[]
   onSaveImage: (person: Person, blob: Blob) => void
-  onSave: (person: Person) => void
-  onClose: () => void
+  onSavePerson: (person: Person) => void
+  onClose: (person?: Person) => void
 }
 
 const baseImage = "https://peekaboo.blob.core.windows.net/faces/"
@@ -152,6 +151,85 @@ class EditPage extends React.Component<ReceivedProps, ComponentState> {
     this.setState({isEditRelationshipsOpen: true})
   }
 
+  getReversePerson(updatedPeople: Person[], relationship: Relationship): Person | null {
+    // First see if I have person already
+    let person = updatedPeople.find(up => up.guid === relationship.guid)
+    if (person) {
+      return person
+    }
+    // If not get them
+    person = this.props.allPeople.find(ap => ap.guid === relationship.guid)
+    if (person) {
+      let copy = new Person(person)
+      updatedPeople.push(copy)
+      return copy
+    }
+    console.log("MisSING PERSON")
+    return null
+  }
+
+  findRelationship(person: Person, relationship: Relationship): Relationship | undefined {
+    return person.relationships.find(r => 
+      r.guid === person.guid && r.type.from === relationship.type.to)
+  }
+
+  makeReverseRelationship(relationship: Relationship, guid: string): Relationship {
+    let reverse: Relationship =  {
+      guid,
+      type: RelationshipType.getRelationshipType(relationship.type.to)
+    }
+    return reverse
+  }
+
+  saveReverseRelationships() {
+    // Identify changes
+    let removed = this.props.person.relationships.filter(or => !this.state.relationships.find(er => er.guid === or.guid))
+    let added = this.state.relationships.filter(or => !this.props.person.relationships.find(er => er.guid === or.guid))
+    let changed = this.state.relationships.filter(or => {
+      let found = this.props.person.relationships.find(er => er.guid === or.guid)
+      return (found && found.type !== or.type)
+    })
+
+    // Update the reverse people
+    let updatedPeople: Person[] = []
+
+    // Removals
+    removed.forEach(removeRelationship => {
+      let reversePerson = this.getReversePerson(updatedPeople, removeRelationship)
+      if (reversePerson) {
+        // Remove the relationship
+        reversePerson.relationships = reversePerson.relationships.filter(r => 
+          r.guid !== this.props.person.guid || r.type.from !== removeRelationship.type.from)
+      }
+    })
+
+    // Additions
+    added.forEach(addedRelationship => {
+      let reversePerson = this.getReversePerson(updatedPeople, addedRelationship)
+      if (reversePerson) {
+        // Create and add reverse relationship
+        let reverseRelationship = this.makeReverseRelationship(addedRelationship, this.props.person.guid)
+        reversePerson.relationships.push(reverseRelationship)
+      }
+    })
+
+    // Changes
+    changed.forEach(changedRelationship => {
+      let reversePerson = this.getReversePerson(updatedPeople, changedRelationship)
+      if (reversePerson) {
+        // Remove the existing relationship
+        reversePerson.relationships = reversePerson.relationships.filter(r => r.guid !== changedRelationship.guid)
+
+        // Create and add reverse new relationship
+        let reverseRelationship = this.makeReverseRelationship(changedRelationship, this.props.person.guid)
+        reversePerson.relationships.push(reverseRelationship)
+      }
+    })
+
+    // Now save changes
+    updatedPeople.forEach(person => this.props.onSavePerson(person))
+  }
+
   // --- DELETE PHOTO ---
   @OF.autobind
   onDeletePhoto(): void {
@@ -236,6 +314,9 @@ class EditPage extends React.Component<ReceivedProps, ComponentState> {
 
   @OF.autobind
   onClickSave(): void {
+
+    this.saveReverseRelationships()
+
     let newPerson = new Person({...this.props.person})
     newPerson.firstName = this.state.firstName
     newPerson.lastName = this.state.lastName
@@ -244,7 +325,8 @@ class EditPage extends React.Component<ReceivedProps, ComponentState> {
     newPerson.alternateName = this.state.alternateName
     newPerson.description = this.state.description
     newPerson.tags = this.state.tags
-    this.props.onSave(newPerson)
+    newPerson.relationships = this.state.relationships
+    this.props.onClose(newPerson)
   }
 
   @OF.autobind
@@ -378,8 +460,9 @@ class EditPage extends React.Component<ReceivedProps, ComponentState> {
                 <div className='EditSection'>
                   <DetailRelationships
                     inEdit={true}
-                    relationships={this.props.person.relationships}
+                    relationships={this.state.relationships}
                     allPeople={this.props.allPeople}
+                    onSelectPerson={() => {}}  // LARS temp
                   />
                   <OF.IconButton
                       className="ButtonIcon ButtonDark"
@@ -454,6 +537,7 @@ class EditPage extends React.Component<ReceivedProps, ComponentState> {
             <EditRelationships
               relationships={this.state.relationships}
               allPeople={this.props.allPeople}
+              person={this.props.person}
               onCancel={this.onCancelEditRelationships}
               onSave={this.onSaveEditRelationships}
             >

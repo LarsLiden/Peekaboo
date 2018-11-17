@@ -122,12 +122,18 @@
   margin: 5px;
 }
 
-.ButtonCorner {
-  position: fixed !important;
-  top: 15px;
-  left: 15px;
-  margin: 3px !important;
-  padding: 0px !important;
+.ButtonBottomRight {
+  position: absolute !important;
+  bottom: 0px;
+  right: 0px;
+  margin-bottom: 10px;
+  margin-right: 0px;
+}
+
+.ButtonTopLeft {
+  position: absolute !important;
+  top: 0px;
+  left: 0px;
 }
 
 .ButtonDark {
@@ -172,6 +178,10 @@
   color: var(--color-themeTertiary);
 }
 
+.SearchDisabled {
+  color: #555555
+}
+
 .SearchText {
   font-size: 20px !important;
 }
@@ -199,19 +209,25 @@
   border-top: solid 1px #555555;
 }
 
+.EditRelationshipSection {
+  height: 120px;
+}
+
 .EditRelationshipDropdown {
-  margin-top: 10px !important;
+  margin-top: 15px !important;
+  float: left;
   width: 150px;
 }
 
 .EditRelationshipLabel {
-  display: inline-block !important;
+  float: left;
   margin-top: 10px !important;
   width: 230px;
   height: 50px;
   font-size: 20px;
   text-align: left;
   margin-left: 10px !important;
+  margin-top: 25px !important;
 }
 
 .LoginTextInput {

@@ -25,9 +25,28 @@
 }
 
 .ViewBodyNameColumn {
+  position: relative;
   width: 150px;
   vertical-align: top;
   display: inline-block;
+  height: 100%;
+}
+
+.DetailRelationship {
+  line-height: 32px;
+}
+
+.DetailRelationshipLink {
+  font-size: 17px !important;
+  margin: 0px !important;
+  padding: 0px !important;
+  color: var(--color-themeTertiary);
+}
+
+.DetailRelationshipPlain {
+  font-size: 17px !important;
+  margin: 0px !important;
+  padding: 0px !important;
 }
 
 .ContentFooter {

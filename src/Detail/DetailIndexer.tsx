@@ -27,13 +27,13 @@ class DetailText extends React.Component<ReceivedProps, ComponentState> {
   }
 
   public render() {
-
+    let buttonClass = `ButtonIcon ${this.props.isVertical ? "ButtonDark" : "ButtonPrimary"}`
     return (
       <div
         className={`DetailIndexer${this.props.isVertical ? " DetailIndexerVertical" : ""}`}
         >
         <OF.IconButton
-          className="ButtonIcon ButtonPrimary"
+          className={buttonClass}
           onClick={this.props.onPrev}
           iconProps={{ iconName: this.props.isVertical ? 'CaretUpSolid8' : 'CaretLeftSolid8' }}
         />
@@ -46,7 +46,7 @@ class DetailText extends React.Component<ReceivedProps, ComponentState> {
           />
         </div>
         <OF.IconButton
-          className="ButtonIcon ButtonPrimary"
+          className={buttonClass}
           onClick={this.props.onNext}
           iconProps={{ iconName: this.props.isVertical ? 'CaretDownSolid8' : 'CaretRightSolid8' }}
         />

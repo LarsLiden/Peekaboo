@@ -3,7 +3,7 @@
  * Licensed under the MIT License.
  */
 import { Person } from "./models/person";
-import { PerfType, QuizPerson, LibraryPerson, Filter, FilterSet, Tag, QuizSet } from './models/models'
+import { PerfType, QuizPerson, Filter, FilterSet, Tag, QuizSet } from './models/models'
 import { MAX_TIME, BIAS } from './models/const'
 
 export function toQuizPerson(person: Person, perfType: PerfType): QuizPerson {
@@ -14,15 +14,6 @@ export function toQuizPerson(person: Person, perfType: PerfType): QuizPerson {
         blobNames: person.photoFilenames,
         performance: person.performance(perfType),
         } as QuizPerson
-}
-
-export function toLibraryPerson(person: Person, perfType: PerfType): LibraryPerson {
-    return {
-        guid: person.guid,
-        fullName: person.fullName(),
-        blobName: person.photoFilenames[0],
-        tags: person.tags
-        } as LibraryPerson 
 }
 
 export function filteredPeople(people: Person[], filter: Filter): Person[] {      
@@ -61,10 +52,8 @@ export function getPerson(people: Person[], guid: string) {
 export function getFilterSet(people: Person[], filter: Filter): FilterSet
 {
     // Filter people by tags
-    let libraryPeople = filteredPeople(people, filter).map(p => {
-        return toLibraryPerson(p, filter.perfType)
-    })
-    return { libraryPeople, selectedIndex: 0 }
+    let filtered = filteredPeople(people, filter)
+    return { people: filtered, selectedIndex: 0 }
 }
 
 export function extractBlockedTags(people: Person[], blockedTags: string[]) : Tag[] {

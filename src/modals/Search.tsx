@@ -8,6 +8,7 @@ import { Person } from '../models/person'
 
 export interface ReceivedProps {
   people: Person[]
+  exclude?: Person
   onSelect: (person: Person) => void
   onCancel: () => void
 }
@@ -72,7 +73,10 @@ class Search extends React.Component<ReceivedProps, ComponentState> {
   private onRenderCell(person: Person, index: number, isScrolling: boolean): JSX.Element {
     
     let nameRender: JSX.Element | null
-    if (this.containsSearch(person.firstName, this.state.searchText)) {
+    if (this.props.exclude && person.guid === this.props.exclude.guid) {
+      nameRender =(<span className="SearchDisabled">{person.fullName()}</span>)
+    }
+    else if (this.containsSearch(person.firstName, this.state.searchText)) {
       nameRender = this.renderFound(this.state.searchText, "", person.firstName, ` ${person.lastName}`)
     }
     else if (this.containsSearch(person.lastName, this.state.searchText)) {
@@ -94,7 +98,11 @@ class Search extends React.Component<ReceivedProps, ComponentState> {
     return (
       <div className="FilterLine">
         <OF.Button className="SearchText"
-            onClick={()=>this.props.onSelect(person)}
+            onClick={()=> {
+              if (!this.props.exclude || person.guid !== this.props.exclude.guid) {
+                this.props.onSelect(person)
+              }
+            }}
           >
           {nameRender}
         </OF.Button>

@@ -25,7 +25,7 @@ export interface ReceivedProps {
   onClickFilter: () => void
   onNextPerson: () => void
   onPrevPerson: () => void
-  onSelectPerson: (person: Person) => void
+  onSelectPerson: (guid: string) => void
 }
 
 const baseImage = "https://peekaboo.blob.core.windows.net/faces/"
@@ -42,24 +42,24 @@ class ViewPage extends React.Component<ReceivedProps, ComponentState> {
     isSearchOpen: false
   }
 
-// --- Search ---
-@OF.autobind
-onCloseSearch(): void {
-  this.setState({isSearchOpen: false})
-}
+  // --- Search ---
+  @OF.autobind
+  onCloseSearch(): void {
+    this.setState({isSearchOpen: false})
+  }
 
-@OF.autobind
-onSelectSearch(person:  Person): void {
-  this.setState({
-    isSearchOpen: false
-  })
-  this.props.onSelectPerson(person)
-}
+  @OF.autobind
+  onSelectSearch(person:  Person): void {
+    this.setState({
+      isSearchOpen: false
+    })
+    this.props.onSelectPerson(person.guid)
+  }
 
-@OF.autobind
-onClickSearch(): void {
-  this.setState({isSearchOpen: true})
-}
+  @OF.autobind
+  onClickSearch(): void {
+    this.setState({isSearchOpen: true})
+  }
 
   @OF.autobind
   onNextPhoto(): void {
@@ -99,17 +99,6 @@ onClickSearch(): void {
         <div>
           <div className="ViewPage">
             <div className="ContentHeader">
-              <OF.IconButton
-                className="ButtonIcon ButtonCorner ButtonDark"
-                onClick={this.props.onEdit}
-                iconProps={{ iconName: 'EditSolid12' }}
-              />
-              <div className="ViewBodyNameColumn">
-                <DetailText title="First Name" alignRight={true} text={this.props.person.firstName}/>
-                <DetailText title="Last Name" alignRight={true} text={this.props.person.lastName}/>
-                <DetailText title="Nickname" alignRight={true} text={this.props.person.nickName}/>
-                <DetailText title="Maiden Name" alignRight={true} text={this.props.person.maidenName}/>
-              </div>
               <div className="ViewImageColumn">
                 <OF.Image
                   className="QuizImageHolder"
@@ -125,9 +114,20 @@ onClickSearch(): void {
                   total={this.props.person.photoFilenames.length}
                 />
               </div>
+              <div className="ViewBodyNameColumn">
+                <DetailText title="First Name" alignRight={true} text={this.props.person.firstName}/>
+                <DetailText title="Last Name" alignRight={true} text={this.props.person.lastName}/>
+                <DetailText title="Nickname" alignRight={true} text={this.props.person.nickName}/>
+                <OF.IconButton
+                  className="ButtonIcon ButtonBottomRight ButtonDark"
+                  onClick={this.props.onEdit}
+                  iconProps={{ iconName: 'EditSolid12' }}
+                />
+              </div>
             </div>
             <div className="ContentBody">
               <DetailText title="Description" text={this.props.person.description} isLong={true}/>
+              <DetailText title="Description" text={this.props.person.alternateName} isLong={true}/>
               <DetailTags 
                 tags={this.props.person.tags}
                 filter={this.props.filter}
@@ -135,6 +135,7 @@ onClickSearch(): void {
               <DetailRelationships
                 relationships={this.props.person.relationships}
                 allPeople={this.props.allPeople}
+                onSelectPerson={this.props.onSelectPerson}
               />
               <DetailEvents
                 events={this.props.person.events}
@@ -160,7 +161,7 @@ onClickSearch(): void {
                   onPrev={this.onPrevPerson}
                   onNext={this.onNextPerson}
                   currentIndex={this.props.filterSet.selectedIndex}
-                  total={this.props.filterSet.libraryPeople.length}
+                  total={this.props.filterSet.people.length}
                 />
                 <OF.IconButton
                     className="ButtonIcon ButtonPrimary"
@@ -185,7 +186,7 @@ onClickSearch(): void {
             }
           </div>
           {this.state.isSearchOpen &&
-              <Search
+            <Search
               people={this.props.allPeople}
               onCancel={this.onCloseSearch}
               onSelect={this.onSelectSearch}
