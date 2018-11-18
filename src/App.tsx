@@ -133,6 +133,13 @@ class App extends React.Component<{}, ComponentState> {
             let allPeople: Person[] = []
             loaded.forEach(people => allPeople = [...allPeople, ...people])
 
+            // Sort people alphabetically
+            allPeople = allPeople.sort((a, b) => {
+              if (a.fullName().toLowerCase() < b.fullName().toLowerCase()) return -1
+              else if (b.fullName().toLowerCase() < a.fullName().toLowerCase()) return 1
+              else return 0
+            })
+
             // Extact tags
             let allTags = Convert.extractTags(allPeople)
             allTags = allTags.sort((a, b) => {
@@ -200,7 +207,7 @@ class App extends React.Component<{}, ComponentState> {
   private async onSavePerson(person: Person) {
     // Replace local
     let people = this.state.allPeople.filter(p => p.guid !== person.guid)
-    this.setState({
+    setStatePromise(this, {
       allPeople: [...people, person]
     })
     // Save

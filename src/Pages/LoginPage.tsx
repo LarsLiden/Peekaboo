@@ -5,6 +5,7 @@
 import * as React from 'react';
 import * as OF from 'office-ui-fabric-react'
 import Client from '../service/client'
+import { HEAD_IMAGE } from '../Util'
 import { StartState } from '../models/models'
 
 export interface ReceivedProps {
@@ -71,7 +72,7 @@ class LoginPage extends React.Component<ReceivedProps, ComponentState> {
       className="LoginPage"
     >
       <OF.Image className="LoginImage"
-        src="https://peekaboo.blob.core.windows.net/resources/HaveWeHead.png"
+        src={HEAD_IMAGE}
         imageFit={OF.ImageFit.cover}
         maximizeFrame={true}
       />

@@ -17,7 +17,7 @@ class DetailCounter extends React.Component<ReceivedProps, {}> {
       return (
         <div className="DetailCount">
           <div>
-            {`${this.props.current+1}`}
+            {this.props.total === 0 ? '0' : `${this.props.current+1}`}
           </div>
           <div 
           className="DetailCountDivider">

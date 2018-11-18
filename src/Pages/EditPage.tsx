@@ -182,6 +182,8 @@ class EditPage extends React.Component<ReceivedProps, ComponentState> {
   }
 
   saveReverseRelationships() {
+    // TODO - issue when more then one relationship type with a person.  Need id's to identify
+    
     // Identify changes
     let removed = this.props.person.relationships.filter(or => !this.state.relationships.find(er => er.guid === or.guid))
     let added = this.state.relationships.filter(or => !this.props.person.relationships.find(er => er.guid === or.guid))
@@ -218,7 +220,7 @@ class EditPage extends React.Component<ReceivedProps, ComponentState> {
       let reversePerson = this.getReversePerson(updatedPeople, changedRelationship)
       if (reversePerson) {
         // Remove the existing relationship
-        reversePerson.relationships = reversePerson.relationships.filter(r => r.guid !== changedRelationship.guid)
+        reversePerson.relationships = reversePerson.relationships.filter(r => r.guid !== this.props.person.guid)
 
         // Create and add reverse new relationship
         let reverseRelationship = this.makeReverseRelationship(changedRelationship, this.props.person.guid)

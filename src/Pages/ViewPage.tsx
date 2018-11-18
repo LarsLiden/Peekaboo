@@ -4,6 +4,7 @@ import '../fabric.css'
 import { Person } from '../models/person'
 import { Filter } from '../models/models'
 import { FilterSet} from '../models/models'
+import { HEAD_IMAGE } from '../Util'
 import Search from '../modals/Search'
 import DetailText from '../Detail/DetailText'
 import DetailTags from '../Detail/DetailTags'
@@ -94,7 +95,10 @@ class ViewPage extends React.Component<ReceivedProps, ComponentState> {
   }
 
   public render() {
-    const imageFile = baseImage + this.props.person.photoFilenames[this.state.photoIndex]
+    const imageFile = this.props.person.photoFilenames.length > 0
+      ? baseImage + this.props.person.photoFilenames[this.state.photoIndex]
+      : HEAD_IMAGE
+
       return (
         <div>
           <div className="ViewPage">
