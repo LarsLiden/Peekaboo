@@ -33,7 +33,7 @@ class EditRelationships extends React.Component<ReceivedProps, ComponentState> {
   }
 
   componentDidMount() {
-    if (this.state.relationships.length == 0) {
+    if (this.state.relationships.length === 0) {
       // Make a local copy 
       this.setState({
         relationships: [...this.props.relationships]
@@ -78,22 +78,22 @@ class EditRelationships extends React.Component<ReceivedProps, ComponentState> {
   }
   
   @OF.autobind
-  private onClickDelete(relationship: Relationship) {
+  onClickDelete(relationship: Relationship) {
     this.setState({
       relationships: this.state.relationships.filter(r => r.guid !== relationship.guid)
     }) 
   }
 
   @OF.autobind
-  private onClickSave() {
+  onClickSave() {
     this.props.onSave(this.state.relationships)
   }
 
   @OF.autobind
-  private onClickAdd() {
-    const newRelationship: Relationship = 
-      {   type: RelationshipType.getRelationshipType(RType.BOSS_OF),
-          guid: "none"
+  onClickAdd() {
+    const newRelationship: Relationship = {
+        type: RelationshipType.getRelationshipType(RType.BOSS_OF),
+        guid: "none"
       }
     this.setState({
       relationships: [...this.state.relationships, newRelationship]
@@ -101,7 +101,7 @@ class EditRelationships extends React.Component<ReceivedProps, ComponentState> {
   }
 
   @OF.autobind
-  private onRenderCell(relationship: Relationship, index: number, isScrolling: boolean): JSX.Element {
+  onRenderCell(relationship: Relationship, index: number, isScrolling: boolean): JSX.Element {
     const person = this.props.allPeople.find(p => p.guid === relationship.guid)
     const name = person ? person.fullName() : "--"
     return (
@@ -155,7 +155,8 @@ class EditRelationships extends React.Component<ReceivedProps, ComponentState> {
           />
         </div>
         <div
-          className="ContentFooter">
+          className="ContentFooter"
+        >
           <OF.IconButton
               className="ButtonIcon ButtonPrimary"
               onClick={this.onClickSave}

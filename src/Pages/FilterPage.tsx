@@ -15,10 +15,7 @@ export interface ReceivedProps {
   onSetBlockTag: (tagName: string, value: boolean) => void
 }
 
-interface ComponentState {
-}
-
-class FilterPage extends React.Component<ReceivedProps, ComponentState> {
+class FilterPage extends React.Component<ReceivedProps, {}> {
 
   @OF.autobind
   onClickClose() {
@@ -26,24 +23,24 @@ class FilterPage extends React.Component<ReceivedProps, ComponentState> {
   }
 
   @OF.autobind
-  private onCheckboxRequireChange(isChecked: boolean = false, tag: Tag) {
+  onCheckboxRequireChange(isChecked: boolean = false, tag: Tag) {
     this.props.onSetRequireTag(tag.name, isChecked)
   }
 
   @OF.autobind
-  private onCheckboxBlockChange(isChecked: boolean = false, tag: Tag) {
+  onCheckboxBlockChange(isChecked: boolean = false, tag: Tag) {
     this.props.onSetBlockTag(tag.name, isChecked)
   }
 
   @OF.autobind
-  private onRenderCell(item: Tag, index: number, isScrolling: boolean): JSX.Element {
+  onRenderCell(item: Tag, index: number, isScrolling: boolean): JSX.Element {
     let isRequired = this.props.filter.required.indexOf(item.name) > -1
     let isBlocked = this.props.filter.blocked.indexOf(item.name) > -1
     return (
       <div className="FilterLine">
         <div 
           className={`FilterName${isBlocked ? ' StrikeThrough' : ''}`}
-          >
+        >
           {item.name}
         </div>
         <div className="FilterNumber">{isBlocked ? "" : item.count}</div>
@@ -53,8 +50,8 @@ class FilterPage extends React.Component<ReceivedProps, ComponentState> {
           checked={isRequired}
         />
         <div
-          className="FilterSpacer">
-        </div>
+          className="FilterSpacer"
+        />
         <OF.Checkbox 
           className={`FilterCheckbox FilterCheckboxBlock${isBlocked ? ' FilterCheckboxBlockSelected' : ''}`}
           onChange={(ev, isChecked) => this.onCheckboxBlockChange(isChecked, item)} 
@@ -63,8 +60,8 @@ class FilterPage extends React.Component<ReceivedProps, ComponentState> {
       </div>
     );
   }
+
   public render() {
-  
     return (
       <div className="FilterPage">
         <div className="ContentHeader FilterHeader">
@@ -76,7 +73,8 @@ class FilterPage extends React.Component<ReceivedProps, ComponentState> {
           onRenderCell={this.onRenderCell}
         />
         <div
-          className="ContentFooter">
+          className="ContentFooter"
+        >
           <OF.DefaultButton
               className="QuizButton"
               onClick={this.onClickClose}

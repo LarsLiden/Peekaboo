@@ -1,9 +1,12 @@
+/**
+ * Copyright (c) Lars Liden. All rights reserved.  
+ * Licensed under the MIT License.
+ */
 import * as React from 'react';
 import * as OF from 'office-ui-fabric-react'
 import '../fabric.css'
 import { Person } from '../models/person'
-import { Filter } from '../models/models'
-import { FilterSet} from '../models/models'
+import { Filter, FilterSet } from '../models/models'
 import { HEAD_IMAGE } from '../Util'
 import Search from '../modals/Search'
 import DetailText from '../Detail/DetailText'
@@ -24,6 +27,7 @@ export interface ReceivedProps {
   onContinueQuiz: () => void
   onEdit: () => void
   onClickFilter: () => void
+  onNewPerson: () => void
   onNextPerson: () => void
   onPrevPerson: () => void
   onSelectPerson: (guid: string) => void
@@ -154,11 +158,17 @@ class ViewPage extends React.Component<ReceivedProps, ComponentState> {
             {this.props.filterSet 
             ?
               <div
-                className="ContentFooter">
+                className="ContentFooter"
+              >
                 <OF.IconButton
-                    className="ButtonIcon ButtonPrimary"
+                    className="ButtonIcon ButtonPrimary FloatLeft"
                     onClick={() => this.props.onClickFilter()}
                     iconProps={{ iconName: 'Filter' }}
+                />
+                <OF.IconButton
+                    className="ButtonIcon ButtonPrimary FloatLeft"
+                    onClick={() => this.onClickSearch()}
+                    iconProps={{ iconName: 'Search' }}
                 />
                 <DetailIndexer
                   isVertical={false}
@@ -168,19 +178,20 @@ class ViewPage extends React.Component<ReceivedProps, ComponentState> {
                   total={this.props.filterSet.people.length}
                 />
                 <OF.IconButton
-                    className="ButtonIcon ButtonPrimary"
-                    onClick={() => this.onClickSearch()}
-                    iconProps={{ iconName: 'Search' }}
+                    className="ButtonIcon ButtonPrimary FloatRight"
+                    onClick={() => this.props.onNewPerson()}
+                    iconProps={{ iconName: 'CirclePlus' }}
                 />
                 <OF.IconButton
-                    className="ButtonIcon ButtonPrimary"
+                    className="ButtonIcon ButtonPrimary FloatRight"
                     onClick={() => this.props.onClickQuiz()}
                     iconProps={{ iconName: 'Unknown' }}
                 />
               </div>
             :
               <div
-                className="ContentFooter">
+                className="ContentFooter"
+              >
                 <OF.IconButton
                   className="ButtonIcon ButtonPrimary"
                   onClick={this.props.onContinueQuiz}

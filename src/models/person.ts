@@ -4,6 +4,7 @@
  */
 import { Performance } from "./performance";
 import { Relationship } from "./relationship"
+import { generateGUID } from "../Util"
 import { PerfType, Event, KeyValue, SocialNet } from './models'
 
 export class Person {
@@ -39,6 +40,11 @@ export class Person {
             this.photoPerformance = new Performance(init.photoPerformance)
             this.namePerformance = new Performance(init.namePerformance)
             this.descPerformance = new Performance(init.descPerformance)
+        } else {
+            this.guid = generateGUID()
+            this.photoPerformance = new Performance()
+            this.namePerformance = new Performance()
+            this.descPerformance = new Performance()
         }
     }
 

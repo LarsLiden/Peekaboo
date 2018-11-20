@@ -22,7 +22,7 @@ class CropPage extends React.Component<ReceivedProps, ComponentState> {
 
   state: ComponentState = {
     imageBlob: null,
-    crop: {aspect: 1/1, x:0, y:0}
+    crop: {aspect: 1 / 1, x: 0, y: 0}
   }
 
   @OF.autobind
@@ -47,8 +47,7 @@ class CropPage extends React.Component<ReceivedProps, ComponentState> {
       this.state.crop.height!
     )
 
-
-    canvas.toBlob(blob =>{
+    canvas.toBlob(blob => {
       this.props.onSave(blob!)
     })
   }
@@ -69,23 +68,24 @@ class CropPage extends React.Component<ReceivedProps, ComponentState> {
       <div className="FilterPage">
         {this.props.imageURL &&
           <div>
-          <ReactCrop
-            src={this.props.imageURL}
-            crop={this.state.crop}
-            onChange={this.onCropChange} 
-          />
-          <div
-            className="ContentFooter">
-              <OF.IconButton
-                  className="ButtonIcon ButtonPrimary"
-                  onClick={this.onSave}
-                  iconProps={{ iconName: 'Save' }}
-              />
-              <OF.IconButton
-                  className="ButtonIcon ButtonPrimary"
-                  onClick={this.props.onClose}
-                  iconProps={{ iconName: 'Cancel' }}
-              />
+            <ReactCrop
+              src={this.props.imageURL}
+              crop={this.state.crop}
+              onChange={this.onCropChange} 
+            />
+            <div
+              className="ContentFooter"
+            >
+                <OF.IconButton
+                    className="ButtonIcon ButtonPrimary"
+                    onClick={this.onSave}
+                    iconProps={{ iconName: 'Save' }}
+                />
+                <OF.IconButton
+                    className="ButtonIcon ButtonPrimary"
+                    onClick={this.props.onClose}
+                    iconProps={{ iconName: 'Cancel' }}
+                />
             </div>
           </div>
         }

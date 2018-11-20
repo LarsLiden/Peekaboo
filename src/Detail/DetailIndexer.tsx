@@ -20,7 +20,7 @@ interface ComponentState {
   inEditMode: boolean
 }
 
-class DetailText extends React.Component<ReceivedProps, ComponentState> {
+class DetailIndexer extends React.Component<ReceivedProps, ComponentState> {
 
   state: ComponentState = {
     inEditMode: false
@@ -55,4 +55,4 @@ class DetailText extends React.Component<ReceivedProps, ComponentState> {
   }
 }
 
-export default DetailText;
+export default DetailIndexer;

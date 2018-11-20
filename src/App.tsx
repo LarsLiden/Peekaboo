@@ -7,13 +7,15 @@ import './App.css';
 import './fabric.css'
 import Client from './service/client'
 import * as OF from 'office-ui-fabric-react'
-import { setStatePromise } from './Util'
-import { QuizSet, QuizPerson, FilterSet, Tag, Filter, PerfType } from './models/models'
+import { setStatePromise, SAD_IMAGE } from './Util'
+import { QuizSet, QuizPerson, FilterSet, Tag, Filter, PerfType, User } from './models/models'
 import { Person } from './models/person'
 import { TestResult } from './models/performance'
+import Confirm from './modals/Confirm'
 import * as Convert from './convert'
-import QuizPage from './Pages/QuizPage';
+import QuizPage from './Pages/QuizPage'
 import LoadPage from './Pages/LoadPage'
+import NewUserPage from './Pages/NewUserPage'
 import FilterPage from './Pages/FilterPage'
 import LoginPage from './Pages/LoginPage'
 import ViewPage from './Pages/ViewPage'
@@ -21,7 +23,8 @@ import EditPage from './Pages/EditPage'
 
 export enum Page {
   LOGIN = "MENU",
-  LOAD ="LOAD",
+  NEWUSER = "NEWUSER",
+  LOAD = "LOAD",
   FILTER = "FILTER",
   QUIZ = "QUIZ",
   VIEW = "VIEW",
@@ -30,11 +33,12 @@ export enum Page {
 }
 
 interface ComponentState {
-  allPeople: Person[],
-  allTags: Tag[],
+  user: User | null
+  allPeople: Person[]
+  allTags: Tag[]
   loadletter: string,
-  loadlettercount: number,
-  loadpeoplecount: number,
+  loadlettercount: number
+  loadpeoplecount: number
   page: Page
   quizSet: QuizSet | null
   filterSet: FilterSet | null
@@ -42,11 +46,13 @@ interface ComponentState {
   filteredPeopleCount: number
   selectedPerson: Person | null
   filter: Filter
+  error: string | null
 }
 
 class App extends React.Component<{}, ComponentState> {
 
   state: ComponentState = {
+    user: null,
     allPeople: [],
     allTags: [],
     loadletter: "",
@@ -58,11 +64,12 @@ class App extends React.Component<{}, ComponentState> {
     filteredPeopleCount: 0,
     page: Page.LOGIN,
     selectedPerson: null,
-    filter: {required: [], blocked: [], perfType: PerfType.PHOTO}
+    filter: {required: [], blocked: [], perfType: PerfType.PHOTO},
+    error: null
   }
 
   @OF.autobind 
-  private async onClickFilter() {
+  async onClickFilter() {
     if (this.state.filteredTags.length === 0) {
       let filteredPeople = Convert.filteredPeople(this.state.allPeople, this.state.filter)
       let tags = Convert.filteredTags(filteredPeople, this.state.allPeople, this.state.filter)
@@ -80,30 +87,38 @@ class App extends React.Component<{}, ComponentState> {
   }
 
   @OF.autobind 
-  private async onEdit() {
+  async onEdit() {
     this.setState({
       page: Page.EDIT
     })
   }
 
   @OF.autobind 
-  private async viewLibraryPerson() {
-      let filterSet = this.state.filterSet
-      if (!filterSet) {
-        filterSet = Convert.getFilterSet(this.state.allPeople, this.state.filter)
-        filterSet!.selectedIndex = 0
-      }
-      let guid = filterSet!.people[filterSet!.selectedIndex].guid
+  async viewLibraryPerson() {
+    let filterSet = this.state.filterSet
+    if (!filterSet) {
+      filterSet = Convert.getFilterSet(this.state.allPeople, this.state.filter)
+      filterSet.selectedIndex = 0
+    }
+    // TODO: also might trigger if overconstrained filter
+    if (filterSet.people.length === 0) {
+      this.setState({
+        page: Page.NEWUSER
+      })
+    }
+    else {
+      let guid = filterSet.people[filterSet.selectedIndex].guid
       let selectedPerson = Convert.getPerson(this.state.allPeople, guid) || null
       this.setState({
         filterSet,
         selectedPerson,
         page: Page.VIEW
       })
+    }
   }
 
   @OF.autobind 
-  private viewQuizDetail(quizPerson: QuizPerson) {
+  viewQuizDetail(quizPerson: QuizPerson) {
       let selectedPerson = Convert.getPerson(this.state.allPeople, quizPerson.guid) || null
       this.setState({
         selectedPerson,
@@ -111,41 +126,46 @@ class App extends React.Component<{}, ComponentState> {
       })
   }
 
+  @OF.autobind async onLoginComplete(user: User) {
+    await setStatePromise(this, {user: user})
+    this.loadPeople()
+  }
+
   @OF.autobind 
-  private async loadPeople() {
+  async loadPeople() {
       let loaded: Person[][] = []
       this.setState({page: Page.LOAD})
 
-      var letters = "ABCDEFGHIJKLM"/*NOPQRSTUVWXYZ"*/.split("")
+      const letters = "ABCDEFGHIJKLM"/*NOPQRSTUVWXYZ"*/.split("")
       for (let letter of letters) {
-        Client.getPeopleStartingWith(letter, async (people) => {
+        Client.getPeopleStartingWith(this.state.user!, letter, async (people) => {
           console.log(`GOT ${letter}`)
           loaded.push(people)
           this.setState({
             loadletter: letter,
             loadlettercount: loaded.length,
-            loadpeoplecount: loaded.reduce((acc, people) => acc + people.length, 0)
+            loadpeoplecount: loaded.reduce((acc, p) => acc + p.length, 0)
           })
 
           // When all are loaded
           if (loaded.length >= letters.length) { 
 
             let allPeople: Person[] = []
-            loaded.forEach(people => allPeople = [...allPeople, ...people])
+            loaded.forEach(p => allPeople = [...allPeople, ...p])
 
             // Sort people alphabetically
             allPeople = allPeople.sort((a, b) => {
-              if (a.fullName().toLowerCase() < b.fullName().toLowerCase()) return -1
-              else if (b.fullName().toLowerCase() < a.fullName().toLowerCase()) return 1
-              else return 0
+              if (a.fullName().toLowerCase() < b.fullName().toLowerCase()) { return -1 }
+              else if (b.fullName().toLowerCase() < a.fullName().toLowerCase()) { return 1 }
+              else { return 0 }
             })
 
             // Extact tags
             let allTags = Convert.extractTags(allPeople)
             allTags = allTags.sort((a, b) => {
-                if (a.name.toLowerCase() < b.name.toLowerCase()) return -1
-                else if (b.name.toLowerCase() < a.name.toLowerCase()) return 1
-                else return 0
+                if (a.name.toLowerCase() < b.name.toLowerCase()) { return -1 }
+                else if (b.name.toLowerCase() < a.name.toLowerCase()) { return 1 }
+                else { return 0 }
             })
             await setStatePromise(this, {
               allPeople,
@@ -159,14 +179,12 @@ class App extends React.Component<{}, ComponentState> {
       }
   }
 
-  /*
   @OF.autobind 
-  private async onClickImport() {
-      await Client.import()
+  async onClickImport() {
+      await Client.import(this.state.user!)
   }
-  */
 
-  private async updateTags() {
+  async updateTags() {
     let filteredPeople = Convert.filteredPeople(this.state.allPeople, this.state.filter)
     let tags = Convert.filteredTags(filteredPeople, this.state.allPeople, this.state.filter)
       this.setState({
@@ -176,7 +194,7 @@ class App extends React.Component<{}, ComponentState> {
   }
 
   @OF.autobind 
-  private async onQuiz() {
+  async onQuiz() {
       let quizSet = Convert.quizSet(this.state.allPeople, this.state.filter) 
       this.setState({
         quizSet,
@@ -184,17 +202,28 @@ class App extends React.Component<{}, ComponentState> {
       })
   }
 
+  @OF.autobind
+  onCloseError() {
+    this.setState({error: null})
+  }
+
   @OF.autobind 
-  private async onCloseEditPage(person?: Person) {
+  async onCloseEditPage(person?: Person) {
     if (person) {
-      // Replace local
-      let people = this.state.allPeople.filter(p => p.guid !== person.guid)
-      this.setState({
-        allPeople: [...people, person],
-        selectedPerson: person,
-        page: Page.VIEW
-      })
-      await Client.putPerson(person)
+      try {
+        await Client.putPerson(this.state.user!, person)
+
+        // Replace local
+        let people = this.state.allPeople.filter(p => p.guid !== person.guid)
+        this.setState({
+          allPeople: [...people, person],
+          selectedPerson: person,
+          page: Page.VIEW
+        })
+      }
+      catch {
+        this.setState({error: `Failed to save ${person.fullName()}`})
+      }
     }
     else {
       this.setState({
@@ -204,30 +233,42 @@ class App extends React.Component<{}, ComponentState> {
   }
 
   @OF.autobind 
-  private async onSavePerson(person: Person) {
-    // Replace local
-    let people = this.state.allPeople.filter(p => p.guid !== person.guid)
-    setStatePromise(this, {
-      allPeople: [...people, person]
-    })
+  async onSavePerson(person: Person) {
+
     // Save
-    await Client.putPerson(person)
+    try {
+      await Client.putPerson(this.state.user!, person)
+
+      // Replace local
+      let people = this.state.allPeople.filter(p => p.guid !== person.guid)
+      setStatePromise(this, {
+        allPeople: [...people, person]
+      })
+    }
+    catch {
+      this.setState({error: `Failed to save ${person.fullName()}`})
+    }
   }
 
   @OF.autobind 
-  private async onSaveImage(person: Person, newImage: Blob) {
+  async onSaveImage(person: Person, newImage: Blob) {
+    try {
       await Client.putImage(person.guid, newImage)
+    }
+    catch {
+      this.setState({error: `Failed to save image`})
+    }
   }
 
   @OF.autobind 
-  private async onContinueQuiz() {
+  async onContinueQuiz() {
       this.setState({
         page: Page.QUIZ
       })
   }
 
   @OF.autobind 
-  private async onQuizDone(testResults: TestResult[]) {
+  async onQuizDone(testResults: TestResult[]) {
       await Client.postTestResults(testResults)
       this.setState({
         page: Page.VIEW
@@ -235,12 +276,11 @@ class App extends React.Component<{}, ComponentState> {
   }
 
   @OF.autobind
-  private onSetReqireTag(tagName: string, set: boolean) {
+  onSetReqireTag(tagName: string, set: boolean) {
   
     if (set) {
-      if (this.state.filter.required.indexOf(tagName) <= 0)
-      {
-        let blocked = this.state.filter.blocked.filter(t => t != tagName)
+      if (this.state.filter.required.indexOf(tagName) <= 0) {
+        let blocked = this.state.filter.blocked.filter(t => t !== tagName)
         let required = [...this.state.filter.required, tagName] 
         this.setState({
           filter: {
@@ -252,7 +292,7 @@ class App extends React.Component<{}, ComponentState> {
       }
     }
     else {
-      let required = this.state.filter.required.filter(t => t != tagName)
+      let required = this.state.filter.required.filter(t => t !== tagName)
       this.setState({
         filter: {
           required,
@@ -264,10 +304,9 @@ class App extends React.Component<{}, ComponentState> {
   }
 
   @OF.autobind
-  private onSetBlockedTag(tagName: string, set: boolean) {
+  onSetBlockedTag(tagName: string, set: boolean) {
   
-    if (set)
-    { 
+    if (set) { 
       if (this.state.filter.blocked.indexOf(tagName) <= 0) {
         let blocked = [...this.state.filter.blocked, tagName] 
         let required = this.state.filter.required.filter(t => t !== tagName)
@@ -293,28 +332,37 @@ class App extends React.Component<{}, ComponentState> {
   }
 
   @OF.autobind
-  async onNextLibraryPage(): Promise<void> {
+  async onNewPerson(): Promise<void> {
+    let newPerson = new Person()
+    this.setState({
+      selectedPerson: newPerson,
+      page: Page.EDIT
+    })
+  }
+
+  @OF.autobind
+  async onNextPerson(): Promise<void> {
     if (this.state.filterSet) {
       let selectedIndex = this.state.filterSet.selectedIndex + 1
       if (selectedIndex >= this.state.filterSet.people.length) {
         selectedIndex = 0
       }
       await setStatePromise(this, {filterSet: {...this.state.filterSet, selectedIndex}})
-      if (this.state.page === Page.VIEW ) {
+      if (this.state.page === Page.VIEW) {
         this.viewLibraryPerson()
       }
     }
   }
 
   @OF.autobind
-  async onPrevLibraryPage(): Promise<void> {
+  async onPrevPerson(): Promise<void> {
     if (this.state.filterSet) {
       let selectedIndex = this.state.filterSet.selectedIndex - 1
       if (selectedIndex < 0) {
         selectedIndex = this.state.filterSet.people.length - 1
       }
       await setStatePromise(this, {filterSet: {...this.state.filterSet, selectedIndex}})
-      if (this.state.page === Page.VIEW ) {
+      if (this.state.page === Page.VIEW) {
         this.viewLibraryPerson()
       }
     }
@@ -338,7 +386,7 @@ class App extends React.Component<{}, ComponentState> {
   }
 
   @OF.autobind
-  private async onCloseFliterPage() {
+  async onCloseFliterPage() {
     await setStatePromise(this, {filterSet: null})
     this.viewLibraryPerson()
   }
@@ -348,13 +396,13 @@ class App extends React.Component<{}, ComponentState> {
       <div className="App">
         {this.state.page === Page.LOGIN &&
          <LoginPage
-          onLoginComplete={this.loadPeople}
+          onLoginComplete={this.onLoginComplete}
          />
         }
         {this.state.page === Page.LOAD &&
           <LoadPage
             letter={this.state.loadletter}
-            count={this.state.allPeople.length}
+            count={this.state.loadpeoplecount}
           />
         }
         {(this.state.page === Page.VIEW || this.state.page === Page.VIEWQUIZ) 
@@ -368,9 +416,15 @@ class App extends React.Component<{}, ComponentState> {
             onContinueQuiz={this.onContinueQuiz}
             onClickFilter={this.onClickFilter}
             onEdit={this.onEdit}
-            onNextPerson={this.onNextLibraryPage}
-            onPrevPerson={this.onPrevLibraryPage}
+            onNewPerson={this.onNewPerson}
+            onNextPerson={this.onNextPerson}
+            onPrevPerson={this.onPrevPerson}
             onSelectPerson={this.onSelectPerson}
+          />
+        }
+        {this.state.page === Page.NEWUSER && 
+          <NewUserPage
+            onClickImport={this.onClickImport}
           />
         }
         {this.state.page === Page.EDIT && this.state.selectedPerson &&
@@ -399,6 +453,13 @@ class App extends React.Component<{}, ComponentState> {
             quizSet={this.state.quizSet}
             onQuizDone={this.onQuizDone}
             onViewDetail={this.viewQuizDetail}
+          />
+        }
+        {this.state.error && 
+          <Confirm
+            title={this.state.error}
+            image={SAD_IMAGE}
+            onCancel={this.onCloseError}
           />
         }
       </div>

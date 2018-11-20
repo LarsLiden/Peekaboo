@@ -6,7 +6,7 @@ import * as React from 'react';
 import * as OF from 'office-ui-fabric-react'
 import '../fabric.css'
 import { QuizPerson, QuizSet } from '../models/models'
-import { getRandomInt} from '../Util'
+import { getRandomInt } from '../Util'
 import { TestResult } from '../models/performance'
 import { MAX_TIME } from '../models/const'
 
@@ -43,26 +43,23 @@ class QuizPage extends React.Component<ReceivedProps, ComponentState> {
     this.selectNextPerson()
   }
 
-  
   // Pick a random person from the test set based on testing frequency
-  getRandomPerson(): QuizPerson
-  {
+  getRandomPerson(): QuizPerson {
     if (!this.props.quizSet) {
       throw new Error("Missing Quizset")
     }
-    if (this.props.quizSet.quizPeople.length == 1)
-    {
+    if (this.props.quizSet.quizPeople.length === 1) {
         return this.props.quizSet.quizPeople[0]
     }
 
-    const randFreq = getRandomInt(0, this.props.quizSet.frequencyTotal-1)
+    const randFreq = getRandomInt(0, this.props.quizSet.frequencyTotal - 1)
 
-    let personIndex = this.props.quizSet.quizPeople.findIndex(qp =>
-      {
+    let personIndex = this.props.quizSet.quizPeople.findIndex(qp => {
         return (randFreq >= qp.performance.frequencyOffsetStart && randFreq < qp.performance.frequencyOffsetEnd)
       }
     )
-    if (personIndex == -1) {
+
+    if (personIndex === -1) {
       throw new Error("Unable to find random person")
     }
 
@@ -81,7 +78,7 @@ class QuizPage extends React.Component<ReceivedProps, ComponentState> {
     this.clearTimer()
 
     const quizPerson = this.getRandomPerson()
-    const imageIndex = getRandomInt(0, quizPerson.blobNames.length-1)
+    const imageIndex = getRandomInt(0, quizPerson.blobNames.length - 1)
 
     this.setState({
       showName: false,
@@ -144,8 +141,7 @@ class QuizPage extends React.Component<ReceivedProps, ComponentState> {
     this.setState({
       timerValue: 0
     })
-    const timerId = setInterval(()=> 
-    {
+    const timerId = setInterval(() => {
       const newTime = this.state.timerValue + timerInterval
       if (newTime <= MAX_TIME) {
         this.setState({
@@ -165,24 +161,20 @@ class QuizPage extends React.Component<ReceivedProps, ComponentState> {
     })
   }
 
-  private TimerFontColor(timerValue: number): string
-  {
-      const color = 255*((timerValue-25)/100)
+  private timerFontColor(timerValue: number): string {
+      const color = ((timerValue - 25) / 100) * 255
       return `rgb(${color}, ${color}, ${color})`
   }
 
-  private TimerBackgroundColor(timerValue: number): string
-  {
+  private timerBackgroundColor(timerValue: number): string {
       let r: number
       let g: number
 
-      if (timerValue <= 50)
-      {
+      if (timerValue <= 50) {
           r = 255;
       }
-      else
-      {
-          r = (255*(1-(timerValue-50.0)/50))
+      else {
+          r = (1 - (timerValue - 50) / 50) * 255
       }
 
       if (timerValue > 50)
@@ -191,7 +183,7 @@ class QuizPage extends React.Component<ReceivedProps, ComponentState> {
       }
       else
       {
-          g = (255*(timerValue/50))
+          g = (timerValue / 50) * 255
       }
 
       return `rgb(${r}, ${g}, 0)`
@@ -199,8 +191,8 @@ class QuizPage extends React.Component<ReceivedProps, ComponentState> {
 
   public render() {
     const overrideStyles = OF.mergeStyles({
-      backgroundColor: this.TimerBackgroundColor(100-(this.state.timerValue/100)),
-      color: this.TimerFontColor(this.state.timerValue/100),
+      backgroundColor: this.timerBackgroundColor(100-(this.state.timerValue/100)),
+      color: this.timerFontColor(this.state.timerValue/100),
       width: "50px",
       marginLeft: "auto",
       marginRight: "auto",
@@ -209,7 +201,7 @@ class QuizPage extends React.Component<ReceivedProps, ComponentState> {
       marginTop: "13px",
       height: "30px",
       borderRadius: "5px"
-    });
+    })
 
     if (!this.state.quizPerson) {
       return null

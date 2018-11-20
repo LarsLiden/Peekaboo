@@ -2,14 +2,16 @@
  * Copyright (c) Lars Liden. All rights reserved.  
  * Licensed under the MIT License.
  */
+ /* tslint:disable */
 import * as React from 'react';
 import * as OF from 'office-ui-fabric-react'
 import Client from '../service/client'
 import { HEAD_IMAGE } from '../Util'
-import { StartState } from '../models/models'
+import { User } from '../models/models'
+import GoogleLogin from 'react-google-login';
 
 export interface ReceivedProps {
-  onLoginComplete: () => void
+  onLoginComplete: (user: User) => void
 }
 
 interface ComponentState {
@@ -27,37 +29,26 @@ class LoginPage extends React.Component<ReceivedProps, ComponentState> {
   }
 
   @OF.autobind
-  private userNameChanged(text: string) {
-    this.setState({
-      userLoginValue: text
-    })
-  }
-
-  @OF.autobind
-  onLoginKeyDown(event: React.KeyboardEvent<HTMLElement>) {
-      // On enter attempt to create the model if required fields are set
-      // Not on import as explicit button press is required to pick the file
-      if (event.key === 'Enter' && this.state.userLoginValue) {
-          this.onClickLogin();
-      }
-  }
-
-  @OF.autobind
-  private async onClickLogin(): Promise<void> {
-    let startState = await Client.start(this.state.userLoginValue)
-    if (startState === StartState.READY) {
-      this.props.onLoginComplete()
+  private async loginSuccess(googleUser: any) {
+    let profile = googleUser.getBasicProfile();
+    let user: User = {
+      id: profile.getId(),
+      name: profile.getName(),
+      email: profile.getEmail()
     }
-    else if (startState === StartState.WAITING) {
-      this.setState({
-        waitingCalloutText: "Server is warming up"
-      })
+    let foundUser = await Client.Login(user)
+    
+    if (foundUser) {
+      this.props.onLoginComplete(foundUser)
     }
     else {
       this.setState({
-        waitingCalloutText: "Not found"
+        waitingCalloutText: "Login Failure"
       })
     }
+
+    //console.log('Image URL: ' + profile.getImageUrl());
+    //console.log('Email: ' + profile.getEmail()); // This is null if the 'email' scope is not present.
   }
 
   @OF.autobind
@@ -76,15 +67,13 @@ class LoginPage extends React.Component<ReceivedProps, ComponentState> {
         imageFit={OF.ImageFit.cover}
         maximizeFrame={true}
       />
-      <div
-        ref={this._startButtonElement}>
-        <OF.TextField
-            className="LoginTextInput"
-            value={this.state.userLoginValue}
-            onChanged={this.userNameChanged}
-            onKeyDown={key => this.onLoginKeyDown(key)}
-        />
-      </div>
+      <GoogleLogin
+        className="LoginButton"
+        clientId="757831696321-kdog1rehu946i1ch7rb3pvmf5r3rr2r4.apps.googleusercontent.com"
+        buttonText="Have We Met?"
+        onSuccess={this.loginSuccess}
+        onFailure={()=>{}}
+      />
       <OF.Callout
           role={'alertdialog'}
           gapSpace={0}
@@ -102,7 +91,7 @@ class LoginPage extends React.Component<ReceivedProps, ComponentState> {
           </div>
         </OF.Callout>
     </div>
-    );
+    )
   }
 }
 

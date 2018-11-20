@@ -9,6 +9,7 @@ import { Person } from '../models/person'
 import { Relationship, RelationshipType } from '../models/relationship'
 import { Filter, Tag } from '../models/models'
 import CropPage from './CropPage'
+import { HEAD_IMAGE } from '../Util'
 import DetailTags from '../Detail/DetailTags'
 import ReactCrop from 'react-image-crop'
 import ConfirmModal from '../modals/Confirm'
@@ -71,7 +72,7 @@ class EditPage extends React.Component<ReceivedProps, ComponentState> {
     relationships: [],
     showCropPage: false,
     imageURL: null,
-    crop: {aspect: 1/1, x:0, y:0, width: 50, height: 50},
+    crop: {aspect: 1 / 1, x: 0, y: 0, width: 50, height: 50},
     file: null,
     isEditTagsOpen: false,
     isEditRelationshipsOpen: false,
@@ -174,11 +175,10 @@ class EditPage extends React.Component<ReceivedProps, ComponentState> {
   }
 
   makeReverseRelationship(relationship: Relationship, guid: string): Relationship {
-    let reverse: Relationship =  {
+    return {
       guid,
       type: RelationshipType.getRelationshipType(relationship.type.to)
     }
-    return reverse
   }
 
   saveReverseRelationships() {
@@ -366,14 +366,17 @@ class EditPage extends React.Component<ReceivedProps, ComponentState> {
   }
 
   public render() {
-    const imageFile = baseImage + this.props.person.photoFilenames[this.state.photoIndex]
+    const imageFile = this.props.person.photoFilenames.length > 0
+    ? baseImage + this.props.person.photoFilenames[this.state.photoIndex]
+    : HEAD_IMAGE
+
       return (
         <div className="QuizPage">
           {this.state.imageURL &&
             <CropPage
               imageURL={this.state.imageURL}
               onClose={this.onCloseCropper}
-              onSave={(blob)=>this.onSaveCrop(blob)}
+              onSave={(blob) => this.onSaveCrop(blob)}
             />
           }
           {!this.state.imageURL &&
@@ -507,7 +510,8 @@ class EditPage extends React.Component<ReceivedProps, ComponentState> {
                 </div>
               </div>
               <div
-                className="ContentFooter">
+                className="ContentFooter"
+              >
                 <OF.IconButton
                     className="ButtonIcon ButtonPrimary"
                     onClick={this.onClickSave}
@@ -532,8 +536,7 @@ class EditPage extends React.Component<ReceivedProps, ComponentState> {
               personTags={this.state.tags}
               onCancel={this.onCancelEditTags}
               onSave={this.onSaveEditTags}
-            >
-            </EditTags>
+            />
           }
           {this.state.isEditRelationshipsOpen &&
             <EditRelationships
@@ -542,24 +545,21 @@ class EditPage extends React.Component<ReceivedProps, ComponentState> {
               person={this.props.person}
               onCancel={this.onCancelEditRelationships}
               onSave={this.onSaveEditRelationships}
-            >
-            </EditRelationships>
+            />
           }
           {this.state.isConfirmDeleteOpen &&
             <ConfirmModal
               title="Are you sure you want to delete this person?"
               onCancel={this.onCancelDelete}
               onConfirm={this.onConfirmDelete}
-            >
-            </ConfirmModal>
+            />
           }
           {this.state.isConfirmDeletePhotoOpen &&
             <ConfirmModal
               title="Are you sure you want to delete this photo?"
               onCancel={this.onCancelDeletePhoto}
               onConfirm={this.onConfirmDeletePhoto}
-            >
-            </ConfirmModal>
+            />
           }
       </div>
     );
