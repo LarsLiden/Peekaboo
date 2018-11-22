@@ -27,7 +27,7 @@ export class Person {
     fullNickName: string = ""
     alternateName: string = ""
     fullAternateName: string = ""
-    saveName: string = ""
+    saveName: string | null = null
     descriptionWithKeyValues: string = ""
     allKeyValues: string = ""
     description: string = ""
@@ -52,6 +52,10 @@ export class Person {
         return `${this.firstName} ${this.lastName}`
     }
 
+    public get cacheKey(): string {
+        return this.saveName![0].toUpperCase()
+    } 
+
     public performance(perfType: PerfType): Performance {
         switch (perfType) {
             case PerfType.PHOTO: 
@@ -67,6 +71,9 @@ export class Person {
     // Does person have data to take test type?
     public hasTestData(perfType: PerfType): boolean
     {
+        // TODO: separate function for actual testing
+        return true
+        /*
         // Excluce people that don't have data for test type
         switch (perfType)
         {
@@ -79,7 +86,7 @@ export class Person {
             case PerfType.ALPHA:
                 return true;
         }
-        return false;
+        return false;*/
     }
     
 }

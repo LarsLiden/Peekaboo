@@ -45,6 +45,7 @@ interface ComponentState {
   filteredTags: Tag[]
   filteredPeopleCount: number
   selectedPerson: Person | null
+  newPerson: Person | null
   filter: Filter
   error: string | null
 }
@@ -64,6 +65,7 @@ class App extends React.Component<{}, ComponentState> {
     filteredPeopleCount: 0,
     page: Page.LOGIN,
     selectedPerson: null,
+    newPerson: null,
     filter: {required: [], blocked: [], perfType: PerfType.PHOTO},
     error: null
   }
@@ -139,6 +141,13 @@ class App extends React.Component<{}, ComponentState> {
       const letters = "ABCDEFGHIJKLM"/*NOPQRSTUVWXYZ"*/.split("")
       for (let letter of letters) {
         Client.getPeopleStartingWith(this.state.user!, letter, async (people) => {
+          if (!people) {
+            this.setState({
+              error: `Failed find your peeps`,
+              page: Page.LOGIN
+            })
+            return
+          }
           console.log(`GOT ${letter}`)
           loaded.push(people)
           this.setState({
@@ -211,13 +220,25 @@ class App extends React.Component<{}, ComponentState> {
   async onCloseEditPage(person?: Person) {
     if (person) {
       try {
+        let people: Person[]
+        let filterSet = this.state.filterSet
         await Client.putPerson(this.state.user!, person)
 
-        // Replace local
-        let people = this.state.allPeople.filter(p => p.guid !== person.guid)
+        if (this.state.newPerson) {
+          // Add new person
+          people = [...this.state.allPeople, person]
+          // Recalculte filter set to include new person
+          filterSet = Convert.getFilterSet(people, this.state.filter)
+        }
+        else {
+          // Replace local
+          people = this.state.allPeople.filter(p => p.guid !== person.guid)
+        }
         this.setState({
-          allPeople: [...people, person],
+          allPeople: people,
           selectedPerson: person,
+          newPerson: null,
+          filterSet,
           page: Page.VIEW
         })
       }
@@ -227,15 +248,35 @@ class App extends React.Component<{}, ComponentState> {
     }
     else {
       this.setState({
+        newPerson: null,
         page: Page.VIEW
       })
     }
   }
 
   @OF.autobind 
-  async onSavePerson(person: Person) {
+  async onDeletePerson(person: Person) {
+    try {
+      await Client.deletePerson(this.state.user!, person)
 
-    // Save
+      // Delete local
+      let people = this.state.allPeople.filter(p => p.guid !== person.guid)
+      // Recalculte filter set to exclude new person
+      let filterSet = Convert.getFilterSet(people, this.state.filter)
+      setStatePromise(this, {
+        allPeople: people,
+        filterSet,
+        page: Page.VIEW
+      })
+      this.onNextPerson()
+    }
+    catch {
+      this.setState({error: `Failed to delete ${person.fullName()}`})
+    }
+  }
+
+  @OF.autobind 
+  async onSavePerson(person: Person) {
     try {
       await Client.putPerson(this.state.user!, person)
 
@@ -335,7 +376,7 @@ class App extends React.Component<{}, ComponentState> {
   async onNewPerson(): Promise<void> {
     let newPerson = new Person()
     this.setState({
-      selectedPerson: newPerson,
+      newPerson,
       page: Page.EDIT
     })
   }
@@ -424,18 +465,21 @@ class App extends React.Component<{}, ComponentState> {
         }
         {this.state.page === Page.NEWUSER && 
           <NewUserPage
-            onClickImport={this.onClickImport}
+            onClose={this.onClickImport}
           />
         }
-        {this.state.page === Page.EDIT && this.state.selectedPerson &&
+        {this.state.page === Page.EDIT 
+          && (this.state.selectedPerson || this.state.newPerson)   
+          &&
           <EditPage
-            person={this.state.selectedPerson}
+            person={this.state.newPerson || this.state.selectedPerson!}
             filter={this.state.filter}
             allTags={this.state.allTags}
             allPeople={this.state.allPeople}
             onClose={this.onCloseEditPage}
             onSavePerson={this.onSavePerson}
             onSaveImage={this.onSaveImage}
+            onDeletePerson={this.onDeletePerson}
           />
         }
         {this.state.page === Page.FILTER &&

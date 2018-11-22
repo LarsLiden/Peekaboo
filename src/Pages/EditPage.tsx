@@ -31,6 +31,7 @@ export interface ReceivedProps {
   allPeople: Person[]
   onSaveImage: (person: Person, blob: Blob) => void
   onSavePerson: (person: Person) => void
+  onDeletePerson: (person: Person) => void
   onClose: (person?: Person) => void
 }
 
@@ -263,6 +264,7 @@ class EditPage extends React.Component<ReceivedProps, ComponentState> {
   @OF.autobind
   onConfirmDelete(): void {
     this.setState({isConfirmDeleteOpen: false})
+    this.props.onDeletePerson(this.props.person)
   }
 
   @OF.autobind
@@ -328,6 +330,11 @@ class EditPage extends React.Component<ReceivedProps, ComponentState> {
     newPerson.description = this.state.description
     newPerson.tags = this.state.tags
     newPerson.relationships = this.state.relationships
+
+    if (!this.props.person.saveName) {
+      // TODO: check for duplicates when creating new name
+      newPerson.saveName = `${this.state.firstName}_${this.state.lastName}`
+    }
     this.props.onClose(newPerson)
   }
 
@@ -522,11 +529,13 @@ class EditPage extends React.Component<ReceivedProps, ComponentState> {
                     onClick={this.onClickCancel}
                     iconProps={{ iconName: 'Cancel' }}
                 />
-                <OF.IconButton
-                    className="ButtonIcon ButtonPrimary"
-                    onClick={this.onClickDelete}
-                    iconProps={{ iconName: 'Trash' }}
-                />
+                {this.props.person.saveName &&
+                  <OF.IconButton
+                      className="ButtonIcon ButtonPrimary"
+                      onClick={this.onClickDelete}
+                      iconProps={{ iconName: 'Trash' }}
+                  />
+                }
               </div>
             </div>
           }

@@ -2,12 +2,12 @@
  * Copyright (c) Lars Liden. All rights reserved.  
  * Licensed under the MIT License.
  */
- /* tslint:disable */
 import * as React from 'react';
 import * as OF from 'office-ui-fabric-react'
+import { HEAD_IMAGE } from '../Util'
 
 export interface ReceivedProps {
-  onClickImport: () => void
+  onClose: () => void
 }
 
 interface ComponentState {
@@ -22,16 +22,18 @@ class NewUserPage extends React.Component<ReceivedProps, ComponentState> {
     userLoginValue: ""
   }
 
+ 
+
   public render() {
   
     return (
       <div
       className="LoginPage"
       >
-        <OF.IconButton
-          className="ButtonIcon ButtonPrimary"
-          onClick={this.props.onClickImport}
-          iconProps={{ iconName: 'CloudDownload' }}
+        <OF.Image className="LoginImage"
+          src={HEAD_IMAGE}
+          imageFit={OF.ImageFit.cover}
+          maximizeFrame={true}
         />
       </div>
     )

@@ -26,22 +26,25 @@ export default class Client {
         }
     }
      
-    public static async getPeopleStartingWith(user: User, letter: string, callback: (people: Person[]) => void): Promise<void> {
-
+    public static async getPeopleStartingWith(user: User, letter: string, callback: (people: Person[] | null) => void): Promise<void> {
+        console.log(`Getting ${letter}`)
         try {
-            console.log(`Getting ${letter}`)
             const response = await axios.get(`${this.baseUrl}/people/${letter}`, this.getConfig(user))
             let peopleJSON = response.data as Person[]
             let people = peopleJSON.map(p => new Person(p))
             callback(people)
         }
-        catch (err) {
-            console.log(JSON.stringify(err))
+        catch {
+            callback(null)
         }
     }
 
     public static async putPerson(user: User, person: Person): Promise<void> {
-        await axios.put(`${this.baseUrl}/person`, {person}/*, this.getConfig(user)*/)
+        await axios.put(`${this.baseUrl}/person`, {person}, this.getConfig(user))
+    }
+
+    public static async deletePerson(user: User, person: Person): Promise<void> {
+        await axios.delete(`${this.baseUrl}/person/${person.cacheKey}/${person.guid}`, this.getConfig(user))
     }
 
     public static async putImage(personGUID: string, blob: Blob) {

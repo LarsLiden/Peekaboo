@@ -6,7 +6,7 @@ import * as React from 'react';
 import * as OF from 'office-ui-fabric-react'
 import 'react-image-crop/dist/ReactCrop.css'
 
-const timerInterval = 120
+const timerInterval = 60
 
 export interface ReceivedProps {
   letter: string
