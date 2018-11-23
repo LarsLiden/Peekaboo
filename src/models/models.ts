@@ -18,6 +18,7 @@ export interface User {
     name: string,
     id: string,
     email: string,
+    photoContainerId?: string,
     hwmid?: string
 }
 

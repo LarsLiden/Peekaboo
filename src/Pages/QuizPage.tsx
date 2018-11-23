@@ -6,7 +6,7 @@ import * as React from 'react';
 import * as OF from 'office-ui-fabric-react'
 import '../fabric.css'
 import { QuizPerson, QuizSet } from '../models/models'
-import { getRandomInt } from '../Util'
+import { getRandomInt, PHOTO_HEIGHT, PHOTO_WIDTH } from '../Util'
 import { TestResult } from '../models/performance'
 import { MAX_TIME } from '../models/const'
 
@@ -161,12 +161,12 @@ class QuizPage extends React.Component<ReceivedProps, ComponentState> {
     })
   }
 
-  private timerFontColor(timerValue: number): string {
+  timerFontColor(timerValue: number): string {
       const color = ((timerValue - 25) / 100) * 255
       return `rgb(${color}, ${color}, ${color})`
   }
 
-  private timerBackgroundColor(timerValue: number): string {
+  timerBackgroundColor(timerValue: number): string {
       let r: number
       let g: number
 
@@ -206,18 +206,21 @@ class QuizPage extends React.Component<ReceivedProps, ComponentState> {
     if (!this.state.quizPerson) {
       return null
     }
+    let width = 250
+    let height = (PHOTO_HEIGHT / PHOTO_WIDTH) * width
     const imageFile = baseImage + this.state.quizPerson.blobNames[this.state.imageIndex]
     return (
       <div className="QuizPage">
         <div
-          className={overrideStyles}>
-          {this.state.timerValue/100}
+          className={overrideStyles}
+        >
+          {this.state.timerValue / 100}
         </div>
         <OF.Image
           className="QuizImageHolder"
           src={imageFile}
-          width={250}
-          height={250}
+          width={width}
+          height={height}
           //imageFit={OF.ImageFit.center}
           onLoad={this.onImageLoaded}
         />

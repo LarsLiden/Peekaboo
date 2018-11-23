@@ -49,11 +49,15 @@ export function getPerson(people: Person[], guid: string) {
     return people.find(p => p.guid === guid)
 } 
 
-export function getFilterSet(people: Person[], filter: Filter): FilterSet
+export function getFilterSet(people: Person[], filter: Filter, person?: Person): FilterSet
 {
     // Filter people by tags
     let filtered = filteredPeople(people, filter)
-    return { people: filtered, selectedIndex: 0 }
+    let selectedIndex = person ? filtered.findIndex(p => p.guid === person.guid) : 0
+    if (selectedIndex < 0) {
+        throw new Error("Invalid person in filter")
+    }
+    return { people: filtered, selectedIndex }
 }
 
 export function extractBlockedTags(people: Person[], blockedTags: string[]) : Tag[] {

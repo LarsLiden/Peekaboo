@@ -7,10 +7,10 @@ import '../fabric.css'
 import './Detail.css'
 
 export interface ReceivedProps {
-  title: string
+  title?: string
+  className?: string
   text: string
   isLong?: boolean
-  alignRight?: boolean
 }
 
 interface ComponentState { 
@@ -29,10 +29,12 @@ class DetailText extends React.Component<ReceivedProps, ComponentState> {
     }
     const bodyClass = this.props.isLong ? "DetailLongBody" : "DetailBody"
     return (
-      <div className={`DetailText ${this.props.alignRight ? "AlignRight" : "AlighnLeft"}`}>
-        <div className="DetailTitle">
-          {this.props.title}
-        </div>
+      <div className={`DetailText ${this.props.className ? this.props.className : ""}`}>
+        {this.props.title &&
+          <div className="DetailTitle">
+            {this.props.title}
+          </div>
+        }
         <div className={bodyClass}>
           {this.props.text || "-"}
         </div>

@@ -7,9 +7,9 @@ import * as OF from 'office-ui-fabric-react'
 import '../fabric.css'
 import { Person } from '../models/person'
 import { Relationship, RelationshipType } from '../models/relationship'
-import { Filter, Tag } from '../models/models'
+import { Filter, Tag, User } from '../models/models'
 import CropPage from './CropPage'
-import { HEAD_IMAGE } from '../Util'
+import { HEAD_IMAGE, baseBlob, getPhotoBlobName, PHOTO_HEIGHT, PHOTO_WIDTH } from '../Util'
 import DetailTags from '../Detail/DetailTags'
 import ReactCrop from 'react-image-crop'
 import ConfirmModal from '../modals/Confirm'
@@ -26,16 +26,16 @@ import "./ViewPage.css"
 
 export interface ReceivedProps {
   person: Person
+  user: User
   filter: Filter
   allTags: Tag[]
   allPeople: Person[]
-  onSaveImage: (person: Person, blob: Blob) => void
+  onSavePhoto: (person: Person, photoData: string) => void
   onSavePerson: (person: Person) => void
+  onDeletePhoto: (person: Person, photoName: string) => void
   onDeletePerson: (person: Person) => void
   onClose: (person?: Person) => void
 }
-
-const baseImage = "https://peekaboo.blob.core.windows.net/faces/"
 
 interface ComponentState { 
   edited: boolean
@@ -246,7 +246,8 @@ class EditPage extends React.Component<ReceivedProps, ComponentState> {
 
   @OF.autobind
   onConfirmDeletePhoto(): void {
-    //TODO - delete
+    let photoName = this.props.person.photoFilenames[this.state.photoIndex]
+    this.props.onDeletePhoto(this.props.person, photoName)
     this.setState({isConfirmDeletePhotoOpen: false})
   }
 
@@ -344,8 +345,8 @@ class EditPage extends React.Component<ReceivedProps, ComponentState> {
   }
 
   @OF.autobind
-  onSaveCrop(blob: Blob): void {
-    this.props.onSaveImage(this.props.person, blob)
+  onSaveCrop(imageData: string): void {
+    this.props.onSavePhoto(this.props.person, imageData)
     this.setState({imageURL: null})
   }
 
@@ -373,203 +374,207 @@ class EditPage extends React.Component<ReceivedProps, ComponentState> {
   }
 
   public render() {
-    const imageFile = this.props.person.photoFilenames.length > 0
-    ? baseImage + this.props.person.photoFilenames[this.state.photoIndex]
-    : HEAD_IMAGE
+    let photoBlobName = HEAD_IMAGE
+    if (this.props.person.photoFilenames.length > 0) {
+      photoBlobName = baseBlob(this.props.user) 
+        + getPhotoBlobName(this.props.person, this.props.person.photoFilenames[this.state.photoIndex])
+    }
+    let width = 160
+    let height = (PHOTO_HEIGHT / PHOTO_WIDTH) * width
 
-      return (
-        <div className="QuizPage">
-          {this.state.imageURL &&
-            <CropPage
-              imageURL={this.state.imageURL}
-              onClose={this.onCloseCropper}
-              onSave={(blob) => this.onSaveCrop(blob)}
-            />
-          }
-          {!this.state.imageURL &&
-            <div>
-              <div className="ContentHeader">
-              <div className="EditImageColumn">
-                  <FilePicker
-                    extensions={['png', 'jpeg', 'jpg']}
-                    onChange={this.onChangeFile}
-                    //TODO onError={(error: string) => this.props.setErrorDisplay(ErrorType.Error, error, [], null)}
-                    maxSize={10}
-                  >
-                    <div>
-                        <OF.IconButton
-                          className="ButtonIcon ButtonDark"
-                          iconProps={{ iconName: 'CircleAddition' }}
-                        />
-                    </div>
-                  </FilePicker>
-                  <div className='EditButtonSpacer'/>
-                  <OF.IconButton
-                    className="ButtonIcon ButtonDark"
-                    onClick={this.onDeletePhoto}
-                    iconProps={{ iconName: 'Delete' }}
-                  />
-                </div>
-                <OF.Image
-                  className="QuizImageHolder"
-                  src={imageFile}
-                  width={160}
-                  height={160}
-                />
-                <DetailIndexer
-                  isVertical={true}
-                  onPrev={this.onPrevPhoto}
-                  onNext={this.onNextPhoto}
-                  currentIndex={this.state.photoIndex}
-                  total={this.props.person.photoFilenames.length}
+    return (
+      <div className="QuizPage">
+        {this.state.imageURL &&
+          <CropPage
+            imageURL={this.state.imageURL}
+            onClose={this.onCloseCropper}
+            onSave={(imageData) => this.onSaveCrop(imageData)}
+          />
+        }
+        {!this.state.imageURL &&
+          <div>
+            <div className="ContentHeader">
+            <div className="EditImageColumn">
+                <FilePicker
+                  extensions={['png', 'jpeg', 'jpg']}
+                  onChange={this.onChangeFile}
+                  //TODO onError={(error: string) => this.props.setErrorDisplay(ErrorType.Error, error, [], null)}
+                  maxSize={10}
+                >
+                  <div>
+                      <OF.IconButton
+                        className="ButtonIcon ButtonDark"
+                        iconProps={{ iconName: 'CircleAddition' }}
+                      />
+                  </div>
+                </FilePicker>
+                <div className='EditButtonSpacer'/>
+                <OF.IconButton
+                  className="ButtonIcon ButtonDark"
+                  onClick={this.onDeletePhoto}
+                  iconProps={{ iconName: 'Delete' }}
                 />
               </div>
-              <div className="ContentBody EditContent">
-                <DetailEditText
-                  label="First Name"
-                  onChanged={text => this.onFirstNameChanged(text)}
-                  value={this.state.firstName}
+              <OF.Image
+                className="QuizImageHolder"
+                src={photoBlobName}
+                width={width}
+                height={height}
+              />
+              <DetailIndexer
+                isVertical={true}
+                onPrev={this.onPrevPhoto}
+                onNext={this.onNextPhoto}
+                currentIndex={this.state.photoIndex}
+                total={this.props.person.photoFilenames.length}
+              />
+            </div>
+            <div className="ContentBody EditContent">
+              <DetailEditText
+                label="First Name"
+                onChanged={text => this.onFirstNameChanged(text)}
+                value={this.state.firstName}
+              />
+              <DetailEditText
+                label="Last Name"
+                onChanged={text => this.onLastNameChanged(text)}
+                value={this.state.lastName}
+              />
+              <DetailEditText
+                label="Nickname"
+                onChanged={text => this.onNickNameChanged(text)}
+                value={this.state.nickName}
+              />    
+              <DetailEditText
+                label="Maiden Name"
+                onChanged={text => this.onMaidenNameChanged(text)}
+                value={this.state.maidenName}
+              />
+              <DetailEditText
+                label="Alternate Name"
+                onChanged={text => this.onAlternativeNameChanged(text)}
+                value={this.state.alternateName}
+              />
+              <DetailEditText
+                // multiline={true}
+                // rows={4}
+                label="Description"
+                onChanged={text => this.onDescriptionNameChanged(text)}
+                value={this.state.description}
+              />
+              <div className='EditSection'>
+                <DetailTags 
+                  inEdit={true}
+                  tags={this.state.tags}
+                  filter={this.props.filter}
                 />
-                <DetailEditText
-                  label="Last Name"
-                  onChanged={text => this.onLastNameChanged(text)}
-                  value={this.state.lastName}
+                <OF.IconButton
+                    className="ButtonIcon ButtonDark"
+                    onClick={this.onEditTags}
+                    iconProps={{ iconName: 'Edit' }}
                 />
-                <DetailEditText
-                  label="Nickname"
-                  onChanged={text => this.onNickNameChanged(text)}
-                  value={this.state.nickName}
-                />    
-                <DetailEditText
-                  label="Maiden Name"
-                  onChanged={text => this.onMaidenNameChanged(text)}
-                  value={this.state.maidenName}
+              </div>
+              <div className='EditSection'>
+                <DetailRelationships
+                  inEdit={true}
+                  relationships={this.state.relationships}
+                  allPeople={this.props.allPeople}
+                  onSelectPerson={() => {}}  // LARS temp
                 />
-                <DetailEditText
-                  label="Alternate Name"
-                  onChanged={text => this.onAlternativeNameChanged(text)}
-                  value={this.state.alternateName}
+                <OF.IconButton
+                    className="ButtonIcon ButtonDark"
+                    onClick={this.onEditRelationships}
+                    iconProps={{ iconName: 'Edit' }}
                 />
-                <DetailEditText
-                 // multiline={true}
-                 // rows={4}
-                  label="Description"
-                  onChanged={text => this.onDescriptionNameChanged(text)}
-                  value={this.state.description}
+              </div>
+              <div className='EditSection'>
+                <DetailEvents
+                  inEdit={true}
+                  events={this.props.person.events}
                 />
-                <div className='EditSection'>
-                  <DetailTags 
-                    inEdit={true}
-                    tags={this.state.tags}
-                    filter={this.props.filter}
-                  />
-                  <OF.IconButton
-                      className="ButtonIcon ButtonDark"
-                      onClick={this.onEditTags}
-                      iconProps={{ iconName: 'Edit' }}
-                  />
-                </div>
-                <div className='EditSection'>
-                  <DetailRelationships
-                    inEdit={true}
-                    relationships={this.state.relationships}
-                    allPeople={this.props.allPeople}
-                    onSelectPerson={() => {}}  // LARS temp
-                  />
-                  <OF.IconButton
-                      className="ButtonIcon ButtonDark"
-                      onClick={this.onEditRelationships}
-                      iconProps={{ iconName: 'Edit' }}
-                  />
-                </div>
-                <div className='EditSection'>
-                  <DetailEvents
-                    inEdit={true}
-                    events={this.props.person.events}
-                  />
-                  <OF.IconButton
+                <OF.IconButton
+                  className="ButtonIcon ButtonDark"
+                  // onClick={this.onEditTags}
+                  iconProps={{ iconName: 'Edit' }}
+                />
+              </div>
+              <div className='EditSection'>
+                <DetailKeyValues
+                  inEdit={true}
+                  keyValues={this.props.person.keyValues}
+                />
+                <OF.IconButton
                     className="ButtonIcon ButtonDark"
                     // onClick={this.onEditTags}
                     iconProps={{ iconName: 'Edit' }}
-                  />
-                </div>
-                <div className='EditSection'>
-                  <DetailKeyValues
-                    inEdit={true}
-                    keyValues={this.props.person.keyValues}
-                  />
-                  <OF.IconButton
-                      className="ButtonIcon ButtonDark"
-                     // onClick={this.onEditTags}
-                      iconProps={{ iconName: 'Edit' }}
-                  />
-                </div>
-                <div className='EditSection'>
-                  <DetailSocialNetworks
-                    inEdit={true}
-                    socialNets={this.props.person.socialNets}
-                  />
-                  <OF.IconButton
-                      className="ButtonIcon ButtonDark"
-                     // onClick={this.onEditTags}
-                      iconProps={{ iconName: 'Edit' }}
-                  />
-                </div>
+                />
               </div>
-              <div
-                className="ContentFooter"
-              >
-                <OF.IconButton
-                    className="ButtonIcon ButtonPrimary"
-                    onClick={this.onClickSave}
-                    iconProps={{ iconName: 'Save' }}
+              <div className='EditSection'>
+                <DetailSocialNetworks
+                  inEdit={true}
+                  socialNets={this.props.person.socialNets}
                 />
                 <OF.IconButton
-                    className="ButtonIcon ButtonPrimary"
-                    onClick={this.onClickCancel}
-                    iconProps={{ iconName: 'Cancel' }}
+                    className="ButtonIcon ButtonDark"
+                    // onClick={this.onEditTags}
+                    iconProps={{ iconName: 'Edit' }}
                 />
-                {this.props.person.saveName &&
-                  <OF.IconButton
-                      className="ButtonIcon ButtonPrimary"
-                      onClick={this.onClickDelete}
-                      iconProps={{ iconName: 'Trash' }}
-                  />
-                }
               </div>
             </div>
-          }
-          {this.state.isEditTagsOpen &&
-            <EditTags
-              allTags={this.props.allTags}
-              personTags={this.state.tags}
-              onCancel={this.onCancelEditTags}
-              onSave={this.onSaveEditTags}
-            />
-          }
-          {this.state.isEditRelationshipsOpen &&
-            <EditRelationships
-              relationships={this.state.relationships}
-              allPeople={this.props.allPeople}
-              person={this.props.person}
-              onCancel={this.onCancelEditRelationships}
-              onSave={this.onSaveEditRelationships}
-            />
-          }
-          {this.state.isConfirmDeleteOpen &&
-            <ConfirmModal
-              title="Are you sure you want to delete this person?"
-              onCancel={this.onCancelDelete}
-              onConfirm={this.onConfirmDelete}
-            />
-          }
-          {this.state.isConfirmDeletePhotoOpen &&
-            <ConfirmModal
-              title="Are you sure you want to delete this photo?"
-              onCancel={this.onCancelDeletePhoto}
-              onConfirm={this.onConfirmDeletePhoto}
-            />
-          }
+            <div
+              className="ContentFooter"
+            >
+              <OF.IconButton
+                  className="ButtonIcon ButtonPrimary"
+                  onClick={this.onClickSave}
+                  iconProps={{ iconName: 'Save' }}
+              />
+              <OF.IconButton
+                  className="ButtonIcon ButtonPrimary"
+                  onClick={this.onClickCancel}
+                  iconProps={{ iconName: 'Cancel' }}
+              />
+              {this.props.person.saveName &&
+                <OF.IconButton
+                    className="ButtonIcon ButtonPrimary"
+                    onClick={this.onClickDelete}
+                    iconProps={{ iconName: 'Trash' }}
+                />
+              }
+            </div>
+          </div>
+        }
+        {this.state.isEditTagsOpen &&
+          <EditTags
+            allTags={this.props.allTags}
+            personTags={this.state.tags}
+            onCancel={this.onCancelEditTags}
+            onSave={this.onSaveEditTags}
+          />
+        }
+        {this.state.isEditRelationshipsOpen &&
+          <EditRelationships
+            relationships={this.state.relationships}
+            allPeople={this.props.allPeople}
+            person={this.props.person}
+            onCancel={this.onCancelEditRelationships}
+            onSave={this.onSaveEditRelationships}
+          />
+        }
+        {this.state.isConfirmDeleteOpen &&
+          <ConfirmModal
+            title="Are you sure you want to delete this person?"
+            onCancel={this.onCancelDelete}
+            onConfirm={this.onConfirmDelete}
+          />
+        }
+        {this.state.isConfirmDeletePhotoOpen &&
+          <ConfirmModal
+            title="Are you sure you want to delete this photo?"
+            onCancel={this.onCancelDeletePhoto}
+            onConfirm={this.onConfirmDeletePhoto}
+          />
+        }
       </div>
     );
   }

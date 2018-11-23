@@ -4,12 +4,13 @@
  */
 import * as React from 'react';
 import * as OF from 'office-ui-fabric-react'
+import { PHOTO_HEIGHT, PHOTO_WIDTH } from '../Util'
 import ReactCrop from 'react-image-crop'
 import 'react-image-crop/dist/ReactCrop.css'
 
 export interface ReceivedProps {
   imageURL: string
-  onSave: (blob: Blob) => void
+  onSave: (imageData: string) => void
   onClose: () => void
 }
 
@@ -22,34 +23,38 @@ class CropPage extends React.Component<ReceivedProps, ComponentState> {
 
   state: ComponentState = {
     imageBlob: null,
-    crop: {aspect: 1 / 1, x: 0, y: 0}
+    crop: {aspect: PHOTO_WIDTH / PHOTO_HEIGHT, x: 0, y: 0}
   }
 
   @OF.autobind
   onSave() {
   
-    const image = document.createElement('img');
+    const image = new Image() 
+    image.src = this.props.imageURL
 
-    const canvas = document.createElement('canvas');
-    canvas.width = this.state.crop.width!;
-    canvas.height = this.state.crop.height!;
-    const ctx = canvas.getContext('2d');
+    const canvas = document.createElement('canvas')
+    canvas.width = PHOTO_WIDTH
+    canvas.height = PHOTO_HEIGHT
+    const ctx = canvas.getContext('2d')
   
     ctx!.drawImage(
       image,
-      this.state.crop.x,
-      this.state.crop.y,
-      this.state.crop.width!,
-      this.state.crop.height!,
-      0,
-      0,
-      this.state.crop.width!,
-      this.state.crop.height!
+      (this.state.crop.x / 100) * image.width,          // Top left X Source
+      (this.state.crop.y / 100) * image.height,         // Top left Y Source
+      ((this.state.crop.width!) / 100) * image.width,   // Width
+      ((this.state.crop.height!) / 100) * image.height, // Height
+      0,                                                // Top left X Destination
+      0,                                                // Top left Y Destination
+      PHOTO_WIDTH,                                      // Width Destination
+      PHOTO_HEIGHT                                      // Height Destination
     )
 
+    const data = canvas.toDataURL()
+    this.props.onSave(data)
+    /*LRAS
     canvas.toBlob(blob => {
       this.props.onSave(blob!)
-    })
+    })*/
   }
 
   @OF.autobind
@@ -72,6 +77,7 @@ class CropPage extends React.Component<ReceivedProps, ComponentState> {
               src={this.props.imageURL}
               crop={this.state.crop}
               onChange={this.onCropChange} 
+              keepSelection={true}
             />
             <div
               className="ContentFooter"

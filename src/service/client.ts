@@ -6,7 +6,7 @@ import axios from 'axios'
 import { User } from '../models/models'
 import { TestResult } from '../models/performance'
 import { Person } from '../models/person'
-import * as blobToBuffer from 'blob-to-buffer'
+//LARS import * as blobToBuffer from 'blob-to-buffer'
 
 export default class Client {
 
@@ -44,19 +44,22 @@ export default class Client {
     }
 
     public static async deletePerson(user: User, person: Person): Promise<void> {
-        await axios.delete(`${this.baseUrl}/person/${person.cacheKey}/${person.guid}`, this.getConfig(user))
+        await axios.delete(`${this.baseUrl}/person/${person.getKey}/${person.guid}`, this.getConfig(user))
     }
 
-    public static async putImage(personGUID: string, blob: Blob) {
-        blobToBuffer(blob, async (error, buffer) => {
-            if (!error) {
-                await axios.put(`${this.baseUrl}/person/${personGUID}/image`,
-                {image: JSON.stringify(buffer)})
-            }
-            else {
-                throw error
-            }
-        })
+    public static async putPhoto(user: User, person: Person, photoData: string): Promise<string> {
+        let response = await axios.put(
+            `${this.baseUrl}/person/${person.getKey}/${person.guid}/photo`,
+            {photo: photoData},
+            this.getConfig(user)
+        )
+        return response.data as string
+    }
+
+    public static async deletePhoto(user: User, person: Person, photoName: string) {
+        await axios.delete(
+            `${this.baseUrl}/person/${person.getKey}/${person.guid}/photo/${photoName}`, this.getConfig(user)
+        )
     }
 
     public static async postTestResults(testResults: TestResult[]): Promise<void> {

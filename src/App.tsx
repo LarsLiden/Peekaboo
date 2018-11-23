@@ -7,7 +7,7 @@ import './App.css';
 import './fabric.css'
 import Client from './service/client'
 import * as OF from 'office-ui-fabric-react'
-import { setStatePromise, SAD_IMAGE } from './Util'
+import { setStatePromise, replacePerson, SAD_IMAGE } from './Util'
 import { QuizSet, QuizPerson, FilterSet, Tag, Filter, PerfType, User } from './models/models'
 import { Person } from './models/person'
 import { TestResult } from './models/performance'
@@ -100,7 +100,6 @@ class App extends React.Component<{}, ComponentState> {
     let filterSet = this.state.filterSet
     if (!filterSet) {
       filterSet = Convert.getFilterSet(this.state.allPeople, this.state.filter)
-      filterSet.selectedIndex = 0
     }
     // TODO: also might trigger if overconstrained filter
     if (filterSet.people.length === 0) {
@@ -138,7 +137,7 @@ class App extends React.Component<{}, ComponentState> {
       let loaded: Person[][] = []
       this.setState({page: Page.LOAD})
 
-      const letters = "ABCDEFGHIJKLM"/*NOPQRSTUVWXYZ"*/.split("")
+      const letters = "ABC"/*EFGHIJKLM"/*NOPQRSTUVWXYZ"*/.split("")
       for (let letter of letters) {
         Client.getPeopleStartingWith(this.state.user!, letter, async (people) => {
           if (!people) {
@@ -228,7 +227,7 @@ class App extends React.Component<{}, ComponentState> {
           // Add new person
           people = [...this.state.allPeople, person]
           // Recalculte filter set to include new person
-          filterSet = Convert.getFilterSet(people, this.state.filter)
+          filterSet = Convert.getFilterSet(people, this.state.filter, person)
         }
         else {
           // Replace local
@@ -268,7 +267,7 @@ class App extends React.Component<{}, ComponentState> {
         filterSet,
         page: Page.VIEW
       })
-      this.onNextPerson()
+      this.viewLibraryPerson()
     }
     catch {
       this.setState({error: `Failed to delete ${person.fullName()}`})
@@ -292,12 +291,36 @@ class App extends React.Component<{}, ComponentState> {
   }
 
   @OF.autobind 
-  async onSaveImage(person: Person, newImage: Blob) {
+  async onDeletePhoto(person: Person, photoName: string) {
     try {
-      await Client.putImage(person.guid, newImage)
+      await Client.deletePhoto(this.state.user!, person, photoName)
+
+      // Upldate local copy
+      person.photoFilenames = person.photoFilenames.filter(p => p !== photoName)
+      let allPeople = replacePerson(this.state.allPeople, person)
+      this.setState({
+        allPeople
+      })
     }
     catch {
-      this.setState({error: `Failed to save image`})
+      this.setState({error: `Failed to delete photo from ${person.fullName()}`})
+    }
+  }
+
+  @OF.autobind 
+  async onSavePhoto(person: Person, photoData: string) {
+    try {
+      let newPhotoName = await Client.putPhoto(this.state.user!, person, photoData)
+
+      // Upldate local copy
+      person.photoFilenames.push(newPhotoName)
+      let allPeople = replacePerson(this.state.allPeople, person)
+      this.setState({
+        allPeople
+      })
+    }
+    catch {
+      this.setState({error: `Failed to save photo`})
     }
   }
 
@@ -451,6 +474,7 @@ class App extends React.Component<{}, ComponentState> {
           <ViewPage
             filterSet={this.state.page === Page.VIEW ? this.state.filterSet! : null}
             person={this.state.selectedPerson}
+            user={this.state.user!}
             filter={this.state.filter}
             allPeople={this.state.allPeople}
             onClickQuiz={this.onQuiz}
@@ -473,13 +497,15 @@ class App extends React.Component<{}, ComponentState> {
           &&
           <EditPage
             person={this.state.newPerson || this.state.selectedPerson!}
+            user={this.state.user!}
             filter={this.state.filter}
             allTags={this.state.allTags}
             allPeople={this.state.allPeople}
             onClose={this.onCloseEditPage}
             onSavePerson={this.onSavePerson}
-            onSaveImage={this.onSaveImage}
+            onSavePhoto={this.onSavePhoto}
             onDeletePerson={this.onDeletePerson}
+            onDeletePhoto={this.onDeletePhoto}
           />
         }
         {this.state.page === Page.FILTER &&

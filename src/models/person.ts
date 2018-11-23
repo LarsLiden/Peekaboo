@@ -52,7 +52,7 @@ export class Person {
         return `${this.firstName} ${this.lastName}`
     }
 
-    public get cacheKey(): string {
+    public get getKey(): string {
         return this.saveName![0].toUpperCase()
     } 
 

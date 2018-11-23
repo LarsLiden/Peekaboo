@@ -18,7 +18,7 @@ class DetailText extends React.Component<ReceivedProps, {}> {
   public render() {
 
     return (
-      <div className={`DetailText AlighnLeft"}`}>
+      <div className={`DetailText AlignLeft"}`}>
         <div className="DetailTitle DetailEditTitle">
           {this.props.label}
         </div>

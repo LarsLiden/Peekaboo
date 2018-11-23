@@ -2,8 +2,13 @@
  * Copyright (c) Lars Liden. All rights reserved.  
  * Licensed under the MIT License.
  */
+import { Person } from './models/person'
+import { User } from './models/models'
+
 export const HEAD_IMAGE = "https://peekaboo.blob.core.windows.net/resources/HaveWeHead.png"
 export const SAD_IMAGE = "https://peekaboo.blob.core.windows.net/resources/SAD_FACE.png"
+export const PHOTO_HEIGHT = 250
+export const PHOTO_WIDTH = 230
 
 export function getRandomInt(min: number, max: number): number {
     return Math.floor(Math.random() * (max - min + 1)) + min;
@@ -15,6 +20,20 @@ export function setStatePromise(that: any, newState: any) {
             resolve();
         });
     });
+}
+
+export function replacePerson(people: Person[], person: Person): Person[] {
+    let newPeople = people.filter(p => p.guid !== person.guid)
+    newPeople.push(person)
+    return newPeople
+}
+
+export function getPhotoBlobName(person: Person, photoName: string) {
+    return `${person.getKey}/${person.saveName}/${photoName}`
+}
+
+export function baseBlob(user: User) {
+    return `https://peekaboo.blob.core.windows.net/${user.photoContainerId}/`
 }
 
 export function generateGUID(): string {
