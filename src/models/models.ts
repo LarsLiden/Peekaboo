@@ -16,9 +16,9 @@ export enum PerfType
 
 export interface User {
     name: string,
-    id: string,
+    googleId: string,
     email: string,
-    photoContainerId?: string,
+    photoBlobPrefix?: string,
     hwmid?: string
 }
 

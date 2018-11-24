@@ -7,6 +7,7 @@ import * as OF from 'office-ui-fabric-react'
 
 export interface ReceivedProps {
   title: string
+  subtitle?: string
   image?: string
   onConfirm?: () => void,
   onCancel?: () => void
@@ -17,9 +18,14 @@ class Confirm extends React.Component<ReceivedProps, {}> {
   public render() {
     return (
       <div className="ModalPage">
-        <div className="ModalBodyText">
+        <div className="ConfirmTitle">
           {this.props.title}
         </div>
+        {this.props.subtitle && 
+          <div className="ConfirmSubtitle">
+            {this.props.subtitle}
+          </div>
+        }
         {this.props.image && 
             <OF.Image
               className="ConfirmImageHolder"
@@ -33,14 +39,14 @@ class Confirm extends React.Component<ReceivedProps, {}> {
         > 
           {this.props.onConfirm &&
             <OF.IconButton
-                className="ButtonIcon ButtonPrimary"
+                className="ButtonIcon ButtonPrimary FloatLeft"
                 onClick={this.props.onConfirm}
                 iconProps={{ iconName: 'LikeSolid' }}
             />
           }
           {this.props.onCancel &&
             <OF.IconButton
-                className="ButtonIcon ButtonPrimary"
+                className="ButtonIcon ButtonPrimary FloatRight"
                 onClick={this.props.onCancel}
                 iconProps={{ iconName: 'DislikeSolid' }}
             />

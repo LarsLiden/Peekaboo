@@ -33,7 +33,7 @@ export function getPhotoBlobName(person: Person, photoName: string) {
 }
 
 export function baseBlob(user: User) {
-    return `https://peekaboo.blob.core.windows.net/${user.photoContainerId}/`
+    return `https://peekaboo.blob.core.windows.net/${user.photoBlobPrefix}/`
 }
 
 export function generateGUID(): string {

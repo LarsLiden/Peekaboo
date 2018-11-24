@@ -190,6 +190,7 @@ class App extends React.Component<{}, ComponentState> {
   @OF.autobind 
   async onClickImport() {
       await Client.import(this.state.user!)
+      this.loadPeople()
   }
 
   async updateTags() {

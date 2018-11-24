@@ -10,7 +10,6 @@
   },
   "dependencies": {
     "axios": "^0.18.0",
-    "blob-to-buffer": "^1.2.8",
     "office-ui-fabric-react": "^6.78.0",
     "react": "^16.5.2",
     "react-dom": "^16.5.2",

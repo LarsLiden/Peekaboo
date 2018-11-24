@@ -271,9 +271,18 @@
   margin-top: var(--modal-thin-height)
 }
 
-.ModalBodyText {
+.ConfirmTitle {
   margin-top: 200px;
   font-size: 20px;
+  width: 300px;
+  margin-left: auto;
+  margin-right: auto;
+}
+
+.ConfirmSubtitle {
+  color: var(--color-themePrimary) !important;
+  font-size: 20px;
+  font-weight: bold;
   width: 300px;
   margin-left: auto;
   margin-right: auto;

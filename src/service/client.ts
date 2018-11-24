@@ -6,7 +6,6 @@ import axios from 'axios'
 import { User } from '../models/models'
 import { TestResult } from '../models/performance'
 import { Person } from '../models/person'
-//LARS import * as blobToBuffer from 'blob-to-buffer'
 
 export default class Client {
 

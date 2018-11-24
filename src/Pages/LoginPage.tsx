@@ -32,7 +32,7 @@ class LoginPage extends React.Component<ReceivedProps, ComponentState> {
   private async loginSuccess(googleUser: any) {
     let profile = googleUser.getBasicProfile();
     let user: User = {
-      id: profile.getId(),
+      googleId: profile.getId(),
       name: profile.getName(),
       email: profile.getEmail()
     }

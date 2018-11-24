@@ -22,19 +22,23 @@ class NewUserPage extends React.Component<ReceivedProps, ComponentState> {
     userLoginValue: ""
   }
 
- 
-
   public render() {
   
     return (
       <div
-      className="LoginPage"
+        className="LoginPage"
       >
-        <OF.Image className="LoginImage"
+        <OF.Image 
+          className="LoginImage"
           src={HEAD_IMAGE}
           imageFit={OF.ImageFit.cover}
           maximizeFrame={true}
         />
+        <OF.DefaultButton
+            className="QuizButton"
+            onClick={this.props.onClose}
+            text="Import"
+        />  
       </div>
     )
   }

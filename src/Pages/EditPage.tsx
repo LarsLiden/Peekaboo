@@ -334,7 +334,7 @@ class EditPage extends React.Component<ReceivedProps, ComponentState> {
 
     if (!this.props.person.saveName) {
       // TODO: check for duplicates when creating new name
-      newPerson.saveName = `${this.state.firstName}_${this.state.lastName}`
+      newPerson.saveName = `${this.state.firstName}_${this.state.lastName}`.replace(/[\W_]+/g, "").replace(" ", "")
     }
     this.props.onClose(newPerson)
   }
@@ -525,7 +525,7 @@ class EditPage extends React.Component<ReceivedProps, ComponentState> {
               className="ContentFooter"
             >
               <OF.IconButton
-                  className="ButtonIcon ButtonPrimary"
+                  className="ButtonIcon ButtonPrimary FloatLeft"
                   onClick={this.onClickSave}
                   iconProps={{ iconName: 'Save' }}
               />
@@ -536,7 +536,7 @@ class EditPage extends React.Component<ReceivedProps, ComponentState> {
               />
               {this.props.person.saveName &&
                 <OF.IconButton
-                    className="ButtonIcon ButtonPrimary"
+                    className="ButtonIcon ButtonPrimary FloatRight"
                     onClick={this.onClickDelete}
                     iconProps={{ iconName: 'Trash' }}
                 />
@@ -563,7 +563,8 @@ class EditPage extends React.Component<ReceivedProps, ComponentState> {
         }
         {this.state.isConfirmDeleteOpen &&
           <ConfirmModal
-            title="Are you sure you want to delete this person?"
+            title="Are you sure you want to delete"
+            subtitle={this.props.person.fullName()}
             onCancel={this.onCancelDelete}
             onConfirm={this.onConfirmDelete}
           />
