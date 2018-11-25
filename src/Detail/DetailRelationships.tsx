@@ -18,14 +18,15 @@ export interface ReceivedProps {
 class DetailRelationships extends React.Component<ReceivedProps, {}> {
 
   @OF.autobind
-  private onRenderCell(relationship: Relationship, index: number, isScrolling: boolean): JSX.Element {
-    const person = this.props.allPeople.find(p => p.guid === relationship.guid)
+  onRenderCell(relationship: Relationship, index: number, isScrolling: boolean): JSX.Element {
+    const person = this.props.allPeople.find(p => p.guid === relationship.personId)
     const name = person ? person.fullName() : "MISSING PERSON"
     return (
       <div className="DetailRelationship">{`${relationship.type.from}`}
-        <OF.Button className={this.props.inEdit ? "DetailRelationshipPlain" : "DetailRelationshipLink"}
-            onClick={()=>this.props.onSelectPerson(relationship.guid)}
-          >
+        <OF.Button 
+          className="DetailRelationshipLink"
+          onClick={() => this.props.onSelectPerson(relationship.personId)}
+        >
           {name}
         </OF.Button>
        

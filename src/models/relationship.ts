@@ -3,8 +3,9 @@
  * Licensed under the MIT License.
  */
 export interface Relationship {
+    id: string
     type: RelationshipType
-    guid: string
+    personId: string
     name?: string
 }
 
@@ -33,9 +34,17 @@ export enum RType {
 export class RelationshipType {
     static relationshipTypes: RelationshipType[] | null = null
 
-    constructor(public from: RType, public to: RType) {
+    public static getRelationshipType(name: string): RelationshipType {
+        if (!this.relationshipTypes) {
+            this.init()
+        }
+        const relationshipType = this.relationshipTypes!.find(rt => rt.from.toString() === name )
+        if (!relationshipType) {
+            throw new Error(`Can't find rtype ${name}`)
+        }
+        return relationshipType
     }
-   
+
     private static addRType(from: RType, to?: RType): void {
         if (!this.relationshipTypes) {
             this.relationshipTypes = []
@@ -48,6 +57,7 @@ export class RelationshipType {
             this.relationshipTypes.push(new RelationshipType(to, from)) 
         }
     }
+    
     private static init(): void {
         // Create types
         this.addRType(RType.MARRIED_TO)
@@ -65,15 +75,7 @@ export class RelationshipType {
         this.addRType(RType.STEP_SIBLING_OF)
         this.addRType(RType.STEP_CHILD_OF, RType.STEP_PARENT_OF)
     } 
-    public static getRelationshipType(name: string): RelationshipType {
-        if (!this.relationshipTypes) {
-            this.init()
-        }
-        const relationshipType = this.relationshipTypes!.find(rt => rt.from.toString() === name )
-        if (!relationshipType) {
-            throw new Error(`Can't find rtype ${name}`)
-        }
-        return relationshipType
-    }
-   
+
+    constructor(public from: RType, public to: RType) {
+    } 
 }

@@ -4,6 +4,7 @@
  */
 import * as React from 'react';
 import * as OF from 'office-ui-fabric-react'
+import { generateGUID } from '../Util'
 import { Person } from '../models/person'
 import Search from '../modals/Search'
 import { Relationship, RType, RelationshipType } from '../models/relationship'
@@ -51,7 +52,7 @@ class EditRelationships extends React.Component<ReceivedProps, ComponentState> {
   onSelectSearch(person:  Person): void {
 
     let relationships = this.state.relationships.filter(r => r !== this.state.searchTarget)
-    let changedRelationship: Relationship = {...this.state.searchTarget!, guid: person.guid }
+    let changedRelationship: Relationship = {...this.state.searchTarget!, personId: person.guid }
     relationships.push(changedRelationship)
 
     this.setState({
@@ -80,7 +81,7 @@ class EditRelationships extends React.Component<ReceivedProps, ComponentState> {
   @OF.autobind
   onClickDelete(relationship: Relationship) {
     this.setState({
-      relationships: this.state.relationships.filter(r => r.guid !== relationship.guid)
+      relationships: this.state.relationships.filter(r => r.personId !== relationship.personId)
     }) 
   }
 
@@ -92,9 +93,10 @@ class EditRelationships extends React.Component<ReceivedProps, ComponentState> {
   @OF.autobind
   onClickAdd() {
     const newRelationship: Relationship = {
-        type: RelationshipType.getRelationshipType(RType.BOSS_OF),
-        guid: "none"
-      }
+      id: generateGUID(),
+      type: RelationshipType.getRelationshipType(RType.BOSS_OF),
+      personId: "none"
+    }
     this.setState({
       relationships: [...this.state.relationships, newRelationship]
     }) 
@@ -102,7 +104,7 @@ class EditRelationships extends React.Component<ReceivedProps, ComponentState> {
 
   @OF.autobind
   onRenderCell(relationship: Relationship, index: number, isScrolling: boolean): JSX.Element {
-    const person = this.props.allPeople.find(p => p.guid === relationship.guid)
+    const person = this.props.allPeople.find(p => p.guid === relationship.personId)
     const name = person ? person.fullName() : "--"
     return (
       <div className="FilterLine">

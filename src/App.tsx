@@ -285,6 +285,10 @@ class App extends React.Component<{}, ComponentState> {
       setStatePromise(this, {
         allPeople: [...people, person]
       })
+
+      if (this.state.selectedPerson && person.guid === this.state.selectedPerson.guid) {
+        this.setState({selectedPerson: person})
+      }
     }
     catch {
       this.setState({error: `Failed to save ${person.fullName()}`})
@@ -507,6 +511,7 @@ class App extends React.Component<{}, ComponentState> {
             onSavePhoto={this.onSavePhoto}
             onDeletePerson={this.onDeletePerson}
             onDeletePhoto={this.onDeletePhoto}
+            onSelectPerson={this.onSelectPerson}
           />
         }
         {this.state.page === Page.FILTER &&

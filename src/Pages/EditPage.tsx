@@ -11,8 +11,10 @@ import { Filter, Tag, User } from '../models/models'
 import CropPage from './CropPage'
 import { HEAD_IMAGE, baseBlob, getPhotoBlobName, PHOTO_HEIGHT, PHOTO_WIDTH } from '../Util'
 import DetailTags from '../Detail/DetailTags'
+import DetailText from '../Detail/DetailText'
 import ReactCrop from 'react-image-crop'
 import ConfirmModal from '../modals/Confirm'
+import EditStrings from '../modals/EditStrings'
 import EditTags from '../modals/EditTags'
 import EditRelationships from '../modals/EditRelationships'
 import DetailIndexer from '../Detail/DetailIndexer'
@@ -20,7 +22,6 @@ import DetailRelationships from '../Detail/DetailRelationships'
 import DetailEvents from '../Detail/DetailEvents'
 import DetailKeyValues from '../Detail/DetailKeyValues'
 import DetailSocialNetworks from '../Detail/DetailSocialNetworks'
-import DetailEditText from '../Detail/DetailEditText'
 import { FilePicker } from 'react-file-picker'
 import "./ViewPage.css"
 
@@ -35,23 +36,17 @@ export interface ReceivedProps {
   onDeletePhoto: (person: Person, photoName: string) => void
   onDeletePerson: (person: Person) => void
   onClose: (person?: Person) => void
+  onSelectPerson: (guid: string) => void
 }
 
 interface ComponentState { 
   edited: boolean
   photoIndex: number
-  firstName: string
-  lastName: string
-  nickName: string
-  maidenName: string
-  alternateName: string
-  description: string
-  tags: string[]
-  relationships: Relationship[]
   showCropPage: boolean
   imageURL: string | null
   crop: ReactCrop.Crop
   file: File | null
+  isEditStringsOpen: boolean
   isEditTagsOpen: boolean
   isEditRelationshipsOpen: boolean
   isConfirmDeletePhotoOpen: boolean
@@ -63,54 +58,34 @@ class EditPage extends React.Component<ReceivedProps, ComponentState> {
   state: ComponentState = {
     edited: false,
     photoIndex: 0,
-    firstName: "",
-    lastName: "",
-    nickName: "",
-    maidenName: "",
-    alternateName: "",
-    description: "",
-    tags: [],
-    relationships: [],
     showCropPage: false,
     imageURL: null,
     crop: {aspect: 1 / 1, x: 0, y: 0, width: 50, height: 50},
     file: null,
+    isEditStringsOpen: false,
     isEditTagsOpen: false,
     isEditRelationshipsOpen: false,
     isConfirmDeletePhotoOpen: false,
     isConfirmDeleteOpen: false
   }
 
-  componentDidMount() {
-    this.updateAppState(this.props.person)
+  // --- EDIT Strings ---
+  @OF.autobind
+  onCancelEditStrings(): void {
+    this.setState({isEditStringsOpen: false})
   }
 
-  componentDidUpdate() {
-    if (this.state.edited === false && 
-      (this.state.firstName !== this.props.person.firstName ||
-        this.state.lastName !== this.props.person.lastName ||
-        this.state.nickName !== this.props.person.nickName ||
-        this.state.maidenName !== this.props.person.maidenName ||
-        this.state.alternateName !== this.props.person.alternateName ||
-        this.state.description !== this.props.person.description ||
-        this.state.tags !== this.props.person.tags ||
-        this.state.relationships !== this.props.person.relationships
-       )) {  
-        this.updateAppState(this.props.person)
-    }
-  }
-
-  updateAppState(person: Person) {
+  @OF.autobind
+  onSaveEditStrings(person: Person): void {
+    this.props.onSavePerson(person)
     this.setState({
-        firstName: person.firstName,
-        lastName: person.lastName,
-        nickName: person.nickName,
-        maidenName: person.maidenName,
-        alternateName: person.alternateName,
-        description: person.description,
-        tags: person.tags,
-        relationships: person.relationships
+      isEditStringsOpen: false
     })
+  }
+
+  @OF.autobind
+  onEditStrings(): void {
+    this.setState({isEditStringsOpen: true})
   }
 
   // --- EDIT TAGS ---
@@ -120,11 +95,14 @@ class EditPage extends React.Component<ReceivedProps, ComponentState> {
   }
 
   @OF.autobind
-  onSaveEditTags(tagNames: string[]): void {
+  onSaveEditTags(tags: string[]): void {
+
+    let newPerson = new Person({...this.props.person})
+    newPerson.tags = tags
+    this.props.onSavePerson(newPerson)
+
     this.setState({
-      isEditTagsOpen: false,
-      tags: tagNames,
-      edited: true
+      isEditTagsOpen: false
     })
   }
 
@@ -141,10 +119,14 @@ class EditPage extends React.Component<ReceivedProps, ComponentState> {
 
   @OF.autobind
   onSaveEditRelationships(relationships: Relationship[]): void {
+    this.saveReverseRelationships(relationships)
+
+    let newPerson = new Person({...this.props.person})
+    newPerson.relationships = relationships
+    this.props.onSavePerson(newPerson)
+
     this.setState({
-      isEditRelationshipsOpen: false,
-      relationships,
-      edited: true
+      isEditRelationshipsOpen: false
     })
   }
 
@@ -155,12 +137,12 @@ class EditPage extends React.Component<ReceivedProps, ComponentState> {
 
   getReversePerson(updatedPeople: Person[], relationship: Relationship): Person | null {
     // First see if I have person already
-    let person = updatedPeople.find(up => up.guid === relationship.guid)
+    let person = updatedPeople.find(up => up.guid === relationship.personId)
     if (person) {
       return person
     }
     // If not get them
-    person = this.props.allPeople.find(ap => ap.guid === relationship.guid)
+    person = this.props.allPeople.find(ap => ap.guid === relationship.personId)
     if (person) {
       let copy = new Person(person)
       updatedPeople.push(copy)
@@ -172,24 +154,24 @@ class EditPage extends React.Component<ReceivedProps, ComponentState> {
 
   findRelationship(person: Person, relationship: Relationship): Relationship | undefined {
     return person.relationships.find(r => 
-      r.guid === person.guid && r.type.from === relationship.type.to)
+      r.personId === person.guid && r.type.from === relationship.type.to)
   }
 
-  makeReverseRelationship(relationship: Relationship, guid: string): Relationship {
+  makeReverseRelationship(relationship: Relationship, personId: string): Relationship {
     return {
-      guid,
+      id: relationship.id,
+      personId,
       type: RelationshipType.getRelationshipType(relationship.type.to)
     }
   }
 
-  saveReverseRelationships() {
-    // TODO - issue when more then one relationship type with a person.  Need id's to identify
-    
+  saveReverseRelationships(relationships: Relationship[]) {
+
     // Identify changes
-    let removed = this.props.person.relationships.filter(or => !this.state.relationships.find(er => er.guid === or.guid))
-    let added = this.state.relationships.filter(or => !this.props.person.relationships.find(er => er.guid === or.guid))
-    let changed = this.state.relationships.filter(or => {
-      let found = this.props.person.relationships.find(er => er.guid === or.guid)
+    let removed = this.props.person.relationships.filter(or => !relationships.find(er => er.id === or.id))
+    let added = relationships.filter(or => !this.props.person.relationships.find(er => er.id === or.id))
+    let changed = relationships.filter(or => {
+      let found = this.props.person.relationships.find(er => er.id === or.id)
       return (found && found.type !== or.type)
     })
 
@@ -202,7 +184,7 @@ class EditPage extends React.Component<ReceivedProps, ComponentState> {
       if (reversePerson) {
         // Remove the relationship
         reversePerson.relationships = reversePerson.relationships.filter(r => 
-          r.guid !== this.props.person.guid || r.type.from !== removeRelationship.type.from)
+          r.personId !== this.props.person.guid || r.type.from !== removeRelationship.type.from)
       }
     })
 
@@ -221,7 +203,7 @@ class EditPage extends React.Component<ReceivedProps, ComponentState> {
       let reversePerson = this.getReversePerson(updatedPeople, changedRelationship)
       if (reversePerson) {
         // Remove the existing relationship
-        reversePerson.relationships = reversePerson.relationships.filter(r => r.guid !== this.props.person.guid)
+        reversePerson.relationships = reversePerson.relationships.filter(r => r.id !== changedRelationship.id)
 
         // Create and add reverse new relationship
         let reverseRelationship = this.makeReverseRelationship(changedRelationship, this.props.person.guid)
@@ -269,37 +251,6 @@ class EditPage extends React.Component<ReceivedProps, ComponentState> {
   }
 
   @OF.autobind
-  onFirstNameChanged(text: string) {
-    //TODO - delete
-    this.setState({firstName: text, edited: true})
-  }
-
-  @OF.autobind
-  onLastNameChanged(text: string) {
-      this.setState({lastName: text, edited: true})
-  }
-
-  @OF.autobind
-  onNickNameChanged(text: string) {
-    this.setState({nickName: text, edited: true})
-  }
-
-  @OF.autobind
-  onMaidenNameChanged(text: string) {
-    this.setState({maidenName: text, edited: true})
-  }
-
-  @OF.autobind
-  onAlternativeNameChanged(text: string) {
-    this.setState({alternateName: text, edited: true})
-  }
-
-  @OF.autobind
-  onDescriptionNameChanged(text: string) {
-    this.setState({description: text, edited: true})
-  }
-  
-  @OF.autobind
   onNextPhoto(): void {
     let photoIndex = this.state.photoIndex + 1
     if (photoIndex >= this.props.person.photoFilenames.length) {
@@ -315,28 +266,6 @@ class EditPage extends React.Component<ReceivedProps, ComponentState> {
       photoIndex = this.props.person.photoFilenames.length - 1
     }
     this.setState({photoIndex})
-  }
-
-  @OF.autobind
-  onClickSave(): void {
-
-    this.saveReverseRelationships()
-
-    let newPerson = new Person({...this.props.person})
-    newPerson.firstName = this.state.firstName
-    newPerson.lastName = this.state.lastName
-    newPerson.nickName = this.state.nickName
-    newPerson.maidenName = this.state.maidenName
-    newPerson.alternateName = this.state.alternateName
-    newPerson.description = this.state.description
-    newPerson.tags = this.state.tags
-    newPerson.relationships = this.state.relationships
-
-    if (!this.props.person.saveName) {
-      // TODO: check for duplicates when creating new name
-      newPerson.saveName = `${this.state.firstName}_${this.state.lastName}`.replace(/[\W_]+/g, "").replace(" ", "")
-    }
-    this.props.onClose(newPerson)
   }
 
   @OF.autobind
@@ -430,42 +359,25 @@ class EditPage extends React.Component<ReceivedProps, ComponentState> {
               />
             </div>
             <div className="ContentBody EditContent">
-              <DetailEditText
-                label="First Name"
-                onChanged={text => this.onFirstNameChanged(text)}
-                value={this.state.firstName}
-              />
-              <DetailEditText
-                label="Last Name"
-                onChanged={text => this.onLastNameChanged(text)}
-                value={this.state.lastName}
-              />
-              <DetailEditText
-                label="Nickname"
-                onChanged={text => this.onNickNameChanged(text)}
-                value={this.state.nickName}
-              />    
-              <DetailEditText
-                label="Maiden Name"
-                onChanged={text => this.onMaidenNameChanged(text)}
-                value={this.state.maidenName}
-              />
-              <DetailEditText
-                label="Alternate Name"
-                onChanged={text => this.onAlternativeNameChanged(text)}
-                value={this.state.alternateName}
-              />
-              <DetailEditText
-                // multiline={true}
-                // rows={4}
-                label="Description"
-                onChanged={text => this.onDescriptionNameChanged(text)}
-                value={this.state.description}
-              />
+              <div className='EditSection'>
+                <div className="DetailText DetailEdit">
+                  <DetailText title="Last Name" text={this.props.person.lastName} isLong={true}/>
+                  <DetailText title="First Name" text={this.props.person.firstName} isLong={true}/>                
+                  <DetailText title="Nickname" text={this.props.person.nickName} isLong={true}/>
+                  <DetailText title="Alt Name" text={this.props.person.alternateName} isLong={true}/>
+                  <DetailText title="Maiden Name" text={this.props.person.maidenName} isLong={true}/>
+                  <DetailText title="Description" text={this.props.person.description} isLong={true}/>
+                </div>                  
+                <OF.IconButton
+                    className="ButtonIcon ButtonDark"
+                    onClick={this.onEditStrings}
+                    iconProps={{ iconName: 'Edit' }}
+                />
+              </div>
               <div className='EditSection'>
                 <DetailTags 
                   inEdit={true}
-                  tags={this.state.tags}
+                  tags={this.props.person.tags}
                   filter={this.props.filter}
                 />
                 <OF.IconButton
@@ -477,9 +389,9 @@ class EditPage extends React.Component<ReceivedProps, ComponentState> {
               <div className='EditSection'>
                 <DetailRelationships
                   inEdit={true}
-                  relationships={this.state.relationships}
+                  relationships={this.props.person.relationships}
                   allPeople={this.props.allPeople}
-                  onSelectPerson={() => {}}  // LARS temp
+                  onSelectPerson={this.props.onSelectPerson}
                 />
                 <OF.IconButton
                     className="ButtonIcon ButtonDark"
@@ -526,11 +438,6 @@ class EditPage extends React.Component<ReceivedProps, ComponentState> {
             >
               <OF.IconButton
                   className="ButtonIcon ButtonPrimary FloatLeft"
-                  onClick={this.onClickSave}
-                  iconProps={{ iconName: 'Save' }}
-              />
-              <OF.IconButton
-                  className="ButtonIcon ButtonPrimary"
                   onClick={this.onClickCancel}
                   iconProps={{ iconName: 'Cancel' }}
               />
@@ -544,17 +451,24 @@ class EditPage extends React.Component<ReceivedProps, ComponentState> {
             </div>
           </div>
         }
+        {this.state.isEditStringsOpen &&
+          <EditStrings
+            person={this.props.person}
+            onCancel={this.onCancelEditStrings}
+            onSave={this.onSaveEditStrings}
+          />
+        }
         {this.state.isEditTagsOpen &&
           <EditTags
             allTags={this.props.allTags}
-            personTags={this.state.tags}
+            personTags={this.props.person.tags}
             onCancel={this.onCancelEditTags}
             onSave={this.onSaveEditTags}
           />
         }
         {this.state.isEditRelationshipsOpen &&
           <EditRelationships
-            relationships={this.state.relationships}
+            relationships={this.props.person.relationships}
             allPeople={this.props.allPeople}
             person={this.props.person}
             onCancel={this.onCancelEditRelationships}
