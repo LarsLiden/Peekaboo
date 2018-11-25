@@ -15,6 +15,27 @@ export interface ReceivedProps {
   onCancel: () => void
 }
 
+const DayPickerStrings: OF.IDatePickerStrings = {
+  months: ['January', 'February', 'March', 'April', 'May', 'June', 'July', 'August', 'September', 'October', 'November', 'December'],
+
+  shortMonths: ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'],
+
+  days: ['Sunday', 'Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday'],
+
+  shortDays: ['S', 'M', 'T', 'W', 'T', 'F', 'S'],
+
+  goToToday: 'Go to today',
+  prevMonthAriaLabel: 'Go to previous month',
+  nextMonthAriaLabel: 'Go to next month',
+  prevYearAriaLabel: 'Go to previous year',
+  nextYearAriaLabel: 'Go to next year',
+  closeButtonAriaLabel: 'Close date picker',
+
+  isRequiredErrorMessage: 'Start date is required.',
+
+  invalidInputErrorMessage: 'Invalid date format.'
+}
+
 interface ComponentState {
   events: Event[]
 }
@@ -50,7 +71,7 @@ class EditEvents extends React.Component<ReceivedProps, ComponentState> {
   onClickAdd() {
     const newEvent: Event = {
       id: generateGUID(),
-      date: JSON.stringify(Date()),
+      date: new Date().toJSON(),
       description: "",
       location: ""
     }
@@ -61,20 +82,25 @@ class EditEvents extends React.Component<ReceivedProps, ComponentState> {
 
   @OF.autobind
   onDescriptionChanged(description: string, event: Event) {
-    let changed = this.state.events.find(e => e.id === e.id)
+    let changed = this.state.events.find(e => e.id === event.id)
     changed!.description = description
   }
 
   @OF.autobind
   onLocationChanged(location: string, event: Event) {
-    let changed = this.state.events.find(e => e.id === e.id)
+    let changed = this.state.events.find(e => e.id === event.id)
     changed!.location = location
   }
 
   @OF.autobind
-  onDateChanged(date: string, event: Event) {
-    let changed = this.state.events.find(e => e.id === e.id)
-    changed!.date = date
+  onDateChanged(date: Date | null | undefined, event: Event) {
+    let changed = this.state.events.find(e => e.id === event.id)
+    changed!.date = date!.toJSON()
+  }
+
+  @OF.autobind
+  onFormatDate(date: Date): string {
+      return `${date.getMonth()}/${date.getDate() + 1}/${date.getFullYear()}`
   }
 
   @OF.autobind
@@ -93,10 +119,17 @@ class EditEvents extends React.Component<ReceivedProps, ComponentState> {
               onChanged={location => this.onLocationChanged(location, event)}
               value={event.location}
             />
-            <DetailEditText
+            <OF.DatePicker
               label="Date"
-              onChanged={date => this.onLocationChanged(date, event)}
-              value={event.date}
+              isRequired={false}
+              allowTextInput={true}
+              ariaLabel="Date"
+              firstDayOfWeek={OF.DayOfWeek.Sunday}
+              strings={DayPickerStrings}
+              value={event.date ? new Date(event.date) : new Date()}
+              onSelectDate={date => this.onDateChanged(date, event)}
+              formatDate={this.onFormatDate}
+             //TODO  parseDateFromString={this._onParseDateFromString}
             />
           </div>
           <OF.IconButton

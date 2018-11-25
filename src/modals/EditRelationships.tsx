@@ -159,12 +159,12 @@ class EditRelationships extends React.Component<ReceivedProps, ComponentState> {
           className="ContentFooter"
         >
           <OF.IconButton
-              className="ButtonIcon ButtonPrimary"
+              className="ButtonIcon ButtonPrimary FloatLeft"
               onClick={this.onClickSave}
               iconProps={{ iconName: 'Save' }}
           />
           <OF.IconButton
-              className="ButtonIcon ButtonPrimary"
+              className="ButtonIcon ButtonPrimary FloatRight"
               onClick={this.props.onCancel}
               iconProps={{ iconName: 'Cancel' }}
           />

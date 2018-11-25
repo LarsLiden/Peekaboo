@@ -67,5 +67,16 @@
   margin-bottom: 10px;
 }
 
+.DetailEventDate {
+  width: 75px;
+  display: inline-block;
+  overflow: hidden;
+  vertical-align: top;
+}
+
+.DetailEventBody {
+  display: inline-block;
+}
+
 
 

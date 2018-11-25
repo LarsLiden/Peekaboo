@@ -27,13 +27,13 @@ class DetailTags extends React.Component<ReceivedProps, {}> {
           </div>          
           <div className="DetailTags">
               {this.props.tags.map(tag => {
-                const delimeter = tag !== this.props.tags[this.props.tags.length -1] ? ",  " : ""
+                const delimeter = tag !== this.props.tags[this.props.tags.length - 1] ? ",  " : ""
                 const isSelected = this.props.filter.required.find(r => r === tag)
                 if (isSelected) { 
-                    return (<span className="TagSelected">{`${tag}${delimeter}`}</span>)
+                    return (<span className="TagSelected" key={tag} >{`${tag}${delimeter}`}</span>)
                 }
                 else {
-                    return (<span className="TagUnselected">{`${tag}${delimeter}`}</span>)
+                    return (<span className="TagUnselected" key={tag} >{`${tag}${delimeter}`}</span>)
                 }
               })
             }

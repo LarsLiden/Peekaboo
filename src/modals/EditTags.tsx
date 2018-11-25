@@ -39,13 +39,13 @@ class EditTags extends React.Component<ReceivedProps, ComponentState> {
   }
 
   @OF.autobind
-  private onClickSave() {
+  onClickSave() {
     let tagNames = this.state.editTags.filter(t => t.count === 1).map(t => t.name)
     this.props.onSave(tagNames)
   }
 
   @OF.autobind
-  private onCheckboxChange(isChecked: boolean = false, tag: Tag) {
+  onCheckboxChange(isChecked: boolean = false, tag: Tag) {
     let editTags = [...this.state.editTags]
     let curTag = editTags.find(t => t.name === tag.name)
     if (isChecked) {
@@ -59,7 +59,7 @@ class EditTags extends React.Component<ReceivedProps, ComponentState> {
   }
 
   @OF.autobind
-  private onRenderCell(tag: Tag, index: number, isScrolling: boolean): JSX.Element {
+  onRenderCell(tag: Tag, index: number, isScrolling: boolean): JSX.Element {
     return (
       <div className="FilterLine">
         <div className="FilterName">
@@ -75,7 +75,6 @@ class EditTags extends React.Component<ReceivedProps, ComponentState> {
   }
 
   public render() {
-  
     return (
       <div className="ModalPage">
         <div className="ContentHeader FilterHeader">
@@ -89,14 +88,15 @@ class EditTags extends React.Component<ReceivedProps, ComponentState> {
           />
         </div>
         <div
-          className="ContentFooter">
+          className="ContentFooter"
+        >
           <OF.IconButton
-              className="ButtonIcon ButtonPrimary"
+              className="ButtonIcon ButtonPrimary FloatLeft"
               onClick={this.onClickSave}
               iconProps={{ iconName: 'Save' }}
           />
           <OF.IconButton
-              className="ButtonIcon ButtonPrimary"
+              className="ButtonIcon ButtonPrimary FloatRight"
               onClick={this.props.onCancel}
               iconProps={{ iconName: 'Cancel' }}
           />

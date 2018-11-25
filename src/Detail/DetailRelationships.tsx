@@ -25,7 +25,11 @@ class DetailRelationships extends React.Component<ReceivedProps, {}> {
       <div className="DetailRelationship">{`${relationship.type.from}`}
         <OF.Button 
           className="DetailRelationshipLink"
-          onClick={() => this.props.onSelectPerson(relationship.personId)}
+          onClick={() => {
+            if (person) {
+              this.props.onSelectPerson(relationship.personId)
+            }
+          }}
         >
           {name}
         </OF.Button>

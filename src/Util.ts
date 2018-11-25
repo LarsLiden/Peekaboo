@@ -36,6 +36,11 @@ export function baseBlob(user: User) {
     return `https://peekaboo.blob.core.windows.net/${user.photoBlobPrefix}/`
 }
 
+export function printDate(date: Date): string {
+    const options = { day: '2-digit', year: '2-digit', month: '2-digit' };
+    return date.toLocaleDateString('en-US', options)
+}
+
 export function generateGUID(): string {
     let d = new Date().getTime()
     let guid = 'xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx'.replace(/[xy]/g, char => {
