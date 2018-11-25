@@ -110,7 +110,7 @@ class EditRelationships extends React.Component<ReceivedProps, ComponentState> {
         <div className='EditSection EditRelationshipSection'>
           <div>
             <OF.Dropdown
-              className="EditRelationshipDropdown"
+              className="EditDropdown"
               defaultSelectedKey={relationship.type.from}
               options={this.state.types}
               onChanged={(obj) => this.onTypeChange(obj, relationship)}

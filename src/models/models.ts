@@ -63,13 +63,13 @@ export interface KeyValue {
     value: string
 }
 
-export enum SocialNetType
-{
+export enum SocialNetType {
     LINKEDIN = "LINKEDIN",
     FACEBOOK = "FACEBOOK"
 }
 
 export interface SocialNet {
+    id: string
     URL: string
     profileID: string
     netType: SocialNetType

@@ -7,7 +7,7 @@ import * as OF from 'office-ui-fabric-react'
 import '../fabric.css'
 import { Person } from '../models/person'
 import { Relationship, RelationshipType } from '../models/relationship'
-import { Filter, Tag, User, KeyValue, Event } from '../models/models'
+import { Filter, Tag, User, KeyValue, Event, SocialNet } from '../models/models'
 import CropPage from './CropPage'
 import { HEAD_IMAGE, baseBlob, getPhotoBlobName, PHOTO_HEIGHT, PHOTO_WIDTH } from '../Util'
 import DetailTags from '../Detail/DetailTags'
@@ -19,6 +19,7 @@ import EditTags from '../modals/EditTags'
 import EditRelationships from '../modals/EditRelationships'
 import EditEvents from '../modals/EditEvents'
 import EditKeyValues from '../modals/EditKeyValues'
+import EditSocialNetworks from '../modals/EditSocialNetworks'
 import DetailIndexer from '../Detail/DetailIndexer'
 import DetailRelationships from '../Detail/DetailRelationships'
 import DetailEvents from '../Detail/DetailEvents'
@@ -53,6 +54,7 @@ interface ComponentState {
   isEditRelationshipsOpen: boolean
   isEditEventsOpen: boolean
   isEditKeyValuesOpen: boolean
+  isEditSocialNetworksOpen: boolean
   isConfirmDeletePhotoOpen: boolean
   isConfirmDeleteOpen: boolean
 }
@@ -71,6 +73,7 @@ class EditPage extends React.Component<ReceivedProps, ComponentState> {
     isEditRelationshipsOpen: false,
     isEditEventsOpen: false,
     isEditKeyValuesOpen: false,
+    isEditSocialNetworksOpen: false,
     isConfirmDeletePhotoOpen: false,
     isConfirmDeleteOpen: false
   }
@@ -263,6 +266,28 @@ class EditPage extends React.Component<ReceivedProps, ComponentState> {
   @OF.autobind
   onEditKeyValues(): void {
     this.setState({isEditKeyValuesOpen: true})
+  }
+
+  // --- EDIT SocialNetworks ---
+  @OF.autobind
+  onCancelEditSocialNetworks(): void {
+    this.setState({isEditSocialNetworksOpen: false})
+  }
+
+  @OF.autobind
+  onSaveEditSocialNetworks(socialNets: SocialNet[]): void {
+    let newPerson = new Person({...this.props.person})
+    newPerson.socialNets = socialNets
+    this.props.onSavePerson(newPerson)
+
+    this.setState({
+      isEditSocialNetworksOpen: false
+    })
+  }
+
+  @OF.autobind
+  onEditSocialNetworks(): void {
+    this.setState({isEditSocialNetworksOpen: true})
   }
 
   // --- DELETE PHOTO ---
@@ -478,7 +503,7 @@ class EditPage extends React.Component<ReceivedProps, ComponentState> {
                 />
                 <OF.IconButton
                     className="ButtonIcon ButtonDark"
-                    // onClick={this.onEditTags}
+                    onClick={this.onEditSocialNetworks}
                     iconProps={{ iconName: 'Edit' }}
                 />
               </div>
@@ -536,6 +561,13 @@ class EditPage extends React.Component<ReceivedProps, ComponentState> {
             person={this.props.person}
             onCancel={this.onCancelEditKeyValues}
             onSave={this.onSaveEditKeyValues}
+          />
+        }
+        {this.state.isEditSocialNetworksOpen &&
+          <EditSocialNetworks
+            person={this.props.person}
+            onCancel={this.onCancelEditSocialNetworks}
+            onSave={this.onSaveEditSocialNetworks}
           />
         }
         {this.state.isConfirmDeleteOpen &&

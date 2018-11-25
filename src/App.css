@@ -226,11 +226,15 @@
   height: 100%;
 }
 
+.EditDropdownSection {
+  height: 55px;
+}
+
 .EditRelationshipSection {
   height: 120px;
 }
 
-.EditRelationshipDropdown {
+.EditDropdown {
   margin-top: 15px !important;
   float: left;
   width: 150px;
