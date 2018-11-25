@@ -222,6 +222,10 @@
   border-top: solid 1px #555555;
 }
 
+.EditKeyValueSection {
+  height: 100%;
+}
+
 .EditRelationshipSection {
   height: 120px;
 }

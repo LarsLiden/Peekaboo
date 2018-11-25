@@ -48,7 +48,7 @@ class DetailKeyValues extends React.Component<ReceivedProps, {}> {
       return (
         <div className={`DetailText ${this.props.inEdit ? 'DetailEdit'  : ''}`}>
           <div className={`DetailTitle ${this.props.inEdit ? 'DetailEditTitle'  : ''}`}>
-            INFO
+            Key Values
           </div>
           <div className="DetailLongBody">
             <OF.DetailsList

@@ -46,6 +46,10 @@
   text-align: left
 }
 
+.DetailTextField {
+  border-bottom-color: var(--color-themePrimary) !important;
+}
+
 .DetailTags {
   margin-left: 5px;
 }
@@ -54,6 +58,13 @@
   display: inline-block;
   margin-top: 5px;
   width: 284px;
+}
+
+.DetailEditKeyValue {
+  display: inline-block;
+  margin-top: 5px;
+  width: 234px;
+  margin-bottom: 10px;
 }
 
 

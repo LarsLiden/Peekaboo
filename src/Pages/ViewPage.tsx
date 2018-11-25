@@ -139,8 +139,8 @@ class ViewPage extends React.Component<ReceivedProps, ComponentState> {
             </div>
           </div>
           <div className="ContentBody">
+            <DetailText title="Alt Name" text={this.props.person.alternateName} isLong={true}/>          
             <DetailText title="Description" text={this.props.person.description} isLong={true}/>
-            <DetailText title="Description" text={this.props.person.alternateName} isLong={true}/>
             <DetailTags 
               tags={this.props.person.tags}
               filter={this.props.filter}

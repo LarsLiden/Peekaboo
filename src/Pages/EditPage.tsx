@@ -7,7 +7,7 @@ import * as OF from 'office-ui-fabric-react'
 import '../fabric.css'
 import { Person } from '../models/person'
 import { Relationship, RelationshipType } from '../models/relationship'
-import { Filter, Tag, User } from '../models/models'
+import { Filter, Tag, User, KeyValue } from '../models/models'
 import CropPage from './CropPage'
 import { HEAD_IMAGE, baseBlob, getPhotoBlobName, PHOTO_HEIGHT, PHOTO_WIDTH } from '../Util'
 import DetailTags from '../Detail/DetailTags'
@@ -17,6 +17,7 @@ import ConfirmModal from '../modals/Confirm'
 import EditStrings from '../modals/EditStrings'
 import EditTags from '../modals/EditTags'
 import EditRelationships from '../modals/EditRelationships'
+import EditKeyValues from '../modals/EditKeyValues'
 import DetailIndexer from '../Detail/DetailIndexer'
 import DetailRelationships from '../Detail/DetailRelationships'
 import DetailEvents from '../Detail/DetailEvents'
@@ -49,6 +50,7 @@ interface ComponentState {
   isEditStringsOpen: boolean
   isEditTagsOpen: boolean
   isEditRelationshipsOpen: boolean
+  isEditKeyValuesOpen: boolean
   isConfirmDeletePhotoOpen: boolean
   isConfirmDeleteOpen: boolean
 }
@@ -65,6 +67,7 @@ class EditPage extends React.Component<ReceivedProps, ComponentState> {
     isEditStringsOpen: false,
     isEditTagsOpen: false,
     isEditRelationshipsOpen: false,
+    isEditKeyValuesOpen: false,
     isConfirmDeletePhotoOpen: false,
     isConfirmDeleteOpen: false
   }
@@ -213,6 +216,28 @@ class EditPage extends React.Component<ReceivedProps, ComponentState> {
 
     // Now save changes
     updatedPeople.forEach(person => this.props.onSavePerson(person))
+  }
+
+  // --- EDIT KeyValuues ---
+  @OF.autobind
+  onCancelEditKeyValues(): void {
+    this.setState({isEditKeyValuesOpen: false})
+  }
+
+  @OF.autobind
+  onSaveEditKeyValues(keyValues: KeyValue[]): void {
+    let newPerson = new Person({...this.props.person})
+    newPerson.keyValues = keyValues
+    this.props.onSavePerson(newPerson)
+
+    this.setState({
+      isEditKeyValuesOpen: false
+    })
+  }
+
+  @OF.autobind
+  onEditKeyValues(): void {
+    this.setState({isEditKeyValuesOpen: true})
   }
 
   // --- DELETE PHOTO ---
@@ -417,7 +442,7 @@ class EditPage extends React.Component<ReceivedProps, ComponentState> {
                 />
                 <OF.IconButton
                     className="ButtonIcon ButtonDark"
-                    // onClick={this.onEditTags}
+                    onClick={this.onEditKeyValues}
                     iconProps={{ iconName: 'Edit' }}
                 />
               </div>
@@ -468,11 +493,17 @@ class EditPage extends React.Component<ReceivedProps, ComponentState> {
         }
         {this.state.isEditRelationshipsOpen &&
           <EditRelationships
-            relationships={this.props.person.relationships}
             allPeople={this.props.allPeople}
             person={this.props.person}
             onCancel={this.onCancelEditRelationships}
             onSave={this.onSaveEditRelationships}
+          />
+        }
+        {this.state.isEditKeyValuesOpen &&
+          <EditKeyValues
+            person={this.props.person}
+            onCancel={this.onCancelEditKeyValues}
+            onSave={this.onSaveEditKeyValues}
           />
         }
         {this.state.isConfirmDeleteOpen &&

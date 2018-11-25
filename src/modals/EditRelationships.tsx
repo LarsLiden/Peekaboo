@@ -10,7 +10,6 @@ import Search from '../modals/Search'
 import { Relationship, RType, RelationshipType } from '../models/relationship'
 
 export interface ReceivedProps {
-  relationships: Relationship[]
   allPeople: Person[]
   person: Person
   onSave: (relationships: Relationship[]) => void
@@ -37,7 +36,7 @@ class EditRelationships extends React.Component<ReceivedProps, ComponentState> {
     if (this.state.relationships.length === 0) {
       // Make a local copy 
       this.setState({
-        relationships: [...this.props.relationships]
+        relationships: [...this.props.person.relationships]
       })   
     }
   }

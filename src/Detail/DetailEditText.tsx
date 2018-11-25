@@ -23,6 +23,7 @@ class DetailText extends React.Component<ReceivedProps, {}> {
           {this.props.label}
         </div>
         <OF.TextField
+          className="DetailTextField"
           underlined={true}
           onChanged={text => this.props.onChanged(text)}
           value={this.props.value}
