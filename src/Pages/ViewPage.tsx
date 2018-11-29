@@ -9,6 +9,7 @@ import { Person } from '../models/person'
 import { Filter, FilterSet, User } from '../models/models'
 import { HEAD_IMAGE, baseBlob, getPhotoBlobName, PHOTO_HEIGHT, PHOTO_WIDTH } from '../Util'
 import Search from '../modals/Search'
+import DetailColor from '../Detail/DetailColor'
 import DetailText from '../Detail/DetailText'
 import DetailTags from '../Detail/DetailTags'
 import DetailIndexer from '../Detail/DetailIndexer'
@@ -28,6 +29,7 @@ export interface ReceivedProps {
   onContinueQuiz: () => void
   onEdit: () => void
   onClickFilter: () => void
+  onClickSort: () => void
   onNewPerson: () => void
   onNextPerson: () => void
   onPrevPerson: () => void
@@ -126,6 +128,9 @@ class ViewPage extends React.Component<ReceivedProps, ComponentState> {
               />
             </div>
             <div className="ViewBodyNameColumn">
+              <DetailColor
+                value={this.props.person.photoPerformance.familiarity}
+              />
               <DetailText className="DetailTextLarge" text={this.props.person.firstName}/>
               {this.props.person.nickName &&
                 <DetailText className="DetailTextLarge" text={`"${this.props.person.nickName}"`}/>
@@ -169,6 +174,11 @@ class ViewPage extends React.Component<ReceivedProps, ComponentState> {
                   className="ButtonIcon ButtonPrimary FloatLeft"
                   onClick={() => this.props.onClickFilter()}
                   iconProps={{ iconName: 'Filter' }}
+              />
+              <OF.IconButton
+                  className="ButtonIcon ButtonPrimary FloatLeft"
+                  onClick={() => this.props.onClickSort()}
+                  iconProps={{ iconName: 'SortLines' }}
               />
               <OF.IconButton
                   className="ButtonIcon ButtonPrimary FloatLeft"

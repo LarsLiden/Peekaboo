@@ -199,6 +199,19 @@
   font-size: 20px !important;
 }
 
+.SortItem {
+  width: 50%;
+  margin-left: auto;
+  margin-right: auto;
+  margin-bottom: 75px;
+  font-size: 18px;
+}
+
+.SortDropdown {
+  margin-top: 10px !important;
+  width: 150px;
+  margin-left: 15px !important;
+}
 .LoginImage {
   opacity: 0.7;
   height: 500px !important;

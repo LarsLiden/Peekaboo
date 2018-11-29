@@ -4,32 +4,102 @@
  */
 import * as React from 'react';
 import * as OF from 'office-ui-fabric-react'
-import { Tag, Filter } from '../models/models'
+import * as Convert from '../convert'
+import { Person } from '../models/person'
+import { Tag, Filter, PerfType } from '../models/models'
 
 export interface ReceivedProps {
-  tags: Tag[]
+  allPeople: Person[]
+  allTags: Tag[]
   filter: Filter
-  peopleCount: number
-  onClose: () => void
-  onSetRequireTag: (tagName: string, value: boolean) => void
-  onSetBlockTag: (tagName: string, value: boolean) => void
+  onClose: (filter: Filter) => void
 }
 
-class FilterPage extends React.Component<ReceivedProps, {}> {
+interface ComponentState {
+  filteredTags: Tag[]
+  filteredPeople: Person[]
+  filter: Filter
+}
+
+class FilterPage extends React.Component<ReceivedProps, ComponentState> {
+
+  state: ComponentState = {
+    filteredTags: [],
+    filteredPeople: [],
+    filter: {...this.props.filter}
+  }
+
+  componentDidMount() {
+    this.setState({
+      filter: {...this.props.filter}
+    })   
+    this.updateTags()
+  }
+
+  updateTags() {
+    let filteredPeople = Convert.filteredPeople(this.props.allPeople, this.state.filter)
+    let filteredTags = Convert.filteredTags(filteredPeople, this.props.allPeople, this.state.filter)
+      this.setState({
+        filteredTags,
+        filteredPeople
+      })
+  }
 
   @OF.autobind
   onClickClose() {
-    this.props.onClose()
+    this.props.onClose(this.state.filter)
   }
 
   @OF.autobind
   onCheckboxRequireChange(isChecked: boolean = false, tag: Tag) {
-    this.props.onSetRequireTag(tag.name, isChecked)
+    if (isChecked) {
+      if (this.state.filter.required.indexOf(tag.name) <= 0) {
+        let blocked = this.state.filter.blocked.filter(t => t !== tag.name)
+        let required = [...this.state.filter.required, tag.name] 
+        this.setState({
+          filter: {...this.state.filter,
+            required,
+            blocked,
+            perfType: PerfType.PHOTO
+          }
+        }, () => this.updateTags())
+      }
+    }
+    else {
+      let required = this.state.filter.required.filter(t => t !== tag.name)
+      this.setState({
+        filter: {
+          ...this.state.filter,
+          required
+        }
+      }, () => this.updateTags())
+    }
   }
 
   @OF.autobind
   onCheckboxBlockChange(isChecked: boolean = false, tag: Tag) {
-    this.props.onSetBlockTag(tag.name, isChecked)
+    if (isChecked) { 
+      if (this.state.filter.blocked.indexOf(tag.name) <= 0) {
+        let blocked = [...this.state.filter.blocked, tag.name] 
+        let required = this.state.filter.required.filter(t => t !== tag.name)
+        this.setState({
+          filter: {
+            ...this.state.filter,
+            required,
+            blocked
+          }
+        }, () => this.updateTags())
+      }
+    }
+    else {
+      let blocked = this.state.filter.blocked.filter(t => t !== tag.name)
+      this.setState({
+        filter: {
+          ...this.state.filter,
+          blocked
+        }
+      }, () => this.updateTags())
+    }
   }
 
   @OF.autobind
@@ -65,21 +135,19 @@ class FilterPage extends React.Component<ReceivedProps, {}> {
     return (
       <div className="FilterPage">
         <div className="ContentHeader FilterHeader">
-          {this.props.peopleCount} People Selected
+          {this.state.filteredPeople.length} People Selected
         </div>
         <OF.List
           className="FilterList"
-          items={this.props.tags}
+          items={this.state.filteredTags}
           onRenderCell={this.onRenderCell}
         />
-        <div
-          className="ContentFooter"
-        >
-          <OF.DefaultButton
-              className="QuizButton"
+        <div className="ContentFooter" >
+          <OF.IconButton
+              className="ButtonIcon ButtonPrimary"
               onClick={this.onClickClose}
-              text="Done"
-          />  
+              iconProps={{ iconName: 'Cancel' }}
+          />
         </div>
       </div>
     );

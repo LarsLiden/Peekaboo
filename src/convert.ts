@@ -3,7 +3,7 @@
  * Licensed under the MIT License.
  */
 import { Person } from "./models/person";
-import { PerfType, QuizPerson, Filter, FilterSet, Tag, QuizSet } from './models/models'
+import { PerfType, QuizPerson, Filter, FilterSet, Tag, QuizSet, SortDirection, SortType } from './models/models'
 import { MAX_TIME, BIAS } from './models/const'
 
 export function toQuizPerson(person: Person, perfType: PerfType): QuizPerson {
@@ -17,32 +17,56 @@ export function toQuizPerson(person: Person, perfType: PerfType): QuizPerson {
 }
 
 export function filteredPeople(people: Person[], filter: Filter): Person[] {      
+    let filteredPeople: Person[] = []
+
     if (filter.blocked.length === 0 && filter.required.length === 0) {
-        return people.filter(p => {
+        filteredPeople = people.filter(p => {
             // Reject if doesn't have appropriate test data
             return (p.hasTestData(filter.perfType))
         })
     }
-    return people.filter(p => {
-        // Reject if doesn't have appropriate test data
-        if (!p.hasTestData(filter.perfType)) {
-            return false
-        }
-        let pass = true
-        filter.required.forEach(f => 
-            {
-                if (!p.tags.find(t => t == f)) {
-                    pass = false
-                }
+    else {
+        filteredPeople = people.filter(p => {
+            // Reject if doesn't have appropriate test data
+            if (!p.hasTestData(filter.perfType)) {
+                return false
+            }
+            let pass = true
+            filter.required.forEach(f => {
+                    if (!p.tags.find(t => t === f)) {
+                        pass = false
+                    }
+                })
+            filter.blocked.forEach(f => { 
+                    if (p.tags.find(t => t === f)) {
+                        pass = false
+                    }
+                })
+            return pass
+        })
+    }
+
+    if (filter.sortType === SortType.NAME) {
+        // Sort people alphabetically
+        filteredPeople = filteredPeople.sort((a, b) => {
+            if (a.fullName().toLowerCase() < b.fullName().toLowerCase()) { return -1 }
+            else if (b.fullName().toLowerCase() < a.fullName().toLowerCase()) { return 1 }
+            else { return 0 }
             })
-        filter.blocked.forEach(f => 
-            { 
-                if (p.tags.find(t => t == f)) {
-                    pass = false
-                }
+    } else if (filter.sortType === SortType.FAMILIARITY) {
+        // Sort people by performance
+        filteredPeople = filteredPeople.sort((a, b) => {
+            if (a.photoPerformance.familiarity < b.photoPerformance.familiarity) { return -1 }
+            else if (b.photoPerformance.familiarity < a.photoPerformance.familiarity) { return 1 }
+            else { return 0 }
             })
-        return pass
-    })
+    }
+
+    if (filter.sortDirection === SortDirection.DOWN) {
+        filteredPeople = filteredPeople.reverse()
+    }
+
+    return filteredPeople
 }
 
 export function getPerson(people: Person[], guid: string) {
@@ -115,7 +139,7 @@ export function quizSet(people: Person[], filter: Filter): QuizSet
             return toQuizPerson(p, filter.perfType)
         })
 
-        if (quizPeople.length == 0) {
+        if (quizPeople.length === 0) {
             return {quizPeople: [], frequencyTotal: 0}
         }
 
@@ -125,15 +149,12 @@ export function quizSet(people: Person[], filter: Filter): QuizSet
         quizPeople.forEach(person =>
         {
             // Only for people with at least one presentation
-            if (person.performance.numPresentations > 0)
-            {
+            if (person.performance.numPresentations > 0) {
                 const averageTime = person.performance.avgTime
-                if (averageTime > maxAverageTime) 
-                {
+                if (averageTime > maxAverageTime) {
                     maxAverageTime = averageTime
                 }
-                if (averageTime < minAverageTime)
-                {
+                if (averageTime < minAverageTime) {
                     minAverageTime = averageTime
                 }
             }
@@ -146,10 +167,9 @@ export function quizSet(people: Person[], filter: Filter): QuizSet
         //-------------------------------------------
 
         // If very first test set all frequencies to 1
-        if (maxAverageTime == 0) 
+        if (maxAverageTime === 0) 
         {
-            quizPeople.forEach(person =>
-            {
+            quizPeople.forEach(person => {
                 person.performance.frequency = 1
             })
         }
@@ -201,7 +221,7 @@ export function quizSet(people: Person[], filter: Filter): QuizSet
             person.performance.familiarity = calcFamiliarity(minAverageTime, maxAverageTime, person.performance.avgTime)
             frequencyTotal += person.performance.frequency
 
-            logstrings.push(`${person.performance.avgTime+(10*MAX_TIME)} \t${person.performance.frequency} \t${person.performance.frequencyOffsetStart} \t${person.performance.frequencyOffsetEnd} \t${person.fullName}`)
+            logstrings.push(`${person.performance.avgTime + (10 * MAX_TIME)} \t${person.performance.frequency} \t${person.performance.frequencyOffsetStart} \t${person.performance.frequencyOffsetEnd} \t${person.fullName}`)
         })
 
         logstrings.sort()
@@ -217,7 +237,7 @@ export function quizSet(people: Person[], filter: Filter): QuizSet
     export function calcFamiliarity(minAverageTime: number, maxAverageTime:number, myAverageTime: number): number
     {
         // If haven't done any testing
-        if (maxAverageTime == minAverageTime)
+        if (maxAverageTime === minAverageTime)
         {
             return 0.5
         }
@@ -226,7 +246,7 @@ export function quizSet(people: Person[], filter: Filter): QuizSet
         {
             const totalDiff = maxAverageTime - minAverageTime;
             const myOffset = myAverageTime - minAverageTime;
-            return 1.0 -  (myOffset / totalDiff);
+            return 1 -  (myOffset / totalDiff);
         }
     }
 

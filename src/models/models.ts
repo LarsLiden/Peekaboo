@@ -49,6 +49,18 @@ export interface Filter {
     perfType: PerfType
     required: string[]
     blocked: string[]
+    sortType: SortType
+    sortDirection: SortDirection
+}
+
+export enum SortType {
+    FAMILIARITY = "FAMILIARITY",
+    NAME  = "NAME"
+}
+
+export enum SortDirection {
+    UP = "UP",
+    DOWN = "DOWN"
 }
 
 export interface Event {

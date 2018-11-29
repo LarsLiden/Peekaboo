@@ -23,7 +23,12 @@ const columns: OF.IColumn[] = [
     //onColumnClick: this._onColumnClick,
     onRender: (item: SocialNet) => {
       return <div className="TableCell">
-        <OF.Link href={item.URL}>{item.netType.toString()}</OF.Link>
+        <OF.Link 
+          href={item.URL}
+          target="_blank"
+        >
+          {item.netType.toString()}
+        </OF.Link>
       </div>
     }
   }

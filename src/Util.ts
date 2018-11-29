@@ -7,6 +7,7 @@ import { User } from './models/models'
 
 export const HEAD_IMAGE = "https://peekaboo.blob.core.windows.net/resources/HaveWeHead.png"
 export const SAD_IMAGE = "https://peekaboo.blob.core.windows.net/resources/SAD_FACE.png"
+export const QUIZ_BUTTON_IMAGE = "https://peekaboo.blob.core.windows.net/resources/quizicon.png"
 export const PHOTO_HEIGHT = 250
 export const PHOTO_WIDTH = 230
 

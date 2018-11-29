@@ -349,9 +349,12 @@ class EditPage extends React.Component<ReceivedProps, ComponentState> {
   }
 
   @OF.autobind
-  onSaveCrop(imageData: string): void {
-    this.props.onSavePhoto(this.props.person, imageData)
-    this.setState({imageURL: null})
+  async onSaveCrop(imageData: string): Promise<void> {
+    await this.props.onSavePhoto(this.props.person, imageData)
+    this.setState({
+      imageURL: null,
+      photoIndex: this.props.person.photoFilenames.length-1
+    })
   }
 
   @OF.autobind

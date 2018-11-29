@@ -18,8 +18,8 @@ export class Person {
     events: Event[]  = [] 
     relationships: Relationship[] = []
     nickName: string = ""
-    maidenName: string= ""
-    guid: string= ""
+    maidenName: string = ""
+    guid: string = ""
     isArchived: boolean = false
     firstName: string = ""
     lastName: string = ""

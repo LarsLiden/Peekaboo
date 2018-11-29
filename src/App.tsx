@@ -8,7 +8,7 @@ import './fabric.css'
 import Client from './service/client'
 import * as OF from 'office-ui-fabric-react'
 import { setStatePromise, replacePerson, SAD_IMAGE } from './Util'
-import { QuizSet, QuizPerson, FilterSet, Tag, Filter, PerfType, User } from './models/models'
+import { QuizSet, QuizPerson, FilterSet, Tag, Filter, PerfType, User, SortType, SortDirection } from './models/models'
 import { Person } from './models/person'
 import { TestResult } from './models/performance'
 import Confirm from './modals/Confirm'
@@ -17,6 +17,7 @@ import QuizPage from './Pages/QuizPage'
 import LoadPage from './Pages/LoadPage'
 import NewUserPage from './Pages/NewUserPage'
 import FilterPage from './Pages/FilterPage'
+import SortPage from './Pages/SortPage'
 import LoginPage from './Pages/LoginPage'
 import ViewPage from './Pages/ViewPage'
 import EditPage from './Pages/EditPage'
@@ -26,6 +27,7 @@ export enum Page {
   NEWUSER = "NEWUSER",
   LOAD = "LOAD",
   FILTER = "FILTER",
+  SORT = "SORT",
   QUIZ = "QUIZ",
   VIEW = "VIEW",
   VIEWQUIZ = "VIEWQUIZ",
@@ -41,7 +43,7 @@ interface ComponentState {
   loadpeoplecount: number
   page: Page
   quizSet: QuizSet | null
-  filterSet: FilterSet | null
+  filterSet: FilterSet
   filteredTags: Tag[]
   filteredPeopleCount: number
   selectedPerson: Person | null
@@ -60,13 +62,21 @@ class App extends React.Component<{}, ComponentState> {
     loadlettercount: 0,
     loadpeoplecount: 0,
     quizSet: null,
-    filterSet: null,
+    filterSet: {
+      people: [],
+      selectedIndex: -1
+    },
     filteredTags: [],
     filteredPeopleCount: 0,
     page: Page.LOGIN,
     selectedPerson: null,
     newPerson: null,
-    filter: {required: [], blocked: [], perfType: PerfType.PHOTO},
+    filter: {
+      required: [], 
+      blocked: [], 
+      perfType: PerfType.PHOTO, 
+      sortType: SortType.NAME, 
+      sortDirection: SortDirection.UP},
     error: null
   }
 
@@ -89,6 +99,13 @@ class App extends React.Component<{}, ComponentState> {
   }
 
   @OF.autobind 
+  async onClickSort() {
+    this.setState({
+      page: Page.SORT
+    })
+  }
+
+  @OF.autobind 
   async onEdit() {
     this.setState({
       page: Page.EDIT
@@ -97,25 +114,20 @@ class App extends React.Component<{}, ComponentState> {
 
   @OF.autobind 
   async viewLibraryPerson() {
-    let filterSet = this.state.filterSet
-    if (!filterSet) {
-      filterSet = Convert.getFilterSet(this.state.allPeople, this.state.filter)
-    }
-    // TODO: also might trigger if overconstrained filter
-    if (filterSet.people.length === 0) {
+    if (this.state.allPeople.length === 0) {
       this.setState({
         page: Page.NEWUSER
       })
+      return
     }
-    else {
-      let guid = filterSet.people[filterSet.selectedIndex].guid
-      let selectedPerson = Convert.getPerson(this.state.allPeople, guid) || null
-      this.setState({
-        filterSet,
-        selectedPerson,
-        page: Page.VIEW
-      })
-    }
+
+    let guid = this.state.filterSet.people[this.state.filterSet.selectedIndex].guid
+    let selectedPerson = Convert.getPerson(this.state.allPeople, guid) || null
+    this.setState({
+      selectedPerson,
+      page: Page.VIEW
+    })
+
   }
 
   @OF.autobind 
@@ -168,7 +180,7 @@ class App extends React.Component<{}, ComponentState> {
               else { return 0 }
             })
 
-            // Extact tags
+            // Extract tags
             let allTags = Convert.extractTags(allPeople)
             allTags = allTags.sort((a, b) => {
                 if (a.name.toLowerCase() < b.name.toLowerCase()) { return -1 }
@@ -179,6 +191,9 @@ class App extends React.Component<{}, ComponentState> {
               allPeople,
               allTags
             })
+
+            // Create initial filter set
+            this.updateFilterSet()
 
             // Open library
             this.viewLibraryPerson()
@@ -191,15 +206,6 @@ class App extends React.Component<{}, ComponentState> {
   async onClickImport() {
       await Client.import(this.state.user!)
       this.loadPeople()
-  }
-
-  async updateTags() {
-    let filteredPeople = Convert.filteredPeople(this.state.allPeople, this.state.filter)
-    let tags = Convert.filteredTags(filteredPeople, this.state.allPeople, this.state.filter)
-      this.setState({
-        filteredTags: tags,
-        filteredPeopleCount: filteredPeople.length
-      })
   }
 
   @OF.autobind 
@@ -320,7 +326,7 @@ class App extends React.Component<{}, ComponentState> {
       // Upldate local copy
       person.photoFilenames.push(newPhotoName)
       let allPeople = replacePerson(this.state.allPeople, person)
-      this.setState({
+      setStatePromise(this, {
         allPeople
       })
     }
@@ -342,62 +348,6 @@ class App extends React.Component<{}, ComponentState> {
       this.setState({
         page: Page.VIEW
       })
-  }
-
-  @OF.autobind
-  onSetReqireTag(tagName: string, set: boolean) {
-  
-    if (set) {
-      if (this.state.filter.required.indexOf(tagName) <= 0) {
-        let blocked = this.state.filter.blocked.filter(t => t !== tagName)
-        let required = [...this.state.filter.required, tagName] 
-        this.setState({
-          filter: {
-            required,
-            blocked,
-            perfType: PerfType.PHOTO
-          }
-        }, () => this.updateTags())
-      }
-    }
-    else {
-      let required = this.state.filter.required.filter(t => t !== tagName)
-      this.setState({
-        filter: {
-          required,
-          blocked: [...this.state.filter.blocked],
-          perfType: PerfType.PHOTO
-        }
-      }, () => this.updateTags())
-    }
-  }
-
-  @OF.autobind
-  onSetBlockedTag(tagName: string, set: boolean) {
-  
-    if (set) { 
-      if (this.state.filter.blocked.indexOf(tagName) <= 0) {
-        let blocked = [...this.state.filter.blocked, tagName] 
-        let required = this.state.filter.required.filter(t => t !== tagName)
-        this.setState({
-          filter: {
-            required,
-            blocked,
-            perfType: PerfType.PHOTO
-          }
-        }, () => this.updateTags())
-      }
-    }
-    else {
-      let blocked = this.state.filter.blocked.filter(t => t !== tagName)
-      this.setState({
-        filter: {
-          required: [...this.state.filter.required],
-          blocked,
-          perfType: PerfType.PHOTO
-        }
-      }, () => this.updateTags())
-    }
   }
 
   @OF.autobind
@@ -444,7 +394,10 @@ class App extends React.Component<{}, ComponentState> {
       if (selectedIndex < 0) {
         selectedIndex = this.state.allPeople.findIndex(p => p.guid === guid)
         // Clear filter set
-        let filterSet: FilterSet = {people: this.state.allPeople, selectedIndex}
+        let filterSet: FilterSet = {
+          people: this.state.allPeople, 
+          selectedIndex
+        }
         await setStatePromise(this, {filterSet})
       }
       else {
@@ -455,9 +408,34 @@ class App extends React.Component<{}, ComponentState> {
   }
 
   @OF.autobind
-  async onCloseFliterPage() {
-    await setStatePromise(this, {filterSet: null})
-    this.viewLibraryPerson()
+  async onCloseFliterPage(filter: Filter) {
+    await setStatePromise(this, {
+      filter
+    })
+    this.updateFilterSet()
+
+    let guid = this.state.filterSet.people[this.state.filterSet.selectedIndex].guid
+    let selectedPerson = Convert.getPerson(this.state.allPeople, guid) || null
+    await setStatePromise(this, {
+      page: Page.VIEW,
+      selectedPerson
+    })
+  }
+
+  updateFilterSet() {
+    let filterSet = Convert.getFilterSet(this.state.allPeople, this.state.filter)
+    
+    // TODO: also might trigger if overconstrained filter
+    if (filterSet.people.length === 0) {
+      this.setState({
+        page: Page.NEWUSER
+      })
+    }
+    else {
+      this.setState({
+        filterSet
+      })
+    }
   }
 
   public render() {
@@ -485,6 +463,7 @@ class App extends React.Component<{}, ComponentState> {
             onClickQuiz={this.onQuiz}
             onContinueQuiz={this.onContinueQuiz}
             onClickFilter={this.onClickFilter}
+            onClickSort={this.onClickSort}
             onEdit={this.onEdit}
             onNewPerson={this.onNewPerson}
             onNextPerson={this.onNextPerson}
@@ -516,12 +495,18 @@ class App extends React.Component<{}, ComponentState> {
         }
         {this.state.page === Page.FILTER &&
           <FilterPage
+            allPeople={this.state.allPeople}
+            allTags={this.state.allTags}
             onClose={this.onCloseFliterPage}
-            onSetRequireTag={(tagName, value) => this.onSetReqireTag(tagName, value)}
-            onSetBlockTag={(tagName, value) => this.onSetBlockedTag(tagName, value)}
-            tags={this.state.filteredTags}
             filter={this.state.filter}
-            peopleCount={this.state.filteredPeopleCount}
+          />
+        }
+        {this.state.page === Page.SORT &&
+          <SortPage
+            allPeople={this.state.allPeople}
+            allTags={this.state.allTags}
+            onClose={this.onCloseFliterPage}
+            filter={this.state.filter}
           />
         }
         {this.state.page === Page.QUIZ && 
