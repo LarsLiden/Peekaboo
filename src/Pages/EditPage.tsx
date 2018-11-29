@@ -517,7 +517,7 @@ class EditPage extends React.Component<ReceivedProps, ComponentState> {
               <OF.IconButton
                   className="ButtonIcon ButtonPrimary FloatLeft"
                   onClick={this.onClickCancel}
-                  iconProps={{ iconName: 'Cancel' }}
+                  iconProps={{ iconName: 'ChromeBack' }}
               />
               {this.props.person.saveName &&
                 <OF.IconButton

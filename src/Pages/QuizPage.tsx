@@ -5,23 +5,23 @@
 import * as React from 'react';
 import * as OF from 'office-ui-fabric-react'
 import '../fabric.css'
-import { QuizPerson, QuizSet } from '../models/models'
-import { getRandomInt, PHOTO_HEIGHT, PHOTO_WIDTH } from '../Util'
+import { QuizPerson, QuizSet, User } from '../models/models'
+import { getRandomInt, PHOTO_HEIGHT, PHOTO_WIDTH, baseBlob } from '../Util'
 import { TestResult } from '../models/performance'
 import { MAX_TIME } from '../models/const'
 
 export interface ReceivedProps {
+  user: User
   quizSet: QuizSet | null
   onQuizDone: (testResults: TestResult[]) => Promise<void>
   onViewDetail: (quizperson: QuizPerson) => void
 }
 
-const baseImage = "https://peekaboo.blob.core.windows.net/faces/"
 const timerInterval = 100
 
 interface ComponentState {
   quizPerson: QuizPerson | null,
-  imageIndex: number,
+  photoIndex: number,
   showName: boolean,
   timerId: NodeJS.Timer | null,
   timerValue: number,
@@ -32,7 +32,7 @@ class QuizPage extends React.Component<ReceivedProps, ComponentState> {
 
   state: ComponentState = {
     quizPerson: null,
-    imageIndex: 0,
+    photoIndex: 0,
     showName: false,
     timerId: null,
     timerValue: 0,
@@ -78,12 +78,12 @@ class QuizPage extends React.Component<ReceivedProps, ComponentState> {
     this.clearTimer()
 
     const quizPerson = this.getRandomPerson()
-    const imageIndex = getRandomInt(0, quizPerson.blobNames.length - 1)
+    const photoIndex = getRandomInt(0, quizPerson.photoBlobnames.length - 1)
 
     this.setState({
       showName: false,
       quizPerson,
-      imageIndex
+      photoIndex
     })
   }
 
@@ -191,8 +191,8 @@ class QuizPage extends React.Component<ReceivedProps, ComponentState> {
 
   public render() {
     const overrideStyles = OF.mergeStyles({
-      backgroundColor: this.timerBackgroundColor(100-(this.state.timerValue/100)),
-      color: this.timerFontColor(this.state.timerValue/100),
+      backgroundColor: this.timerBackgroundColor(100 - (this.state.timerValue / 100)),
+      color: this.timerFontColor(this.state.timerValue / 100),
       width: "50px",
       marginLeft: "auto",
       marginRight: "auto",
@@ -208,7 +208,9 @@ class QuizPage extends React.Component<ReceivedProps, ComponentState> {
     }
     let width = 250
     let height = (PHOTO_HEIGHT / PHOTO_WIDTH) * width
-    const imageFile = baseImage + this.state.quizPerson.blobNames[this.state.imageIndex]
+
+    const photoBlobname = baseBlob(this.props.user) + this.state.quizPerson.photoBlobnames[this.state.photoIndex]
+
     return (
       <div className="QuizPage">
         <div
@@ -218,7 +220,7 @@ class QuizPage extends React.Component<ReceivedProps, ComponentState> {
         </div>
         <OF.Image
           className="QuizImageHolder"
-          src={imageFile}
+          src={photoBlobname}
           width={width}
           height={height}
           //imageFit={OF.ImageFit.center}
@@ -226,12 +228,10 @@ class QuizPage extends React.Component<ReceivedProps, ComponentState> {
         />
         {this.state.showName && 
           <div>
-            <div
-              className='QuizName'>
+            <div className='QuizName'>
               {this.state.quizPerson.fullName}
             </div>
-            <div
-              className='QuizDescription'>
+            <div className='QuizDescription'>
               {this.state.quizPerson.description}
             </div>
             <OF.IconButton
@@ -241,8 +241,7 @@ class QuizPage extends React.Component<ReceivedProps, ComponentState> {
             />
           </div>
         }
-        <div
-          className="ContentFooter">
+        <div className="ContentFooter">
           <OF.IconButton
             className="ButtonIcon FloatLeft"
             onClick={this.onClickKnow}
@@ -252,7 +251,7 @@ class QuizPage extends React.Component<ReceivedProps, ComponentState> {
               className="ButtonIcon ButtonPrimary"
               onClick={this.onClickQuit}
               iconProps={{ iconName: 'ChromeClose' }}
-            />
+          />
           {this.state.showName ? 
             <OF.IconButton
               className="ButtonIcon  ButtonPrimary FloatRight"

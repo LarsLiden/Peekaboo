@@ -136,6 +136,10 @@
   left: 0px;
 }
 
+.ButtonOutlined {
+  border: 1px #ffffff solid !important;
+}
+
 .ButtonDark {
   display: inline-block !important;
   background-color: #333333 !important;

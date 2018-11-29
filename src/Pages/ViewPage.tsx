@@ -170,11 +170,21 @@ class ViewPage extends React.Component<ReceivedProps, ComponentState> {
             <div
               className="ContentFooter"
             >
-              <OF.IconButton
+              {(this.props.filter.required.length > 0 || this.props.filter.blocked.length > 0) 
+                ?
+                <OF.IconButton
+                  className="ButtonIcon ButtonPrimary FloatLeft ButtonOutlined"
+                  onClick={() => this.props.onClickFilter()}
+                  iconProps={{ iconName: 'FilterSolid' }}
+                />
+                :
+                <OF.IconButton
                   className="ButtonIcon ButtonPrimary FloatLeft"
                   onClick={() => this.props.onClickFilter()}
                   iconProps={{ iconName: 'Filter' }}
-              />
+                />
+              }
+
               <OF.IconButton
                   className="ButtonIcon ButtonPrimary FloatLeft"
                   onClick={() => this.props.onClickSort()}

@@ -154,7 +154,7 @@ class EditStrings extends React.Component<ReceivedProps, ComponentState> {
               <OF.IconButton
                   className="ButtonIcon ButtonPrimary FloatRight"
                   onClick={this.onClickCancel}
-                  iconProps={{ iconName: 'Cancel' }}
+                  iconProps={{ iconName: 'ChromeClose' }}
               />
             </div>
           </div>

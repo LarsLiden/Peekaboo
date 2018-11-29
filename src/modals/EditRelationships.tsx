@@ -166,7 +166,7 @@ class EditRelationships extends React.Component<ReceivedProps, ComponentState> {
           <OF.IconButton
               className="ButtonIcon ButtonPrimary FloatRight"
               onClick={this.props.onCancel}
-              iconProps={{ iconName: 'Cancel' }}
+              iconProps={{ iconName: 'ChromeClose' }}
           />
         </div>
         {this.state.searchTarget &&

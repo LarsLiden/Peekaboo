@@ -26,7 +26,7 @@ class Search extends React.Component<ReceivedProps, ComponentState> {
   }
 
   @OF.autobind
-  private onSearchChanged(text: string) {
+  onSearchChanged(text: string) {
     const stext = text.toUpperCase()
     let startNameMatch = this.props.people.filter(p => 
       p.firstName.toUpperCase().startsWith(stext) ||
@@ -48,15 +48,14 @@ class Search extends React.Component<ReceivedProps, ComponentState> {
     })
   }
   
-
-  private containsSearch(name: string, search: string): boolean {
+  containsSearch(name: string, search: string): boolean {
     if (name.toUpperCase().startsWith(search.toUpperCase())) {
       return true
     }
     return false
   }
 
-  private renderFound(search: string, pre: string, name: string, post: string): JSX.Element {
+  renderFound(search: string, pre: string, name: string, post: string): JSX.Element {
       const startText = name.slice(0, search.length)
       const endText = name.slice(search.length)
       return (
@@ -70,7 +69,7 @@ class Search extends React.Component<ReceivedProps, ComponentState> {
   }
 
   @OF.autobind
-  private onRenderCell(person: Person, index: number, isScrolling: boolean): JSX.Element {
+  onRenderCell(person: Person, index: number, isScrolling: boolean): JSX.Element {
     
     let nameRender: JSX.Element | null
     if (this.props.exclude && person.guid === this.props.exclude.guid) {
@@ -97,13 +96,14 @@ class Search extends React.Component<ReceivedProps, ComponentState> {
 
     return (
       <div className="FilterLine">
-        <OF.Button className="SearchText"
-            onClick={()=> {
-              if (!this.props.exclude || person.guid !== this.props.exclude.guid) {
-                this.props.onSelect(person)
-              }
-            }}
-          >
+        <OF.Button 
+          className="SearchText"
+          onClick={() => {
+            if (!this.props.exclude || person.guid !== this.props.exclude.guid) {
+              this.props.onSelect(person)
+            }
+          }}
+        >
           {nameRender}
         </OF.Button>
       </div>
@@ -111,7 +111,6 @@ class Search extends React.Component<ReceivedProps, ComponentState> {
   }
 
   public render() {
-  
     return (
       <div className="ModalPage">
         <div className="ContentHeader ContentHeaderThin">
@@ -133,12 +132,11 @@ class Search extends React.Component<ReceivedProps, ComponentState> {
             onRenderCell={this.onRenderCell}
           />
         </div>
-        <div
-          className="ContentFooter">
+        <div className="ContentFooter">
           <OF.IconButton
-              className="ButtonIcon ButtonPrimary"
+              className="ButtonIcon ButtonPrimary FloatLeft"
               onClick={this.props.onCancel}
-              iconProps={{ iconName: 'Cancel' }}
+              iconProps={{ iconName: 'ChromeBack' }}
           />
         </div>
       </div>

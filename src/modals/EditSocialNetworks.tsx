@@ -135,7 +135,7 @@ class EditSocialNetworks extends React.Component<ReceivedProps, ComponentState> 
           <OF.IconButton
               className="ButtonIcon ButtonPrimary FloatRight"
               onClick={this.props.onCancel}
-              iconProps={{ iconName: 'Cancel' }}
+              iconProps={{ iconName: 'ChromeClose' }}
           />
         </div>
       </div>

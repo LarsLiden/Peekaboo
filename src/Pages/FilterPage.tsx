@@ -51,6 +51,17 @@ class FilterPage extends React.Component<ReceivedProps, ComponentState> {
   }
 
   @OF.autobind
+  onClickClear() {
+    this.setState({
+      filter: {...this.state.filter,
+        required: [],
+        blocked: [],
+        perfType: PerfType.PHOTO
+      }
+    }, () => this.updateTags())
+  }
+
+  @OF.autobind
   onCheckboxRequireChange(isChecked: boolean = false, tag: Tag) {
     if (isChecked) {
       if (this.state.filter.required.indexOf(tag.name) <= 0) {
@@ -104,8 +115,8 @@ class FilterPage extends React.Component<ReceivedProps, ComponentState> {
 
   @OF.autobind
   onRenderCell(item: Tag, index: number, isScrolling: boolean): JSX.Element {
-    let isRequired = this.props.filter.required.indexOf(item.name) > -1
-    let isBlocked = this.props.filter.blocked.indexOf(item.name) > -1
+    let isRequired = this.state.filter.required.indexOf(item.name) > -1
+    let isBlocked = this.state.filter.blocked.indexOf(item.name) > -1
     return (
       <div className="FilterLine">
         <div 
@@ -144,9 +155,14 @@ class FilterPage extends React.Component<ReceivedProps, ComponentState> {
         />
         <div className="ContentFooter" >
           <OF.IconButton
-              className="ButtonIcon ButtonPrimary"
+              className="ButtonIcon ButtonPrimary FloatLeft"
               onClick={this.onClickClose}
-              iconProps={{ iconName: 'Cancel' }}
+              iconProps={{ iconName: 'ChromeBack' }}
+          />
+          <OF.IconButton
+              className="ButtonIcon ButtonPrimary FloatRight"
+              onClick={this.onClickClear}
+              iconProps={{ iconName: 'ClearFilter' }}
           />
         </div>
       </div>

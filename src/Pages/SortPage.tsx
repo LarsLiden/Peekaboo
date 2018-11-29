@@ -85,9 +85,9 @@ class SortPage extends React.Component<ReceivedProps, ComponentState> {
         </div>
         <div className="ContentFooter" >
           <OF.IconButton
-              className="ButtonIcon ButtonPrimary"
+              className="ButtonIcon ButtonPrimary FloatLeft"
               onClick={this.onClickClose}
-              iconProps={{ iconName: 'Cancel' }}
+              iconProps={{ iconName: 'ChromeBack' }}
           />
         </div>
       </div>

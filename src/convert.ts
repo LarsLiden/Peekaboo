@@ -4,6 +4,7 @@
  */
 import { Person } from "./models/person";
 import { PerfType, QuizPerson, Filter, FilterSet, Tag, QuizSet, SortDirection, SortType } from './models/models'
+import { getPhotoBlobName } from './Util'
 import { MAX_TIME, BIAS } from './models/const'
 
 export function toQuizPerson(person: Person, perfType: PerfType): QuizPerson {
@@ -11,9 +12,9 @@ export function toQuizPerson(person: Person, perfType: PerfType): QuizPerson {
         guid: person.guid,
         fullName: `${person.firstName} ${person.lastName}`,
         description: person.description,
-        blobNames: person.photoFilenames,
+        photoBlobnames: person.photoFilenames.map(f => getPhotoBlobName(person, f)),
         performance: person.performance(perfType),
-        } as QuizPerson
+    }
 }
 
 export function filteredPeople(people: Person[], filter: Filter): Person[] {      
@@ -135,9 +136,9 @@ export function filteredTags(filteredPeople: Person[], allPeople: Person[], filt
 export function quizSet(people: Person[], filter: Filter): QuizSet
     {
         // Filter people by tags
-        let quizPeople = filteredPeople(people, filter).map(p => {
-            return toQuizPerson(p, filter.perfType)
-        })
+        let quizPeople = filteredPeople(people, filter)
+            .filter(p => p.photoFilenames.length > 0)
+            .map(p => {return toQuizPerson(p, filter.perfType)})
 
         if (quizPeople.length === 0) {
             return {quizPeople: [], frequencyTotal: 0}

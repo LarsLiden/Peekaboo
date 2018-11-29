@@ -511,6 +511,7 @@ class App extends React.Component<{}, ComponentState> {
         }
         {this.state.page === Page.QUIZ && 
           <QuizPage
+            user={this.state.user!}
             quizSet={this.state.quizSet}
             onQuizDone={this.onQuizDone}
             onViewDetail={this.viewQuizDetail}

@@ -29,7 +29,7 @@ export interface QuizSet {
 
 export interface QuizPerson {
     guid: string
-    blobNames: string[]
+    photoBlobnames: string[]
     fullName: string
     description: string
     performance: Performance

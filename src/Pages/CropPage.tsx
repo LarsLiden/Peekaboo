@@ -90,7 +90,7 @@ class CropPage extends React.Component<ReceivedProps, ComponentState> {
                 <OF.IconButton
                     className="ButtonIcon ButtonPrimary"
                     onClick={this.props.onClose}
-                    iconProps={{ iconName: 'Cancel' }}
+                    iconProps={{ iconName: 'ChromeClose' }}
                 />
             </div>
           </div>
