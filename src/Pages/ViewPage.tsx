@@ -210,15 +210,21 @@ class ViewPage extends React.Component<ReceivedProps, ComponentState> {
                     iconProps={{ iconName: 'Search' }}
                 />
                 <OF.IconButton
-                    className="ButtonIcon ButtonPrimary FloatRight"
+                    className="ButtonIcon ButtonPrimary FloatLeft"
                     onClick={() => this.props.onNewPerson()}
                     iconProps={{ iconName: 'CirclePlus' }}
                 />
-                <OF.IconButton
+                <OF.Button
                     className="ButtonIcon ButtonPrimary FloatRight"
                     onClick={() => this.props.onClickQuiz()}
-                    iconProps={{ iconName: 'Unknown' }}
-                />
+                >
+                  <OF.Image
+                    className="QuizImageHolder"
+                    src={"https://peekaboo.blob.core.windows.net/resources/quizicon.png"}
+                    width={100}
+                    height={30}
+                  />
+                </OF.Button>
               </div>
             </div>
           :
