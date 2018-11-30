@@ -13,8 +13,8 @@
   padding-left: 5px;
 }
 
-.DetailTextLarge {
-  text-align: right !important;
+.DetailName {
+  text-align: left !important;
   font-size: 18px !important;
   margin-bottom: 9px;
 }
@@ -24,7 +24,9 @@
 }
 
 .DetailIndexerVertical {
-  width: 60px
+  width: 60px;
+  display: block;
+  margin-top: -5px;
 }
 
 .DetailTitle {

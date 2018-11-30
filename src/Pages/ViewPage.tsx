@@ -112,6 +112,27 @@ class ViewPage extends React.Component<ReceivedProps, ComponentState> {
       <div>
         <div className="ViewPage">
           <div className="ContentHeader">
+            <div className="ViewBodyNameColumn">
+              <DetailColor
+                value={this.props.person.photoPerformance.familiarity}
+              />
+              <DetailText className="DetailName" text={this.props.person.firstName}/>
+              {this.props.person.nickName &&
+                <DetailText className="DetailName" text={`"${this.props.person.nickName}"`}/>
+              }
+              <DetailText className="DetailName" text={this.props.person.lastName}/>
+              {this.props.filterSet && 
+                <div className="ViewIndexer">
+                  <DetailIndexer
+                    isVertical={false}
+                    onPrev={this.onPrevPerson}
+                    onNext={this.onNextPerson}
+                    currentIndex={this.props.filterSet.selectedIndex}
+                    total={this.props.filterSet.people.length}
+                  />
+                </div>
+              }
+            </div>
             <div className="ViewImageColumn">
               <OF.Image
                 className="QuizImageHolder"
@@ -119,28 +140,20 @@ class ViewPage extends React.Component<ReceivedProps, ComponentState> {
                 width={width}
                 height={height}
               />
-              <DetailIndexer
-                isVertical={true}
-                onPrev={this.onPrevPhoto}
-                onNext={this.onNextPhoto}
-                currentIndex={this.state.photoIndex}
-                total={this.props.person.photoFilenames.length}
-              />
-            </div>
-            <div className="ViewBodyNameColumn">
-              <DetailColor
-                value={this.props.person.photoPerformance.familiarity}
-              />
-              <DetailText className="DetailTextLarge" text={this.props.person.firstName}/>
-              {this.props.person.nickName &&
-                <DetailText className="DetailTextLarge" text={`"${this.props.person.nickName}"`}/>
-              }
-              <DetailText className="DetailTextLarge" text={this.props.person.lastName}/>
-              <OF.IconButton
-                className="ButtonIcon ButtonBottomRight ButtonDark"
-                onClick={this.props.onEdit}
-                iconProps={{ iconName: 'EditSolid12' }}
-              />
+              <div className="InlineBlock">
+                <DetailIndexer
+                  isVertical={true}
+                  onPrev={this.onPrevPhoto}
+                  onNext={this.onNextPhoto}
+                  currentIndex={this.state.photoIndex}
+                  total={this.props.person.photoFilenames.length}
+                />
+                <OF.IconButton
+                    className="ButtonIcon ButtonDark"
+                    onClick={this.props.onEdit}
+                    iconProps={{ iconName: 'EditSolid12' }}
+                />
+              </div>
             </div>
           </div>
           <div className="ContentBody">
@@ -167,51 +180,46 @@ class ViewPage extends React.Component<ReceivedProps, ComponentState> {
           </div>
           {this.props.filterSet 
           ?
-            <div
-              className="ContentFooter"
-            >
-              {(this.props.filter.required.length > 0 || this.props.filter.blocked.length > 0) 
-                ?
-                <OF.IconButton
-                  className="ButtonIcon ButtonPrimary FloatLeft ButtonOutlined"
-                  onClick={() => this.props.onClickFilter()}
-                  iconProps={{ iconName: 'FilterSolid' }}
-                />
-                :
-                <OF.IconButton
-                  className="ButtonIcon ButtonPrimary FloatLeft"
-                  onClick={() => this.props.onClickFilter()}
-                  iconProps={{ iconName: 'Filter' }}
-                />
-              }
+            <div>
+              <div
+                className="ContentFooter"
+              >
+                {(this.props.filter.required.length > 0 || this.props.filter.blocked.length > 0) 
+                  ?
+                  <OF.IconButton
+                    className="ButtonIcon ButtonPrimary FloatLeft ButtonOutlined"
+                    onClick={() => this.props.onClickFilter()}
+                    iconProps={{ iconName: 'FilterSolid' }}
+                  />
+                  :
+                  <OF.IconButton
+                    className="ButtonIcon ButtonPrimary FloatLeft"
+                    onClick={() => this.props.onClickFilter()}
+                    iconProps={{ iconName: 'Filter' }}
+                  />
+                }
 
-              <OF.IconButton
-                  className="ButtonIcon ButtonPrimary FloatLeft"
-                  onClick={() => this.props.onClickSort()}
-                  iconProps={{ iconName: 'SortLines' }}
-              />
-              <OF.IconButton
-                  className="ButtonIcon ButtonPrimary FloatLeft"
-                  onClick={() => this.onClickSearch()}
-                  iconProps={{ iconName: 'Search' }}
-              />
-              <DetailIndexer
-                isVertical={false}
-                onPrev={this.onPrevPerson}
-                onNext={this.onNextPerson}
-                currentIndex={this.props.filterSet.selectedIndex}
-                total={this.props.filterSet.people.length}
-              />
-              <OF.IconButton
-                  className="ButtonIcon ButtonPrimary FloatRight"
-                  onClick={() => this.props.onNewPerson()}
-                  iconProps={{ iconName: 'CirclePlus' }}
-              />
-              <OF.IconButton
-                  className="ButtonIcon ButtonPrimary FloatRight"
-                  onClick={() => this.props.onClickQuiz()}
-                  iconProps={{ iconName: 'Unknown' }}
-              />
+                <OF.IconButton
+                    className="ButtonIcon ButtonPrimary FloatLeft"
+                    onClick={() => this.props.onClickSort()}
+                    iconProps={{ iconName: 'SortLines' }}
+                />
+                <OF.IconButton
+                    className="ButtonIcon ButtonPrimary FloatLeft"
+                    onClick={() => this.onClickSearch()}
+                    iconProps={{ iconName: 'Search' }}
+                />
+                <OF.IconButton
+                    className="ButtonIcon ButtonPrimary FloatRight"
+                    onClick={() => this.props.onNewPerson()}
+                    iconProps={{ iconName: 'CirclePlus' }}
+                />
+                <OF.IconButton
+                    className="ButtonIcon ButtonPrimary FloatRight"
+                    onClick={() => this.props.onClickQuiz()}
+                    iconProps={{ iconName: 'Unknown' }}
+                />
+              </div>
             </div>
           :
             <div

@@ -243,7 +243,7 @@ class QuizPage extends React.Component<ReceivedProps, ComponentState> {
         }
         <div className="ContentFooter">
           <OF.IconButton
-            className="ButtonIcon FloatLeft"
+            className="ButtonIcon ButtonPrimary FloatLeft"
             onClick={this.onClickKnow}
             iconProps={{ iconName: 'LikeSolid' }}
           />

@@ -410,7 +410,7 @@ class EditPage extends React.Component<ReceivedProps, ComponentState> {
                 >
                   <div>
                       <OF.IconButton
-                        className="ButtonIcon ButtonDark"
+                        className="ButtonIcon ButtonDark ButtonTopFlush"
                         iconProps={{ iconName: 'CircleAddition' }}
                       />
                   </div>
@@ -428,13 +428,15 @@ class EditPage extends React.Component<ReceivedProps, ComponentState> {
                 width={width}
                 height={height}
               />
-              <DetailIndexer
-                isVertical={true}
-                onPrev={this.onPrevPhoto}
-                onNext={this.onNextPhoto}
-                currentIndex={this.state.photoIndex}
-                total={this.props.person.photoFilenames.length}
-              />
+              <div className="InlineBlock">
+                <DetailIndexer
+                  isVertical={true}
+                  onPrev={this.onPrevPhoto}
+                  onNext={this.onNextPhoto}
+                  currentIndex={this.state.photoIndex}
+                  total={this.props.person.photoFilenames.length}
+                />
+              </div>
             </div>
             <div className="ContentBody EditContent">
               <div className='EditSection'>

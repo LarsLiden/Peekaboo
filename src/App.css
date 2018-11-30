@@ -102,6 +102,10 @@
   float: right;
 }
 
+.InlineBlock {
+  display: inline-block;
+}
+
 .AlignLeft {
   text-align: left !important;
 }
@@ -122,18 +126,14 @@
   margin: 5px;
 }
 
-.ButtonBottomRight {
-  position: absolute !important;
-  bottom: 0px;
-  right: 0px;
-  margin-bottom: 10px;
-  margin-right: 0px;
-}
-
 .ButtonTopLeft {
   position: absolute !important;
   top: 0px;
   left: 0px;
+}
+
+.ButtonTopFlush{
+  margin-top: 0px;
 }
 
 .ButtonOutlined {
@@ -142,7 +142,9 @@
 
 .ButtonDark {
   display: inline-block !important;
-  background-color: #333333 !important;
+  background-color: #003763 !important;
+  height: 40px !important;
+  width: 40px !important;
 }
 
 .ButtonPrimary {

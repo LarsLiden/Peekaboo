@@ -42,10 +42,10 @@ class DetailColor extends React.Component<ReceivedProps, {}> {
       color: "#ffffff",
       fontSize: "20px",
       borderRadius: "5px",
-      width: "120px",
+      width: "145px",
       height: "5px",
       margin: "0px",
-      float: "right",
+      float: "left",
     })
 
   return (

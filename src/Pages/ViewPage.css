@@ -6,12 +6,17 @@
   background-color: black;
 }
 
+.ViewIndexer {
+  bottom: 0px;
+  position: absolute;
+}
+
 .ContentHeader {
   margin-left: auto;
   margin-right: auto;
   padding-top: 20px;
   top: 0px;
-  height: 175px;
+  height: 180px;
   border-bottom: white 1px solid;
   margin-bottom: 10px;
   position: fixed;
@@ -62,7 +67,7 @@
 }
 
 .ViewImageColumn {
-  height: 220px;
+  position: relative;
   width: 280px;
   display: inline-block;
 }
