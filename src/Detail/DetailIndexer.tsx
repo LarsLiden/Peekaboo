@@ -27,13 +27,12 @@ class DetailIndexer extends React.Component<ReceivedProps, ComponentState> {
   }
 
   public render() {
-    let buttonClass = `ButtonIcon ${this.props.isVertical ? "ButtonDark" : "ButtonPrimary"}`
     return (
       <div
         className={`DetailIndexer${this.props.isVertical ? " DetailIndexerVertical" : ""}`}
       >
         <OF.IconButton
-          className={buttonClass}
+          className="ButtonIcon ButtonDark"
           onClick={this.props.onPrev}
           iconProps={{ iconName: this.props.isVertical ? 'CaretUpSolid8' : 'CaretLeftSolid8' }}
         />
@@ -46,7 +45,7 @@ class DetailIndexer extends React.Component<ReceivedProps, ComponentState> {
           />
         </div>
         <OF.IconButton
-          className={buttonClass}
+          className="ButtonIcon ButtonDark"
           onClick={this.props.onNext}
           iconProps={{ iconName: this.props.isVertical ? 'CaretDownSolid8' : 'CaretRightSolid8' }}
         />

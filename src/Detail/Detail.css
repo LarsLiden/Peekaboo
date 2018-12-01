@@ -14,9 +14,17 @@
 }
 
 .DetailName {
-  text-align: left !important;
-  font-size: 18px !important;
+  text-align: right !important;
+  font-size: 22px !important;
   margin-bottom: 9px;
+  float: right;
+  margin-right: 15px;
+  width: 100%;
+  height: 25px;
+}
+
+.DetailNameGroup {
+  position: absolute
 }
 
 .DetailIndexer {

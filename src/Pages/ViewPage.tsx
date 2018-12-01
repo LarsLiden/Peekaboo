@@ -9,7 +9,7 @@ import { Person } from '../models/person'
 import { Filter, FilterSet, User } from '../models/models'
 import { HEAD_IMAGE, baseBlob, getPhotoBlobName, PHOTO_HEIGHT, PHOTO_WIDTH } from '../Util'
 import Search from '../modals/Search'
-import DetailColor from '../Detail/DetailColor'
+import ScaledColor from '../modals/ScaledColor'
 import DetailText from '../Detail/DetailText'
 import DetailTags from '../Detail/DetailTags'
 import DetailIndexer from '../Detail/DetailIndexer'
@@ -108,31 +108,22 @@ class ViewPage extends React.Component<ReceivedProps, ComponentState> {
     }
     let width = 160
     let height = (PHOTO_HEIGHT / PHOTO_WIDTH) * width
-
+    let scale = Math.round((1 - (this.props.person.photoPerformance.avgTime / MAX_TIME)) * 100)
     return (
       <div>
         <div className="ViewPage">
           <div className="ContentHeader">
-            <div className="ViewBodyNameColumn">
-              <DetailColor
-                value={(1 - (this.props.person.photoPerformance.avgTime / MAX_TIME))}
-              />
+            <div className="ViewBodyNameColumn">      
               <DetailText className="DetailName" text={this.props.person.firstName}/>
               {this.props.person.nickName &&
                 <DetailText className="DetailName" text={`"${this.props.person.nickName}"`}/>
               }
               <DetailText className="DetailName" text={this.props.person.lastName}/>
-              {this.props.filterSet && 
-                <div className="ViewIndexer">
-                  <DetailIndexer
-                    isVertical={false}
-                    onPrev={this.onPrevPerson}
-                    onNext={this.onNextPerson}
-                    currentIndex={this.props.filterSet.selectedIndex}
-                    total={this.props.filterSet.people.length}
-                  />
-                </div>
-              }
+              <div className="ViewScale">
+                <ScaledColor
+                  scale={scale}
+                />
+              </div> 
             </div>
             <div className="ViewImageColumn">
               <OF.Image
@@ -182,6 +173,15 @@ class ViewPage extends React.Component<ReceivedProps, ComponentState> {
           {this.props.filterSet 
           ?
             <div>
+              <div className="ViewIndexer">
+                <DetailIndexer
+                  isVertical={false}
+                  onPrev={this.onPrevPerson}
+                  onNext={this.onNextPerson}
+                  currentIndex={this.props.filterSet.selectedIndex}
+                  total={this.props.filterSet.people.length}
+                />
+              </div>
               <div
                 className="ContentFooter"
               >

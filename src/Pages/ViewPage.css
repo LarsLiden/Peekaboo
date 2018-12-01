@@ -7,8 +7,10 @@
 }
 
 .ViewIndexer {
-  bottom: 0px;
-  position: absolute;
+  position: fixed;
+  bottom: 63px;
+  background-color: black;
+  width: 100%;
 }
 
 .ContentHeader {
@@ -35,6 +37,12 @@
   vertical-align: top;
   display: inline-block;
   height: 100%;
+}
+
+.ViewScale {
+  position: absolute;
+  bottom: 2px;
+  right: 15px;
 }
 
 .DetailRelationship {
@@ -68,7 +76,7 @@
 
 .ViewImageColumn {
   position: relative;
-  width: 280px;
+  width: 220px;
   display: inline-block;
 }
 

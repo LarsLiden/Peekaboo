@@ -6,6 +6,7 @@ import * as React from 'react';
 import * as OF from 'office-ui-fabric-react'
 import '../fabric.css'
 import { QuizPerson, QuizSet, User } from '../models/models'
+import ScaledColor from '../modals/ScaledColor'
 import { getRandomInt, PHOTO_HEIGHT, PHOTO_WIDTH, baseBlob } from '../Util'
 import { TestResult } from '../models/performance'
 import { MAX_TIME } from '../models/const'
@@ -162,47 +163,7 @@ class QuizPage extends React.Component<ReceivedProps, ComponentState> {
     })
   }
 
-  timerFontColor(timerValue: number): string {
-      const color = ((timerValue - 25) / 100) * 255
-      return `rgb(${color}, ${color}, ${color})`
-  }
-
-  timerBackgroundColor(timerValue: number): string {
-      let r: number
-      let g: number
-
-      if (timerValue <= 50) {
-          r = 255;
-      }
-      else {
-          r = (1 - (timerValue - 50) / 50) * 255
-      }
-
-      if (timerValue > 50)
-      {
-          g = 255
-      }
-      else
-      {
-          g = (timerValue / 50) * 255
-      }
-
-      return `rgb(${r}, ${g}, 0)`
-  }
-
   public render() {
-    const overrideStyles = OF.mergeStyles({
-      backgroundColor: this.timerBackgroundColor(100 - (this.state.timerValue / 100)),
-      color: this.timerFontColor(this.state.timerValue / 100),
-      width: "50px",
-      marginLeft: "auto",
-      marginRight: "auto",
-      marginBottom: "15px",
-      fontSize: "20px",
-      marginTop: "13px",
-      height: "30px",
-      borderRadius: "5px"
-    })
 
     if (!this.state.quizPerson) {
       return null
@@ -214,11 +175,9 @@ class QuizPage extends React.Component<ReceivedProps, ComponentState> {
 
     return (
       <div className="QuizPage">
-        <div
-          className={overrideStyles}
-        >
-          {this.state.timerValue / 100}
-        </div>
+        <ScaledColor
+          scale={this.state.timerValue / 100}
+        />
         <OF.Image
           className="QuizImageHolder"
           src={photoBlobname}
