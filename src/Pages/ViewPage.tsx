@@ -18,6 +18,7 @@ import DetailEvents from '../Detail/DetailEvents'
 import DetailKeyValues from '../Detail/DetailKeyValues'
 import DetailSocialNetworks from '../Detail/DetailSocialNetworks'
 import "./ViewPage.css"
+import { MAX_TIME } from '../models/const';
 
 export interface ReceivedProps {
   filterSet: FilterSet | null
@@ -114,7 +115,7 @@ class ViewPage extends React.Component<ReceivedProps, ComponentState> {
           <div className="ContentHeader">
             <div className="ViewBodyNameColumn">
               <DetailColor
-                value={this.props.person.photoPerformance.familiarity}
+                value={(1 - (this.props.person.photoPerformance.avgTime / MAX_TIME))}
               />
               <DetailText className="DetailName" text={this.props.person.firstName}/>
               {this.props.person.nickName &&

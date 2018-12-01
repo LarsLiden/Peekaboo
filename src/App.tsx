@@ -344,7 +344,25 @@ class App extends React.Component<{}, ComponentState> {
 
   @OF.autobind 
   async onQuizDone(testResults: TestResult[]) {
-      await Client.postTestResults(testResults)
+      try {
+        let updatedPeople = await Client.postTestResults(this.state.user!, testResults)
+        let allPeople: Person[] = [...this.state.allPeople]
+        updatedPeople.forEach(p => 
+          allPeople = replacePerson(allPeople, new Person(p))
+        )
+        this.setState({ allPeople })
+ 
+        if (this.state.selectedPerson) {
+          let selectedGuid = this.state.selectedPerson.guid
+          let changedPerson = updatedPeople.find(p => p.guid === selectedGuid)
+          if (changedPerson) {
+            this.setState({selectedPerson: new Person(changedPerson)})
+          }
+        }
+      }
+      catch {
+        this.setState({error: `Failed to save Test Results`})  
+      }
       this.setState({
         page: Page.VIEW
       })

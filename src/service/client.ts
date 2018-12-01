@@ -61,16 +61,10 @@ export default class Client {
         )
     }
 
-    public static async postTestResults(testResults: TestResult[]): Promise<void> {
-
-        try {
-            await axios.post(`${this.baseUrl}/testresults`,
-                {testResults: testResults})
-            return
-        }
-        catch (err) {
-            console.log(JSON.stringify(err))
-        }
+    public static async postTestResults(user: User, testResults: TestResult[]): Promise<Person[]> {
+        let response = await axios.post(`${this.baseUrl}/testresults`,
+            {testResults: testResults}, this.getConfig(user))
+        return response.data as Person[]
     }
 
     public static async import(user: User): Promise<void> {

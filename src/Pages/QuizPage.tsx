@@ -89,6 +89,7 @@ class QuizPage extends React.Component<ReceivedProps, ComponentState> {
 
   addTestResult(result: number) {
     const testResult: TestResult = {
+      saveName: this.state.quizPerson!.saveName,
       guid: this.state.quizPerson!.guid,
       result
     }

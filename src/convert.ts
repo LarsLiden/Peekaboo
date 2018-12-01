@@ -9,6 +9,7 @@ import { MAX_TIME, BIAS } from './models/const'
 
 export function toQuizPerson(person: Person, perfType: PerfType): QuizPerson {
     return {
+        saveName: person.saveName!,
         guid: person.guid,
         fullName: `${person.firstName} ${person.lastName}`,
         description: person.description,
@@ -93,7 +94,7 @@ export function extractBlockedTags(people: Person[], blockedTags: string[]) : Ta
             const isBlocked = blockedTags.find(b => b === t)
             if (isBlocked) {
                 const tag = tags.find(tag => tag.name === t)
-                if(tag) {
+                if (tag) {
                     tag.count++
                 }
                 else {
@@ -110,8 +111,8 @@ export function extractTags(people: Person[]) : Tag[] {
     let tags: Tag[] = []
     people.map(p => {
         p.tags.map(t => {
-            const tag = tags.find(tag => tag.name == t)
-            if(tag) {
+            const tag = tags.find(tag => tag.name === t)
+            if (tag) {
                 tag.count++
             }
             else {
@@ -147,8 +148,7 @@ export function quizSet(people: Person[], filter: Filter): QuizSet
         // Find longest and shortest times
         let maxAverageTime  = 0;
         let minAverageTime = MAX_TIME
-        quizPeople.forEach(person =>
-        {
+        quizPeople.forEach(person => {
             // Only for people with at least one presentation
             if (person.performance.numPresentations > 0) {
                 const averageTime = person.performance.avgTime
@@ -168,27 +168,22 @@ export function quizSet(people: Person[], filter: Filter): QuizSet
         //-------------------------------------------
 
         // If very first test set all frequencies to 1
-        if (maxAverageTime === 0) 
-        {
+        if (maxAverageTime === 0) {
             quizPeople.forEach(person => {
                 person.performance.frequency = 1
             })
         }
         // Caculate the frequency for each
-        else
-        {
+        else {
             let newFrequency = Math.ceil(1 + (BIAS * ((maxAverageTime / minAverageTime) - 1)))
                     	
-            quizPeople.forEach(person =>
-            {
+            quizPeople.forEach(person => {
                 // If a new person, use largest time
-                if (person.performance.numPresentations === 0)
-                {
+                if (person.performance.numPresentations === 0) {
                     person.performance.frequency = newFrequency
                 }
                     // Otherwise use average time
-                else
-                {
+                else {
                     // Get average time take to respond
                     let avgTime = person.performance.avgTime
 
@@ -196,7 +191,7 @@ export function quizSet(people: Person[], filter: Filter): QuizSet
                     let ageBias = person.performance.ageBias()
                     
                     // Limit to max time
-                    avgTime = Math.min(MAX_TIME,(avgTime+ageBias));
+                    avgTime = Math.min(MAX_TIME, (avgTime + ageBias));
 
                     // Calculate how often this person should appear
                     let frequency = Math.ceil(1 + (BIAS * ((avgTime / minAverageTime) - 1)))
@@ -214,8 +209,7 @@ export function quizSet(people: Person[], filter: Filter): QuizSet
         console.log("LOW:" + minAverageTime);
 
         let logstrings: string[] = []
-        quizPeople.forEach(person =>
-        {
+        quizPeople.forEach(person => {
             person.performance.frequencyOffsetStart = frequencyTotal 
             person.performance.frequencyOffsetEnd = frequencyTotal + person.performance.frequency
          //LARS TODO   person.performance.Rank = .SetRank(SortType, _Library._selectedPeople.IndexOf(person));
@@ -250,20 +244,3 @@ export function quizSet(people: Person[], filter: Filter): QuizSet
             return 1 -  (myOffset / totalDiff);
         }
     }
-
-
-/* lars goes away
-export function toDisplayPerson(person: Person): Person {
-    let dPerson: Person = JSON.parse(JSON.stringify(person))
-
-    dPerson.relationships = dPerson.relationships.map( r => {
-        let sourcePerson = dataProvider.getPerson(r.guid)
-        if (sourcePerson) {
-            return {...r, name: sourcePerson.fullName()} as Relationship
-        }
-        else {
-            return {...r, name: "MISSING PERSON"} as Relationship
-        }
-    })
-    return dPerson 
-}*/

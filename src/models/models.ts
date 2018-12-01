@@ -6,8 +6,7 @@ import { Performance } from './performance'
 import { Person } from './person'
 
 // Separate stuff needed by server and client into two files LARS
-export enum PerfType
-{
+export enum PerfType {
     PHOTO = "PHOTO",
     NAME = "NAME",
     DESC = "DESC",
@@ -28,6 +27,7 @@ export interface QuizSet {
 }
 
 export interface QuizPerson {
+    saveName: string
     guid: string
     photoBlobnames: string[]
     fullName: string

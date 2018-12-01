@@ -26,90 +26,13 @@ export class Performance {
     {
         // LARS recheck this math
         let millisecondsPassed = Date.now() - this.lastTested
-        let daysPassed = (millisecondsPassed / (1000*60*60*24));
+        let daysPassed = (millisecondsPassed / (1000 * 60 * 60 * 24));
         return daysPassed * (MAX_TIME / 30);
     }
-
-    public Reset()
-		{
-		    this.bestTime	= 0
-			this.worstTime	= 0
-
-            // Set ave to the worst
-            // time to bias towards new people
-			this.avgTime	= MAX_TIME
-			this.numPresentations = 0
-            this.lastTested = 0
-        }
-        
-    public AddResult(elapsedTime: number)
-		{
-            // Make sure it's a valid time
-            if (elapsedTime < 0)
-            {
-                throw new Error("invalid elapsed time")
-            }
-            else if (elapsedTime > MAX_TIME)
-            {
-                throw new Error("invalid elapsed time")
-            }
-
-            this.lastTested = Date.now()
-
-			// Is it the first real presentation, then average it with the
-            // worst possible time.  This assures a bias towards new people
-			if (this.numPresentations == 0) 
-			{
-				this.bestTime	= elapsedTime
-				this.worstTime	= elapsedTime
-
-                // Calculate new average
-                this.avgTime = (MAX_TIME + elapsedTime) / 2
-				this.numPresentations++
-				return
-			}
-
-			// Put cap on times
-			if (elapsedTime > MAX_TIME) 
-			{
-				elapsedTime = MAX_TIME
-			}
-
-			// Is it the new min?
-			if (elapsedTime < this.bestTime) 
-			{
-				this.bestTime = elapsedTime
-			}
-
-			// Is it the new max?
-			if (elapsedTime > this.worstTime)
-			{
-				this.worstTime = elapsedTime
-			}
-
-            //----------------------------------------
-			// Calculate new average of last 20 trials
-            //----------------------------------------
-            if (this.numPresentations < 20)
-            {
-                this.avgTime = ((this.numPresentations * this.avgTime) + elapsedTime) / (this.numPresentations + 1)
-            }
-            else
-            {
-                this.avgTime = ((19 * this.avgTime) + elapsedTime) / 20
-            }
-			// Increase presentation count
-			this.numPresentations++
-
-            // TODO
-			// Save
-		}
- 
 }
 
 export interface TestResult {
+    saveName: string,
     guid: string,
     result: number
 }
-
-
