@@ -438,6 +438,22 @@
   text-align: left;
 }
 
+.PerformanceText {
+  display: inline-block;
+  font-size: 20px;
+  width: 170px;
+  margin-top: 20px;
+  text-align: left;
+}
+
+.PerformanceText2 {
+  display: inline-block;
+  font-size: 20px;
+  width: 50px;
+  margin-top: 20px;
+  text-align: center;
+}
+
 .QuizTimer {
     color: #ffffff;
     background-color: #555555;

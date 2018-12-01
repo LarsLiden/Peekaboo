@@ -9,6 +9,7 @@ import { Person } from '../models/person'
 import { Filter, FilterSet, User } from '../models/models'
 import { HEAD_IMAGE, baseBlob, getPhotoBlobName, PHOTO_HEIGHT, PHOTO_WIDTH } from '../Util'
 import Search from '../modals/Search'
+import ViewPerformance from '../modals/ViewPerformance'
 import ScaledColor from '../modals/ScaledColor'
 import DetailText from '../Detail/DetailText'
 import DetailTags from '../Detail/DetailTags'
@@ -40,13 +41,15 @@ export interface ReceivedProps {
 interface ComponentState { 
   photoIndex: number
   isSearchOpen: boolean
+  isViewPerformanceOpen: boolean
 }
 
 class ViewPage extends React.Component<ReceivedProps, ComponentState> {
 
   state: ComponentState = {
     photoIndex: 0,
-    isSearchOpen: false
+    isSearchOpen: false,
+    isViewPerformanceOpen: false
   }
 
   // --- Search ---
@@ -66,6 +69,17 @@ class ViewPage extends React.Component<ReceivedProps, ComponentState> {
   @OF.autobind
   onClickSearch(): void {
     this.setState({isSearchOpen: true})
+  }
+
+  // --- Performance ---
+  @OF.autobind
+  onCloseViewPerformance(): void {
+    this.setState({isViewPerformanceOpen: false})
+  }
+
+  @OF.autobind
+  onClickViewPerformance(): void {
+    this.setState({isViewPerformanceOpen: true})
   }
 
   @OF.autobind
@@ -108,7 +122,7 @@ class ViewPage extends React.Component<ReceivedProps, ComponentState> {
     }
     let width = 160
     let height = (PHOTO_HEIGHT / PHOTO_WIDTH) * width
-    let scale = Math.round((1 - (this.props.person.photoPerformance.avgTime / MAX_TIME)) * 100)
+    let scale = 100 - Math.round((1 - (this.props.person.photoPerformance.avgTime / MAX_TIME)) * 100)
     return (
       <div>
         <div className="ViewPage">
@@ -119,7 +133,11 @@ class ViewPage extends React.Component<ReceivedProps, ComponentState> {
                 <DetailText className="DetailName" text={`"${this.props.person.nickName}"`}/>
               }
               <DetailText className="DetailName" text={this.props.person.lastName}/>
-              <div className="ViewScale">
+              <div 
+                className="ViewScale" 
+                onClick={this.onClickViewPerformance}
+                role="button"
+              >
                 <ScaledColor
                   scale={scale}
                 />
@@ -245,6 +263,12 @@ class ViewPage extends React.Component<ReceivedProps, ComponentState> {
             people={this.props.allPeople}
             onCancel={this.onCloseSearch}
             onSelect={this.onSelectSearch}
+          />
+        }
+        {this.state.isViewPerformanceOpen &&
+          <ViewPerformance
+            performance={this.props.person.photoPerformance}
+            onClose={this.onCloseViewPerformance}
           />
         }
       </div>
