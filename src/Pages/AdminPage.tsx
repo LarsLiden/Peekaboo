@@ -5,26 +5,44 @@
 import * as React from 'react';
 import * as OF from 'office-ui-fabric-react'
 import { User } from '../models/models'
-import Client from '../service/client'
+import ConfirmModal from '../modals/Confirm'
 
 export interface ReceivedProps {
   user: User
+  users: User[]
+  onDeleteUser: (user: User) => {}
   onClose: () => {}
 }
 
 interface ComponentState {
-  users: User[]
+  isConfirmDeleteUser: User | null
 }
 
 class AdminPage extends React.Component<ReceivedProps, ComponentState> {
 
   state: ComponentState = {
-    users: []
+    isConfirmDeleteUser: null
   }
 
-  async componentDidMount() {
-    let users = await Client.getUsers(this.props.user) 
-    this.setState({users})
+  // --- DELETE USER ---
+  @OF.autobind
+  onDeleteUser(user: User): void {
+    this.setState({isConfirmDeleteUser: user})
+  }
+
+  @OF.autobind
+  onCancelDeleteUser(): void {
+    this.setState({isConfirmDeleteUser: null})
+  }
+
+  @OF.autobind
+  async onConfirmDeleteUser(): Promise<void> {
+    if (this.state.isConfirmDeleteUser) {
+      await this.props.onDeleteUser(this.state.isConfirmDeleteUser)
+      this.setState({
+        isConfirmDeleteUser: null
+      })
+    }
   }
 
   @OF.autobind
@@ -51,11 +69,13 @@ class AdminPage extends React.Component<ReceivedProps, ComponentState> {
           <div className="AdminUserText">
             {joined} - {last}
           </div>
-          <OF.IconButton
-            className="ButtonIcon ButtonDark FloatRight"
-            //onClick={() => this.onClickDelete(keyValue)}
-            iconProps={{ iconName: 'Delete' }}
-        />
+          {user.googleId !== this.props.user.googleId &&
+            <OF.IconButton
+              className="ButtonIcon ButtonDark FloatRight"
+              onClick={() => this.onDeleteUser(user)}
+              iconProps={{ iconName: 'Delete' }}
+            />
+          }
         </div>
       </div>
     );
@@ -70,7 +90,7 @@ class AdminPage extends React.Component<ReceivedProps, ComponentState> {
         <div className="ModalBody">
           <OF.List
             className="FilterList"
-            items={this.state.users}
+            items={this.props.users}
             onRenderCell={this.onRenderCell}
           />
         </div>
@@ -81,6 +101,14 @@ class AdminPage extends React.Component<ReceivedProps, ComponentState> {
               iconProps={{ iconName: 'ChromeBack' }}
           />
         </div>
+        {this.state.isConfirmDeleteUser &&
+        <ConfirmModal
+          title="Are you sure you want to delete"
+          subtitle={this.state.isConfirmDeleteUser.name}
+          onCancel={this.onCancelDeleteUser}
+          onConfirm={this.onConfirmDeleteUser}
+        />
+      }
       </div>
     );
   }

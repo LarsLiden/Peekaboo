@@ -30,6 +30,10 @@ export default class Client {
         return response.data as User[]
     }
 
+    public static async deleteUser(admin: User, userToDelete: User): Promise<void> {
+        await axios.delete(`${this.baseUrl}/user/${userToDelete.hwmid}`, this.getConfig(admin))
+    }
+
     public static async getPeopleStartingWith(user: User, letter: string, callback: (people: Person[] | null) => void): Promise<void> {
         console.log(`Getting ${letter}`)
         try {

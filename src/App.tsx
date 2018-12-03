@@ -38,6 +38,7 @@ export enum Page {
 
 interface ComponentState {
   user: User | null
+  users: User[]
   allPeople: Person[]
   allTags: Tag[]
   loadletter: string,
@@ -58,6 +59,7 @@ class App extends React.Component<{}, ComponentState> {
 
   state: ComponentState = {
     user: null,
+    users: [],
     allPeople: [],
     allTags: [],
     loadletter: "",
@@ -109,9 +111,13 @@ class App extends React.Component<{}, ComponentState> {
 
   @OF.autobind 
   async onClickAdmin() {
-    this.setState({
-      page: Page.ADMIN
-    })
+    if (this.state.user) {
+      let users = await Client.getUsers(this.state.user) 
+      this.setState({
+        page: Page.ADMIN,
+        users
+      })
+    }
   }
 
   @OF.autobind 
@@ -269,6 +275,19 @@ class App extends React.Component<{}, ComponentState> {
     }
   }
 
+  @OF.autobind
+  async onDeleteUser(userToDelete: User) {
+    try {
+      await Client.deleteUser(this.state.user!, userToDelete) 
+      let users = this.state.users.filter(u => u.hwmid !== userToDelete.hwmid)
+      this.setState({
+        users
+      })
+    }
+    catch {
+      this.setState({error: `Failed to delete ${userToDelete.name}`})
+    }
+  }
   @OF.autobind 
   async onDeletePerson(person: Person) {
     try {
@@ -569,6 +588,8 @@ class App extends React.Component<{}, ComponentState> {
         {this.state.user && this.state.user!.isAdmin && this.state.page === Page.ADMIN &&
           <AdminPage
             user={this.state.user}
+            users={this.state.users}
+            onDeleteUser={this.onDeleteUser}
             onClose={this.onCloseAdminPage}
           />
         }
