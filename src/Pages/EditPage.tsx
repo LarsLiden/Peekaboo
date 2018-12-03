@@ -38,6 +38,7 @@ export interface ReceivedProps {
   onSavePerson: (person: Person) => void
   onDeletePhoto: (person: Person, photoName: string) => void
   onDeletePerson: (person: Person) => void
+  onArchivePerson: (person: Person) => void
   onClose: (person?: Person) => void
   onSelectPerson: (guid: string) => void
 }
@@ -56,7 +57,8 @@ interface ComponentState {
   isEditKeyValuesOpen: boolean
   isEditSocialNetworksOpen: boolean
   isConfirmDeletePhotoOpen: boolean
-  isConfirmDeleteOpen: boolean
+  isConfirmDeleteOpen: boolean,
+  isConfirmArchiveOpen: boolean
 }
 
 class EditPage extends React.Component<ReceivedProps, ComponentState> {
@@ -75,7 +77,8 @@ class EditPage extends React.Component<ReceivedProps, ComponentState> {
     isEditKeyValuesOpen: false,
     isEditSocialNetworksOpen: false,
     isConfirmDeletePhotoOpen: false,
-    isConfirmDeleteOpen: false
+    isConfirmDeleteOpen: false,
+    isConfirmArchiveOpen: false
   }
 
   // --- EDIT Strings ---
@@ -325,6 +328,23 @@ class EditPage extends React.Component<ReceivedProps, ComponentState> {
     this.props.onDeletePerson(this.props.person)
   }
 
+   // --- ARCHIVE PERSON ---
+   @OF.autobind
+   onCancelArchive(): void {
+     this.setState({isConfirmArchiveOpen: false})
+   }
+ 
+   @OF.autobind
+   onClickArchive(): void {
+     this.setState({isConfirmArchiveOpen: true})
+   }
+ 
+   @OF.autobind
+   onConfirmArchive(): void {
+     this.setState({isConfirmArchiveOpen: false})
+     this.props.onArchivePerson(this.props.person)
+   }
+
   @OF.autobind
   onNextPhoto(): void {
     let photoIndex = this.state.photoIndex + 1
@@ -528,6 +548,13 @@ class EditPage extends React.Component<ReceivedProps, ComponentState> {
                     iconProps={{ iconName: 'Trash' }}
                 />
               }
+              {true &&
+                <OF.IconButton
+                    className="ButtonIcon ButtonPrimary FloatRight"
+                    onClick={this.onClickArchive}
+                    iconProps={{ iconName: 'Archive' }}
+                />
+              }
             </div>
           </div>
         }
@@ -581,6 +608,14 @@ class EditPage extends React.Component<ReceivedProps, ComponentState> {
             subtitle={this.props.person.fullName()}
             onCancel={this.onCancelDelete}
             onConfirm={this.onConfirmDelete}
+          />
+        }
+        {this.state.isConfirmArchiveOpen &&
+          <ConfirmModal
+            title="Are you sure you want to archive"
+            subtitle={this.props.person.fullName()}
+            onCancel={this.onCancelArchive}
+            onConfirm={this.onConfirmArchive}
           />
         }
         {this.state.isConfirmDeletePhotoOpen &&

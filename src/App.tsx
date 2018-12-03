@@ -282,6 +282,27 @@ class App extends React.Component<{}, ComponentState> {
   }
 
   @OF.autobind 
+  async onArchivePerson(person: Person) {
+    try {
+      await Client.archivePerson(this.state.user!, person)
+
+      // Delete local
+      let people = this.state.allPeople.filter(p => p.guid !== person.guid)
+      // Recalculte filter set to exclude new person
+      let filterSet = Convert.getFilterSet(people, this.state.filter)
+      setStatePromise(this, {
+        allPeople: people,
+        filterSet,
+        page: Page.VIEW
+      })
+      this.viewLibraryPerson()
+    }
+    catch {
+      this.setState({error: `Failed to archive ${person.fullName()}`})
+    }
+  }
+
+  @OF.autobind 
   async onSavePerson(person: Person) {
     try {
       await Client.putPerson(this.state.user!, person)
@@ -507,6 +528,7 @@ class App extends React.Component<{}, ComponentState> {
             onSavePerson={this.onSavePerson}
             onSavePhoto={this.onSavePhoto}
             onDeletePerson={this.onDeletePerson}
+            onArchivePerson={this.onArchivePerson}
             onDeletePhoto={this.onDeletePhoto}
             onSelectPerson={this.onSelectPerson}
           />

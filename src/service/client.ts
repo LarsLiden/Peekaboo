@@ -46,6 +46,12 @@ export default class Client {
         await axios.delete(`${this.baseUrl}/person/${person.getKey}/${person.guid}`, this.getConfig(user))
     }
 
+    public static async archivePerson(user: User, person: Person): Promise<void> {
+        await axios.post(
+            `${this.baseUrl}/person/${person.getKey}/${person.guid}/archive`, null, this.getConfig(user)
+        )
+    }
+
     public static async putPhoto(user: User, person: Person, photoData: string): Promise<string> {
         let response = await axios.put(
             `${this.baseUrl}/person/${person.getKey}/${person.guid}/photo`,

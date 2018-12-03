@@ -19,6 +19,7 @@ export interface User {
     email: string,
     photoBlobPrefix?: string,
     hwmid?: string
+    isAdmin?: string
 }
 
 export interface QuizSet {
