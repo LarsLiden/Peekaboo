@@ -24,7 +24,12 @@ export default class Client {
             return null
         }
     }
-     
+
+    public static async getUsers(user: User): Promise<User[]> {
+        const response = await axios.get(`${this.baseUrl}/users`, this.getConfig(user))
+        return response.data as User[]
+    }
+
     public static async getPeopleStartingWith(user: User, letter: string, callback: (people: Person[] | null) => void): Promise<void> {
         console.log(`Getting ${letter}`)
         try {

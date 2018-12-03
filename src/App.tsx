@@ -18,6 +18,7 @@ import LoadPage from './Pages/LoadPage'
 import NewUserPage from './Pages/NewUserPage'
 import FilterPage from './Pages/FilterPage'
 import SortPage from './Pages/SortPage'
+import AdminPage from './Pages/AdminPage'
 import LoginPage from './Pages/LoginPage'
 import ViewPage from './Pages/ViewPage'
 import EditPage from './Pages/EditPage'
@@ -28,6 +29,7 @@ export enum Page {
   LOAD = "LOAD",
   FILTER = "FILTER",
   SORT = "SORT",
+  ADMIN = "ADMIN",
   QUIZ = "QUIZ",
   VIEW = "VIEW",
   VIEWQUIZ = "VIEWQUIZ",
@@ -102,6 +104,13 @@ class App extends React.Component<{}, ComponentState> {
   async onClickSort() {
     this.setState({
       page: Page.SORT
+    })
+  }
+
+  @OF.autobind 
+  async onClickAdmin() {
+    this.setState({
+      page: Page.ADMIN
     })
   }
 
@@ -447,6 +456,13 @@ class App extends React.Component<{}, ComponentState> {
   }
 
   @OF.autobind
+  async onCloseAdminPage() {
+    await setStatePromise(this, {
+      page: Page.VIEW
+    })
+  }
+
+  @OF.autobind
   async onCloseFliterPage(filter: Filter) {
     await setStatePromise(this, {
       filter
@@ -503,6 +519,7 @@ class App extends React.Component<{}, ComponentState> {
             onContinueQuiz={this.onContinueQuiz}
             onClickFilter={this.onClickFilter}
             onClickSort={this.onClickSort}
+            onClickAdmin={this.onClickAdmin}
             onEdit={this.onEdit}
             onNewPerson={this.onNewPerson}
             onNextPerson={this.onNextPerson}
@@ -547,6 +564,12 @@ class App extends React.Component<{}, ComponentState> {
             allTags={this.state.allTags}
             onClose={this.onCloseFliterPage}
             filter={this.state.filter}
+          />
+        }
+        {this.state.user && this.state.user!.isAdmin && this.state.page === Page.ADMIN &&
+          <AdminPage
+            user={this.state.user}
+            onClose={this.onCloseAdminPage}
           />
         }
         {this.state.page === Page.QUIZ && 

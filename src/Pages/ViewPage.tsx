@@ -32,6 +32,7 @@ export interface ReceivedProps {
   onEdit: () => void
   onClickFilter: () => void
   onClickSort: () => void
+  onClickAdmin: () => void
   onNewPerson: () => void
   onNextPerson: () => void
   onPrevPerson: () => void
@@ -233,6 +234,13 @@ class ViewPage extends React.Component<ReceivedProps, ComponentState> {
                     onClick={() => this.props.onNewPerson()}
                     iconProps={{ iconName: 'CirclePlus' }}
                 />
+                {this.props.user.isAdmin &&
+                  <OF.IconButton
+                      className="ButtonIcon ButtonPrimary FloatLeft"
+                      onClick={() => this.props.onClickAdmin()}
+                      iconProps={{ iconName: 'Settings' }}
+                  />
+                }
                 <OF.Button
                     className="ButtonIcon ButtonPrimary FloatRight"
                     onClick={() => this.props.onClickQuiz()}
