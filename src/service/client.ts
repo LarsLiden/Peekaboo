@@ -38,8 +38,8 @@ export default class Client {
         await axios.delete(`${this.baseUrl}/user/${userToDelete.hwmid}`, this.getConfig(admin))
     }
 
-    public static async exportToUser(admin: User, destination: User): Promise<User> {
-        const response = await axios.post(`${this.baseUrl}/user/${destination.hwmid}`, this.getConfig(admin))
+    public static async exportToUser(admin: User, destination: User, peopleIds: string[]): Promise<User> {
+        const response = await axios.post(`${this.baseUrl}/user/${destination.hwmid}`, {peopleIds}, this.getConfig(admin))
         return response.data as User
     }
 

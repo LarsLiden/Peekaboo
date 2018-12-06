@@ -307,15 +307,11 @@ class App extends React.Component<{}, ComponentState> {
   @OF.autobind
   async onExportToUser(destination: User) {
     try {
-      let updatedUser = await Client.exportToUser(this.state.user!, destination) 
-      let users = this.state.users.filter(u => u.hwmid !== destination.hwmid)
-      users.push(updatedUser)
-      this.setState({
-        users
-      })
+      let peopleIds = this.state.filterSet.people.map(p => p.personId!)
+      await Client.exportToUser(this.state.user!, destination, peopleIds) 
     }
     catch {
-      this.setState({error: `Failed to delete ${destination.name}`})
+      this.setState({error: `Failed to export ${destination.name}`})
     }
   }
   
@@ -620,6 +616,7 @@ class App extends React.Component<{}, ComponentState> {
           <AdminPage
             user={this.state.user}
             users={this.state.users}
+            filterSet={this.state.filterSet}
             onDeleteUser={this.onDeleteUser}
             onExportToUser={this.onExportToUser}
             onClose={this.onCloseAdminPage}

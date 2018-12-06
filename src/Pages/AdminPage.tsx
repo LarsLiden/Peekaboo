@@ -4,12 +4,13 @@
  */
 import * as React from 'react';
 import * as OF from 'office-ui-fabric-react'
-import { User } from '../models/models'
+import { User, FilterSet } from '../models/models'
 import ConfirmModal from '../modals/Confirm'
 
 export interface ReceivedProps {
   user: User
   users: User[]
+  filterSet: FilterSet
   onDeleteUser: (user: User) => {}
   onExportToUser: (user: User) => {}
   onClose: () => {}
@@ -94,7 +95,7 @@ class AdminPage extends React.Component<ReceivedProps, ComponentState> {
             {joined} - {last}
           </div>
           <div className="AdminUserText">
-            {user.numPhotos} - {user.numPeople} - {user.numTestResults}
+            {user.numPeople} - {user.numPhotos} - {user.numTestResults}
           </div>
           {user.googleId !== this.props.user.googleId &&
             <div className="AdminButtons">
@@ -145,7 +146,7 @@ class AdminPage extends React.Component<ReceivedProps, ComponentState> {
         }
         {this.state.isConfirmExportToUser &&
           <ConfirmModal
-            title={`Are you sure you want to export ${this.props.user.numPeople} people to`}
+            title={`Are you sure you want to export ${this.props.filterSet.people.length} people to`}
             subtitle={this.state.isConfirmExportToUser.name}
             onCancel={this.onCancelExportToUser}
             onConfirm={this.onConfirmExportToUser}
