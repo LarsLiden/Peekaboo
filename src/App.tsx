@@ -136,8 +136,8 @@ class App extends React.Component<{}, ComponentState> {
       return
     }
 
-    let guid = this.state.filterSet.people[this.state.filterSet.selectedIndex].guid
-    let selectedPerson = Convert.getPerson(this.state.allPeople, guid) || null
+    let personId = this.state.filterSet.people[this.state.filterSet.selectedIndex].personId
+    let selectedPerson = Convert.getPerson(this.state.allPeople, personId!) || null
     this.setState({
       selectedPerson,
       page: Page.VIEW
@@ -147,7 +147,7 @@ class App extends React.Component<{}, ComponentState> {
 
   @OF.autobind 
   viewQuizDetail(quizPerson: QuizPerson) {
-      let selectedPerson = Convert.getPerson(this.state.allPeople, quizPerson.guid) || null
+      let selectedPerson = Convert.getPerson(this.state.allPeople, quizPerson.personId) || null
       this.setState({
         selectedPerson,
         page: Page.VIEWQUIZ
@@ -212,11 +212,26 @@ class App extends React.Component<{}, ComponentState> {
 
             // Open library
             this.viewLibraryPerson()
+
+            await this.sendUserStats()
           }
         })
       }
   }
 
+  // Send stats back to server
+  async sendUserStats(): Promise<void> {
+    const numPhotos = this.state.allPeople.reduce((acc, person) => {return acc + person.photoFilenames.length}, 0)
+    const numTestResults = this.state.allPeople.reduce((acc, person) => {return acc + person.photoPerformance.numPresentations}, 0)
+    let user = {...this.state.user!,
+      numPeople: this.state.allPeople.length,
+      numPhotos,
+      numTestResults
+    }
+    await Client.updateUser(user)
+
+    this.setState({user})
+  }
   @OF.autobind 
   async onClickImport() {
       await Client.import(this.state.user!)
@@ -253,7 +268,7 @@ class App extends React.Component<{}, ComponentState> {
         }
         else {
           // Replace local
-          people = this.state.allPeople.filter(p => p.guid !== person.guid)
+          people = this.state.allPeople.filter(p => p.personId !== person.personId)
         }
         this.setState({
           allPeople: people,
@@ -288,13 +303,29 @@ class App extends React.Component<{}, ComponentState> {
       this.setState({error: `Failed to delete ${userToDelete.name}`})
     }
   }
+
+  @OF.autobind
+  async onExportToUser(destination: User) {
+    try {
+      let updatedUser = await Client.exportToUser(this.state.user!, destination) 
+      let users = this.state.users.filter(u => u.hwmid !== destination.hwmid)
+      users.push(updatedUser)
+      this.setState({
+        users
+      })
+    }
+    catch {
+      this.setState({error: `Failed to delete ${destination.name}`})
+    }
+  }
+  
   @OF.autobind 
   async onDeletePerson(person: Person) {
     try {
       await Client.deletePerson(this.state.user!, person)
 
       // Delete local
-      let people = this.state.allPeople.filter(p => p.guid !== person.guid)
+      let people = this.state.allPeople.filter(p => p.personId !== person.personId)
       // Recalculte filter set to exclude new person
       let filterSet = Convert.getFilterSet(people, this.state.filter)
       setStatePromise(this, {
@@ -315,7 +346,7 @@ class App extends React.Component<{}, ComponentState> {
       await Client.archivePerson(this.state.user!, person)
 
       // Delete local
-      let people = this.state.allPeople.filter(p => p.guid !== person.guid)
+      let people = this.state.allPeople.filter(p => p.personId !== person.personId)
       // Recalculte filter set to exclude new person
       let filterSet = Convert.getFilterSet(people, this.state.filter)
       setStatePromise(this, {
@@ -336,12 +367,12 @@ class App extends React.Component<{}, ComponentState> {
       await Client.putPerson(this.state.user!, person)
 
       // Replace local
-      let people = this.state.allPeople.filter(p => p.guid !== person.guid)
+      let people = this.state.allPeople.filter(p => p.personId !== person.personId)
       setStatePromise(this, {
         allPeople: [...people, person]
       })
 
-      if (this.state.selectedPerson && person.guid === this.state.selectedPerson.guid) {
+      if (this.state.selectedPerson && person.personId === this.state.selectedPerson.personId) {
         this.setState({selectedPerson: person})
       }
     }
@@ -402,8 +433,8 @@ class App extends React.Component<{}, ComponentState> {
         this.setState({ allPeople })
  
         if (this.state.selectedPerson) {
-          let selectedGuid = this.state.selectedPerson.guid
-          let changedPerson = updatedPeople.find(p => p.guid === selectedGuid)
+          let selectedpersonId = this.state.selectedPerson.personId
+          let changedPerson = updatedPeople.find(p => p.personId === selectedpersonId)
           if (changedPerson) {
             this.setState({selectedPerson: new Person(changedPerson)})
           }
@@ -455,11 +486,11 @@ class App extends React.Component<{}, ComponentState> {
   }
 
   @OF.autobind
-  async onSelectPerson(guid: string): Promise<void> {
+  async onSelectPerson(personId: string): Promise<void> {
     if (this.state.filterSet) {
-      let selectedIndex = this.state.filterSet.people.findIndex(p => p.guid === guid)
+      let selectedIndex = this.state.filterSet.people.findIndex(p => p.personId === personId)
       if (selectedIndex < 0) {
-        selectedIndex = this.state.allPeople.findIndex(p => p.guid === guid)
+        selectedIndex = this.state.allPeople.findIndex(p => p.personId === personId)
         // Clear filter set
         let filterSet: FilterSet = {
           people: this.state.allPeople, 
@@ -488,8 +519,8 @@ class App extends React.Component<{}, ComponentState> {
     })
     this.updateFilterSet()
 
-    let guid = this.state.filterSet.people[this.state.filterSet.selectedIndex].guid
-    let selectedPerson = Convert.getPerson(this.state.allPeople, guid) || null
+    let personId = this.state.filterSet.people[this.state.filterSet.selectedIndex].personId
+    let selectedPerson = Convert.getPerson(this.state.allPeople, personId!) || null
     await setStatePromise(this, {
       page: Page.VIEW,
       selectedPerson
@@ -590,6 +621,7 @@ class App extends React.Component<{}, ComponentState> {
             user={this.state.user}
             users={this.state.users}
             onDeleteUser={this.onDeleteUser}
+            onExportToUser={this.onExportToUser}
             onClose={this.onCloseAdminPage}
           />
         }

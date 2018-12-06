@@ -11,17 +11,20 @@ export interface ReceivedProps {
   user: User
   users: User[]
   onDeleteUser: (user: User) => {}
+  onExportToUser: (user: User) => {}
   onClose: () => {}
 }
 
 interface ComponentState {
   isConfirmDeleteUser: User | null
+  isConfirmExportToUser: User | null
 }
 
 class AdminPage extends React.Component<ReceivedProps, ComponentState> {
 
   state: ComponentState = {
-    isConfirmDeleteUser: null
+    isConfirmDeleteUser: null,
+    isConfirmExportToUser: null
   }
 
   // --- DELETE USER ---
@@ -41,6 +44,27 @@ class AdminPage extends React.Component<ReceivedProps, ComponentState> {
       await this.props.onDeleteUser(this.state.isConfirmDeleteUser)
       this.setState({
         isConfirmDeleteUser: null
+      })
+    }
+  }
+
+  // --- EXPORT TO USER ---
+  @OF.autobind
+  onExportToUser(user: User): void {
+    this.setState({isConfirmExportToUser: user})
+  }
+
+  @OF.autobind
+  onCancelExportToUser(): void {
+    this.setState({isConfirmExportToUser: null})
+  }
+
+  @OF.autobind
+  async onConfirmExportToUser(): Promise<void> {
+    if (this.state.isConfirmExportToUser) {
+      await this.props.onExportToUser(this.state.isConfirmExportToUser)
+      this.setState({
+        isConfirmExportToUser: null
       })
     }
   }
@@ -69,12 +93,22 @@ class AdminPage extends React.Component<ReceivedProps, ComponentState> {
           <div className="AdminUserText">
             {joined} - {last}
           </div>
+          <div className="AdminUserText">
+            {user.numPhotos} - {user.numPeople} - {user.numTestResults}
+          </div>
           {user.googleId !== this.props.user.googleId &&
-            <OF.IconButton
-              className="ButtonIcon ButtonDark FloatRight"
-              onClick={() => this.onDeleteUser(user)}
-              iconProps={{ iconName: 'Delete' }}
-            />
+            <div className="AdminButtons">
+              <OF.IconButton
+                className="ButtonIcon ButtonDark FloatRight"
+                onClick={() => this.onDeleteUser(user)}
+                iconProps={{ iconName: 'Delete' }}
+              />
+              <OF.IconButton
+                className="ButtonIcon ButtonDark FloatRight"
+                onClick={() => this.onExportToUser(user)}
+                iconProps={{ iconName: 'IncreaseIndentLegacy' }}
+              />
+            </div>
           }
         </div>
       </div>
@@ -86,7 +120,7 @@ class AdminPage extends React.Component<ReceivedProps, ComponentState> {
       <div className="ModalPage">
         <div className="ContentHeader FilterHeader">
           Admin
-        </div>
+        </div >
         <div className="ModalBody">
           <OF.List
             className="FilterList"
@@ -102,13 +136,21 @@ class AdminPage extends React.Component<ReceivedProps, ComponentState> {
           />
         </div>
         {this.state.isConfirmDeleteUser &&
-        <ConfirmModal
-          title="Are you sure you want to delete"
-          subtitle={this.state.isConfirmDeleteUser.name}
-          onCancel={this.onCancelDeleteUser}
-          onConfirm={this.onConfirmDeleteUser}
-        />
-      }
+          <ConfirmModal
+            title="Are you sure you want to delete"
+            subtitle={this.state.isConfirmDeleteUser.name}
+            onCancel={this.onCancelDeleteUser}
+            onConfirm={this.onConfirmDeleteUser}
+          />
+        }
+        {this.state.isConfirmExportToUser &&
+          <ConfirmModal
+            title={`Are you sure you want to export ${this.props.user.numPeople} people to`}
+            subtitle={this.state.isConfirmExportToUser.name}
+            onCancel={this.onCancelExportToUser}
+            onConfirm={this.onConfirmExportToUser}
+          />
+        }
       </div>
     );
   }

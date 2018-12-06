@@ -20,6 +20,9 @@ export interface User {
     photoBlobPrefix?: string,
     hwmid?: string
     isAdmin?: string
+    numPeople?: number
+    numPhotos?: number,
+    numTestResults?: number
 }
 
 export interface QuizSet {
@@ -28,8 +31,7 @@ export interface QuizSet {
 }
 
 export interface QuizPerson {
-    saveName: string
-    guid: string
+    personId: string
     photoBlobnames: string[]
     fullName: string
     description: string
@@ -65,7 +67,7 @@ export enum SortDirection {
 }
 
 export interface Event {
-    id: string
+    eventId: string
     date?: string
     description: string
     location: string
@@ -82,7 +84,7 @@ export enum SocialNetType {
 }
 
 export interface SocialNet {
-    id: string
+    socialNetId: string
     URL: string
     profileID: string
     netType: SocialNetType

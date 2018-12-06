@@ -40,7 +40,7 @@ export interface ReceivedProps {
   onDeletePerson: (person: Person) => void
   onArchivePerson: (person: Person) => void
   onClose: (person?: Person) => void
-  onSelectPerson: (guid: string) => void
+  onSelectPerson: (personId: string) => void
 }
 
 interface ComponentState { 
@@ -149,12 +149,12 @@ class EditPage extends React.Component<ReceivedProps, ComponentState> {
 
   getReversePerson(updatedPeople: Person[], relationship: Relationship): Person | null {
     // First see if I have person already
-    let person = updatedPeople.find(up => up.guid === relationship.personId)
+    let person = updatedPeople.find(up => up.personId === relationship.personId)
     if (person) {
       return person
     }
     // If not get them
-    person = this.props.allPeople.find(ap => ap.guid === relationship.personId)
+    person = this.props.allPeople.find(ap => ap.personId === relationship.personId)
     if (person) {
       let copy = new Person(person)
       updatedPeople.push(copy)
@@ -166,7 +166,7 @@ class EditPage extends React.Component<ReceivedProps, ComponentState> {
 
   findRelationship(person: Person, relationship: Relationship): Relationship | undefined {
     return person.relationships.find(r => 
-      r.personId === person.guid && r.type.from === relationship.type.to)
+      r.personId === person.personId && r.type.from === relationship.type.to)
   }
 
   makeReverseRelationship(relationship: Relationship, personId: string): Relationship {
@@ -196,7 +196,7 @@ class EditPage extends React.Component<ReceivedProps, ComponentState> {
       if (reversePerson) {
         // Remove the relationship
         reversePerson.relationships = reversePerson.relationships.filter(r => 
-          r.personId !== this.props.person.guid || r.type.from !== removeRelationship.type.from)
+          r.personId !== this.props.person.personId || r.type.from !== removeRelationship.type.from)
       }
     })
 
@@ -205,7 +205,7 @@ class EditPage extends React.Component<ReceivedProps, ComponentState> {
       let reversePerson = this.getReversePerson(updatedPeople, addedRelationship)
       if (reversePerson) {
         // Create and add reverse relationship
-        let reverseRelationship = this.makeReverseRelationship(addedRelationship, this.props.person.guid)
+        let reverseRelationship = this.makeReverseRelationship(addedRelationship, this.props.person.personId!)
         reversePerson.relationships.push(reverseRelationship)
       }
     })
@@ -218,7 +218,7 @@ class EditPage extends React.Component<ReceivedProps, ComponentState> {
         reversePerson.relationships = reversePerson.relationships.filter(r => r.id !== changedRelationship.id)
 
         // Create and add reverse new relationship
-        let reverseRelationship = this.makeReverseRelationship(changedRelationship, this.props.person.guid)
+        let reverseRelationship = this.makeReverseRelationship(changedRelationship, this.props.person.personId!)
         reversePerson.relationships.push(reverseRelationship)
       }
     })
@@ -541,7 +541,7 @@ class EditPage extends React.Component<ReceivedProps, ComponentState> {
                   onClick={this.onClickCancel}
                   iconProps={{ iconName: 'ChromeBack' }}
               />
-              {this.props.person.saveName &&
+              {this.props.person.personId &&
                 <OF.IconButton
                     className="ButtonIcon ButtonPrimary FloatRight"
                     onClick={this.onClickDelete}

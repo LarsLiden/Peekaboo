@@ -51,7 +51,7 @@ class EditRelationships extends React.Component<ReceivedProps, ComponentState> {
   onSelectSearch(person:  Person): void {
 
     let relationships = this.state.relationships.filter(r => r !== this.state.searchTarget)
-    let changedRelationship: Relationship = {...this.state.searchTarget!, personId: person.guid }
+    let changedRelationship: Relationship = {...this.state.searchTarget!, personId: person.personId! }
     relationships.push(changedRelationship)
 
     this.setState({
@@ -103,7 +103,7 @@ class EditRelationships extends React.Component<ReceivedProps, ComponentState> {
 
   @OF.autobind
   onRenderCell(relationship: Relationship, index: number, isScrolling: boolean): JSX.Element {
-    const person = this.props.allPeople.find(p => p.guid === relationship.personId)
+    const person = this.props.allPeople.find(p => p.personId === relationship.personId)
     const name = person ? person.fullName() : "--"
     return (
       <div className="FilterLine">

@@ -41,7 +41,7 @@ class EditSocialNetworks extends React.Component<ReceivedProps, ComponentState> 
   @OF.autobind
   onClickDelete(socialNet: SocialNet) {
     this.setState({
-      socialNets: this.state.socialNets.filter(k => k.id !== socialNet.id)
+      socialNets: this.state.socialNets.filter(k => k.socialNetId !== socialNet.socialNetId)
     }) 
   }
 
@@ -53,7 +53,7 @@ class EditSocialNetworks extends React.Component<ReceivedProps, ComponentState> 
   @OF.autobind
   onClickAdd() {
     const newSocialNet: SocialNet = {
-      id: generateGUID(),
+      socialNetId: generateGUID(),
       URL: "",
       profileID: "",
       netType: SocialNetType.LINKEDIN
@@ -65,13 +65,13 @@ class EditSocialNetworks extends React.Component<ReceivedProps, ComponentState> 
 
   @OF.autobind
   onURLChanged(url: string, socialNet: SocialNet) {
-    let changed = this.state.socialNets.find(r => r.id === socialNet.id)
+    let changed = this.state.socialNets.find(r => r.socialNetId === socialNet.socialNetId)
     changed!.URL = url
   }
 
   @OF.autobind 
   onTypeChange(option: OF.IDropdownOption, socialNet: SocialNet) {
-    let changed = this.state.socialNets.find(r => r.id === socialNet.id)
+    let changed = this.state.socialNets.find(r => r.socialNetId === socialNet.socialNetId)
     changed!.netType = SocialNetType[option.text]
   }
 

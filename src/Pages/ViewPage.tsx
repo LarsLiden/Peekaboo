@@ -36,7 +36,7 @@ export interface ReceivedProps {
   onNewPerson: () => void
   onNextPerson: () => void
   onPrevPerson: () => void
-  onSelectPerson: (guid: string) => void
+  onSelectPerson: (personId: string) => void
 }
 
 interface ComponentState { 
@@ -64,7 +64,7 @@ class ViewPage extends React.Component<ReceivedProps, ComponentState> {
     this.setState({
       isSearchOpen: false
     })
-    this.props.onSelectPerson(person.guid)
+    this.props.onSelectPerson(person.personId!)
   }
 
   @OF.autobind

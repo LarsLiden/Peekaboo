@@ -9,8 +9,7 @@ import { MAX_TIME, BIAS } from './models/const'
 
 export function toQuizPerson(person: Person, perfType: PerfType): QuizPerson {
     return {
-        saveName: person.saveName!,
-        guid: person.guid,
+        personId: person.personId!,
         fullName: `${person.firstName} ${person.lastName}`,
         description: person.description,
         photoBlobnames: person.photoFilenames.map(f => getPhotoBlobName(person, f)),
@@ -71,15 +70,15 @@ export function filteredPeople(people: Person[], filter: Filter): Person[] {
     return filteredPeople
 }
 
-export function getPerson(people: Person[], guid: string) {
-    return people.find(p => p.guid === guid)
+export function getPerson(people: Person[], personId: string) {
+    return people.find(p => p.personId === personId)
 } 
 
 export function getFilterSet(people: Person[], filter: Filter, person?: Person): FilterSet
 {
     // Filter people by tags
     let filtered = filteredPeople(people, filter)
-    let selectedIndex = person ? filtered.findIndex(p => p.guid === person.guid) : 0
+    let selectedIndex = person ? filtered.findIndex(p => p.personId === person.personId) : 0
     if (selectedIndex < 0) {
         throw new Error("Invalid person in filter")
     }

@@ -230,8 +230,13 @@
   color: var(--color-white);
   text-align: left;
   float: left;
-  width: 200px;
+  width: 180px;
 }
+
+.AdminButtons {
+  float: right;
+}
+
 .LoginImage {
   opacity: 0.7;
   height: 500px !important;

@@ -72,7 +72,7 @@ class Search extends React.Component<ReceivedProps, ComponentState> {
   onRenderCell(person: Person, index: number, isScrolling: boolean): JSX.Element {
     
     let nameRender: JSX.Element | null
-    if (this.props.exclude && person.guid === this.props.exclude.guid) {
+    if (this.props.exclude && person.personId === this.props.exclude.personId) {
       nameRender =(<span className="SearchDisabled">{person.fullName()}</span>)
     }
     else if (this.containsSearch(person.firstName, this.state.searchText)) {
@@ -99,7 +99,7 @@ class Search extends React.Component<ReceivedProps, ComponentState> {
         <OF.Button 
           className="SearchText"
           onClick={() => {
-            if (!this.props.exclude || person.guid !== this.props.exclude.guid) {
+            if (!this.props.exclude || person.personId !== this.props.exclude.personId) {
               this.props.onSelect(person)
             }
           }}

@@ -34,7 +34,7 @@ class LoadPage extends React.Component<ReceivedProps, ComponentState> {
 
   componentDidMount() {
    
-    const timerId = setInterval(()=> 
+    const timerId = setInterval(() => 
     {
       if (this.state.displayCount < this.props.count) {
           this.setState({

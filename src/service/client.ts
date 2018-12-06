@@ -30,8 +30,17 @@ export default class Client {
         return response.data as User[]
     }
 
+    public static async updateUser(user: User): Promise<void> {
+        await axios.post(`${this.baseUrl}/user`, {user}, this.getConfig(user))
+    }
+
     public static async deleteUser(admin: User, userToDelete: User): Promise<void> {
         await axios.delete(`${this.baseUrl}/user/${userToDelete.hwmid}`, this.getConfig(admin))
+    }
+
+    public static async exportToUser(admin: User, destination: User): Promise<User> {
+        const response = await axios.post(`${this.baseUrl}/user/${destination.hwmid}`, this.getConfig(admin))
+        return response.data as User
     }
 
     public static async getPeopleStartingWith(user: User, letter: string, callback: (people: Person[] | null) => void): Promise<void> {
@@ -52,18 +61,18 @@ export default class Client {
     }
 
     public static async deletePerson(user: User, person: Person): Promise<void> {
-        await axios.delete(`${this.baseUrl}/person/${person.getKey}/${person.guid}`, this.getConfig(user))
+        await axios.delete(`${this.baseUrl}/person/${person.personId}`, this.getConfig(user))
     }
 
     public static async archivePerson(user: User, person: Person): Promise<void> {
         await axios.post(
-            `${this.baseUrl}/person/${person.getKey}/${person.guid}/archive`, null, this.getConfig(user)
+            `${this.baseUrl}/person/${person.personId}/archive`, null, this.getConfig(user)
         )
     }
 
     public static async putPhoto(user: User, person: Person, photoData: string): Promise<string> {
         let response = await axios.put(
-            `${this.baseUrl}/person/${person.getKey}/${person.guid}/photo`,
+            `${this.baseUrl}/person/${person.personId}/photo`,
             {photo: photoData},
             this.getConfig(user)
         )
@@ -72,7 +81,7 @@ export default class Client {
 
     public static async deletePhoto(user: User, person: Person, photoName: string) {
         await axios.delete(
-            `${this.baseUrl}/person/${person.getKey}/${person.guid}/photo/${photoName}`, this.getConfig(user)
+            `${this.baseUrl}/person/${person.personId}/photo/${photoName}`, this.getConfig(user)
         )
     }
 

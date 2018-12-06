@@ -12,14 +12,14 @@ export interface ReceivedProps {
   relationships: Relationship[]
   allPeople: Person[]
   inEdit?: boolean
-  onSelectPerson: (guid: string) => void
+  onSelectPerson: (personId: string) => void
 }
 
 class DetailRelationships extends React.Component<ReceivedProps, {}> {
 
   @OF.autobind
   onRenderCell(relationship: Relationship, index: number, isScrolling: boolean): JSX.Element {
-    const person = this.props.allPeople.find(p => p.guid === relationship.personId)
+    const person = this.props.allPeople.find(p => p.personId === relationship.personId)
     const name = person ? person.fullName() : "MISSING PERSON"
     return (
       <div className="DetailRelationship">{`${relationship.type.from}`}

@@ -32,7 +32,6 @@ export class Performance {
 }
 
 export interface TestResult {
-    saveName: string,
-    guid: string,
+    personId: string,
     result: number
 }

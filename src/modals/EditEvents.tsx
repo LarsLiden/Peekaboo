@@ -58,7 +58,7 @@ class EditEvents extends React.Component<ReceivedProps, ComponentState> {
   @OF.autobind
   onClickDelete(event: Event) {
     this.setState({
-      events: this.state.events.filter(k => k.id !== event.id)
+      events: this.state.events.filter(k => k.eventId !== event.eventId)
     }) 
   }
 
@@ -70,7 +70,7 @@ class EditEvents extends React.Component<ReceivedProps, ComponentState> {
   @OF.autobind
   onClickAdd() {
     const newEvent: Event = {
-      id: generateGUID(),
+      eventId: generateGUID(),
       date: new Date().toJSON(),
       description: "",
       location: ""
@@ -82,19 +82,19 @@ class EditEvents extends React.Component<ReceivedProps, ComponentState> {
 
   @OF.autobind
   onDescriptionChanged(description: string, event: Event) {
-    let changed = this.state.events.find(e => e.id === event.id)
+    let changed = this.state.events.find(e => e.eventId === event.eventId)
     changed!.description = description
   }
 
   @OF.autobind
   onLocationChanged(location: string, event: Event) {
-    let changed = this.state.events.find(e => e.id === event.id)
+    let changed = this.state.events.find(e => e.eventId === event.eventId)
     changed!.location = location
   }
 
   @OF.autobind
   onDateChanged(date: Date | null | undefined, event: Event) {
-    let changed = this.state.events.find(e => e.id === event.id)
+    let changed = this.state.events.find(e => e.eventId === event.eventId)
     changed!.date = date!.toJSON()
   }
 

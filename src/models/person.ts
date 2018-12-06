@@ -4,7 +4,6 @@
  */
 import { Performance } from "./performance";
 import { Relationship } from "./relationship"
-import { generateGUID } from "../Util"
 import { PerfType, Event, KeyValue, SocialNet } from './models'
 
 export class Person {
@@ -19,7 +18,6 @@ export class Person {
     relationships: Relationship[] = []
     nickName: string = ""
     maidenName: string = ""
-    guid: string = ""
     isArchived: boolean = false
     firstName: string = ""
     lastName: string = ""
@@ -27,7 +25,7 @@ export class Person {
     fullNickName: string = ""
     alternateName: string = ""
     fullAternateName: string = ""
-    saveName: string | null = null
+    personId: string | null = null
     descriptionWithKeyValues: string = ""
     allKeyValues: string = ""
     description: string = ""
@@ -41,7 +39,6 @@ export class Person {
             this.namePerformance = new Performance(init.namePerformance)
             this.descPerformance = new Performance(init.descPerformance)
         } else {
-            this.guid = generateGUID()
             this.photoPerformance = new Performance()
             this.namePerformance = new Performance()
             this.descPerformance = new Performance()
@@ -53,7 +50,7 @@ export class Person {
     }
 
     public get getKey(): string {
-        return this.saveName![0].toUpperCase()
+        return this.personId![0].toUpperCase()
     } 
 
     public performance(perfType: PerfType): Performance {

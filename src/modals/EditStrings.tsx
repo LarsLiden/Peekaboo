@@ -6,6 +6,7 @@ import * as React from 'react';
 import * as OF from 'office-ui-fabric-react'
 import '../fabric.css'
 import { Person } from '../models/person'
+import { generateSaveName } from '../Util'
 import DetailEditText from '../Detail/DetailEditText'
 import "../Pages/ViewPage.css"
 
@@ -81,7 +82,6 @@ class EditStrings extends React.Component<ReceivedProps, ComponentState> {
     this.setState({description: text})
   }
   
-
   @OF.autobind
   onClickSave(): void {
 
@@ -93,9 +93,9 @@ class EditStrings extends React.Component<ReceivedProps, ComponentState> {
     newPerson.alternateName = this.state.alternateName
     newPerson.description = this.state.description
 
-    if (!this.props.person.saveName) {
+    if (!this.props.person.personId) {
       // TODO: check for duplicates when creating new name
-      newPerson.saveName = `${this.state.firstName}_${this.state.lastName}`.replace(/[\W_]+/g, "").replace(" ", "")
+      newPerson.personId = generateSaveName(this.state.firstName, this.state.lastName)
     }
     this.props.onSave(newPerson)
   }

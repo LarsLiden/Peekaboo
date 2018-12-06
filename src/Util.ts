@@ -24,13 +24,13 @@ export function setStatePromise(that: any, newState: any) {
 }
 
 export function replacePerson(people: Person[], person: Person): Person[] {
-    let newPeople = people.filter(p => p.guid !== person.guid)
+    let newPeople = people.filter(p => p.personId !== person.personId)
     newPeople.push(person)
     return newPeople
 }
 
 export function getPhotoBlobName(person: Person, photoName: string) {
-    return `${person.getKey}/${person.saveName}/${photoName}`
+    return `${person.getKey}/${person.personId}/${photoName}`
 }
 
 export function baseBlob(user: User) {
@@ -40,6 +40,19 @@ export function baseBlob(user: User) {
 export function printDate(date: Date): string {
     const options = { day: '2-digit', year: '2-digit', month: '2-digit' };
     return date.toLocaleDateString('en-US', options)
+}
+
+export function generateSaveName(firstName: string, lastName: string): string {
+
+    let d = new Date().getTime()
+    let id = 'xxxxx'.replace(/[xy]/g, char => {
+      let r = ((d + Math.random() * 16) % 16) | 0
+      d = Math.floor(d / 16)
+      return (char === 'x' ? r : (r & 0x3) | 0x8).toString(16)
+    })
+
+    let baseName = `${firstName}_${lastName}`.replace(/[\W_]+/g, "").replace(" ", "")
+    return `${baseName}_${id}`
 }
 
 export function generateGUID(): string {
