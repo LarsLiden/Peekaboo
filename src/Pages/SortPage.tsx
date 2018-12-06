@@ -60,8 +60,10 @@ class SortPage extends React.Component<ReceivedProps, ComponentState> {
   public render() {
     return (
       <div className="ModalPage">
-        <div className="ContentHeader FilterHeader">
-          Sort
+        <div className="HeaderHolder">
+          <div className="HeaderContent">
+            Sort
+          </div>
         </div>
         <div className="ContentBody">
           <div className="SortItem">
@@ -83,12 +85,14 @@ class SortPage extends React.Component<ReceivedProps, ComponentState> {
             />
           </div>
         </div>
-        <div className="ContentFooter" >
-          <OF.IconButton
-              className="ButtonIcon ButtonPrimary FloatLeft"
-              onClick={this.onClickClose}
-              iconProps={{ iconName: 'ChromeBack' }}
-          />
+        <div className="FooterHolder">
+          <div className="FooterContent" >
+            <OF.IconButton
+                className="ButtonIcon ButtonPrimary FloatLeft"
+                onClick={this.onClickClose}
+                iconProps={{ iconName: 'ChromeBack' }}
+            />
+          </div>
         </div>
       </div>
     );

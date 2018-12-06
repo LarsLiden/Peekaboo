@@ -145,13 +145,15 @@ class EditEvents extends React.Component<ReceivedProps, ComponentState> {
   public render() {
     return (
       <div className="ModalPage">
-        <div className="ContentHeader FilterHeader">
-          <OF.IconButton
-              className="ButtonIcon ButtonPrimary ButtonTopLeft"
-              onClick={this.onClickAdd}
-              iconProps={{ iconName: 'CircleAddition' }}
-          />
-          Key Values
+        <div className="HeaderHolder">
+          <div className="HeaderContent">
+            <OF.IconButton
+                className="ButtonIcon ButtonPrimary ButtonTopLeft"
+                onClick={this.onClickAdd}
+                iconProps={{ iconName: 'CircleAddition' }}
+            />
+            Key Values
+          </div>
         </div>
         <div className="ModalBody">
           <OF.List
@@ -160,19 +162,19 @@ class EditEvents extends React.Component<ReceivedProps, ComponentState> {
             onRenderCell={this.onRenderCell}
           />
         </div>
-        <div
-          className="ContentFooter"
-        >
-          <OF.IconButton
-              className="ButtonIcon ButtonPrimary"
-              onClick={this.onClickSave}
-              iconProps={{ iconName: 'Save' }}
-          />
-          <OF.IconButton
-              className="ButtonIcon ButtonPrimary"
-              onClick={this.props.onCancel}
-              iconProps={{ iconName: 'ChromeClose' }}
-          />
+        <div className="FooterHolder"> 
+          <div className="FooterContent">
+            <OF.IconButton
+                className="ButtonIcon ButtonPrimary"
+                onClick={this.onClickSave}
+                iconProps={{ iconName: 'Save' }}
+            />
+            <OF.IconButton
+                className="ButtonIcon ButtonPrimary"
+                onClick={this.props.onCancel}
+                iconProps={{ iconName: 'ChromeClose' }}
+            />
+          </div>
         </div>
       </div>
     );

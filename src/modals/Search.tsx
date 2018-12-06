@@ -113,7 +113,7 @@ class Search extends React.Component<ReceivedProps, ComponentState> {
   public render() {
     return (
       <div className="ModalPage">
-        <div className="ContentHeader ContentHeaderThin">
+        <div className="HeaderContent HeaderContentThin">
           <OF.Label className="SearchLabel">
             Search:
           </OF.Label>
@@ -132,12 +132,14 @@ class Search extends React.Component<ReceivedProps, ComponentState> {
             onRenderCell={this.onRenderCell}
           />
         </div>
-        <div className="ContentFooter">
-          <OF.IconButton
-              className="ButtonIcon ButtonPrimary FloatLeft"
-              onClick={this.props.onCancel}
-              iconProps={{ iconName: 'ChromeBack' }}
-          />
+        <div className="FooterHolder">
+          <div className="FooterContent">
+            <OF.IconButton
+                className="ButtonIcon ButtonPrimary FloatLeft"
+                onClick={this.props.onCancel}
+                iconProps={{ iconName: 'ChromeBack' }}
+            />
+          </div>
         </div>
       </div>
     );

@@ -373,7 +373,7 @@ class EditPage extends React.Component<ReceivedProps, ComponentState> {
     await this.props.onSavePhoto(this.props.person, imageData)
     this.setState({
       imageURL: null,
-      photoIndex: this.props.person.photoFilenames.length-1
+      photoIndex: this.props.person.photoFilenames.length - 1
     })
   }
 
@@ -420,42 +420,44 @@ class EditPage extends React.Component<ReceivedProps, ComponentState> {
         }
         {!this.state.imageURL &&
           <div>
-            <div className="ContentHeader">
-            <div className="EditImageColumn">
-                <FilePicker
-                  extensions={['png', 'jpeg', 'jpg']}
-                  onChange={this.onChangeFile}
-                  //TODO onError={(error: string) => this.props.setErrorDisplay(ErrorType.Error, error, [], null)}
-                  maxSize={10}
-                >
-                  <div>
-                      <OF.IconButton
-                        className="ButtonIcon ButtonDark ButtonTopFlush"
-                        iconProps={{ iconName: 'CircleAddition' }}
-                      />
-                  </div>
-                </FilePicker>
-                <div className='EditButtonSpacer'/>
-                <OF.IconButton
-                  className="ButtonIcon ButtonDark"
-                  onClick={this.onDeletePhoto}
-                  iconProps={{ iconName: 'Delete' }}
+            <div className="HeaderHolder HeaderTall">
+              <div className="HeaderContent HeaderNoPadding">
+                <div className="EditImageColumn">
+                  <FilePicker
+                    extensions={['png', 'jpeg', 'jpg']}
+                    onChange={this.onChangeFile}
+                    //TODO onError={(error: string) => this.props.setErrorDisplay(ErrorType.Error, error, [], null)}
+                    maxSize={10}
+                  >
+                    <div>
+                        <OF.IconButton
+                          className="ButtonIcon ButtonDark ButtonTopFlush"
+                          iconProps={{ iconName: 'CircleAddition' }}
+                        />
+                    </div>
+                  </FilePicker>
+                  <div className='EditButtonSpacer'/>
+                  <OF.IconButton
+                    className="ButtonIcon ButtonDark"
+                    onClick={this.onDeletePhoto}
+                    iconProps={{ iconName: 'Delete' }}
+                  />
+                </div>
+                <OF.Image
+                  className="QuizImageHolder"
+                  src={photoBlobName}
+                  width={width}
+                  height={height}
                 />
-              </div>
-              <OF.Image
-                className="QuizImageHolder"
-                src={photoBlobName}
-                width={width}
-                height={height}
-              />
-              <div className="InlineBlock">
-                <DetailIndexer
-                  isVertical={true}
-                  onPrev={this.onPrevPhoto}
-                  onNext={this.onNextPhoto}
-                  currentIndex={this.state.photoIndex}
-                  total={this.props.person.photoFilenames.length}
-                />
+                <div className="InlineBlock">
+                  <DetailIndexer
+                    isVertical={true}
+                    onPrev={this.onPrevPhoto}
+                    onNext={this.onNextPhoto}
+                    currentIndex={this.state.photoIndex}
+                    total={this.props.person.photoFilenames.length}
+                  />
+                </div>
               </div>
             </div>
             <div className="ContentBody EditContent">
@@ -533,28 +535,28 @@ class EditPage extends React.Component<ReceivedProps, ComponentState> {
                 />
               </div>
             </div>
-            <div
-              className="ContentFooter"
-            >
-              <OF.IconButton
-                  className="ButtonIcon ButtonPrimary FloatLeft"
-                  onClick={this.onClickCancel}
-                  iconProps={{ iconName: 'ChromeBack' }}
-              />
-              {this.props.person.personId &&
+            <div className="FooterHolder">
+              <div className="FooterContent">
                 <OF.IconButton
-                    className="ButtonIcon ButtonPrimary FloatRight"
-                    onClick={this.onClickDelete}
-                    iconProps={{ iconName: 'Trash' }}
+                    className="ButtonIcon ButtonPrimary FloatLeft"
+                    onClick={this.onClickCancel}
+                    iconProps={{ iconName: 'ChromeBack' }}
                 />
-              }
-              {true &&
-                <OF.IconButton
-                    className="ButtonIcon ButtonPrimary FloatRight"
-                    onClick={this.onClickArchive}
-                    iconProps={{ iconName: 'Archive' }}
-                />
-              }
+                {this.props.person.personId &&
+                  <OF.IconButton
+                      className="ButtonIcon ButtonPrimary FloatRight"
+                      onClick={this.onClickDelete}
+                      iconProps={{ iconName: 'Trash' }}
+                  />
+                }
+                {this.props.user.isAdmin &&
+                  <OF.IconButton
+                      className="ButtonIcon ButtonPrimary FloatRight"
+                      onClick={this.onClickArchive}
+                      iconProps={{ iconName: 'Archive' }}
+                  />
+                }
+              </div>
             </div>
           </div>
         }

@@ -200,29 +200,31 @@ class QuizPage extends React.Component<ReceivedProps, ComponentState> {
             />
           </div>
         }
-        <div className="ContentFooter">
-          <OF.IconButton
-            className="ButtonIcon ButtonPrimary FloatLeft"
-            onClick={this.onClickKnow}
-            iconProps={{ iconName: 'LikeSolid' }}
-          />
-          <OF.IconButton
-              className="ButtonIcon ButtonPrimary"
-              onClick={this.onClickQuit}
-              iconProps={{ iconName: 'ChromeClose' }}
-          />
-          {this.state.showName ? 
+        <div className="FooterHolder">
+          <div className="FooterContent">
             <OF.IconButton
-              className="ButtonIcon  ButtonPrimary FloatRight"
-              onClick={this.onClickDontKnow}
-              iconProps={{ iconName: 'DislikeSolid' }}
-            /> :
-            <OF.IconButton
-              className="ButtonIcon  ButtonPrimary FloatRight"
-              onClick={this.onClickQuestion}
-              iconProps={{ iconName: 'UnknownSolid' }}
+              className="ButtonIcon ButtonPrimary FloatLeft"
+              onClick={this.onClickKnow}
+              iconProps={{ iconName: 'LikeSolid' }}
             />
-          }
+            <OF.IconButton
+                className="ButtonIcon ButtonPrimary"
+                onClick={this.onClickQuit}
+                iconProps={{ iconName: 'ChromeClose' }}
+            />
+            {this.state.showName ? 
+              <OF.IconButton
+                className="ButtonIcon  ButtonPrimary FloatRight"
+                onClick={this.onClickDontKnow}
+                iconProps={{ iconName: 'DislikeSolid' }}
+              /> :
+              <OF.IconButton
+                className="ButtonIcon  ButtonPrimary FloatRight"
+                onClick={this.onClickQuestion}
+                iconProps={{ iconName: 'UnknownSolid' }}
+              />
+            }
+          </div>
         </div>
       </div>
     )

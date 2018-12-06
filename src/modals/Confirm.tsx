@@ -34,23 +34,23 @@ class Confirm extends React.Component<ReceivedProps, {}> {
               height={100}
             />
         }
-        <div
-          className="ContentFooter"
-        > 
-          {this.props.onConfirm &&
-            <OF.IconButton
-                className="ButtonIcon ButtonPrimary FloatLeft"
-                onClick={this.props.onConfirm}
-                iconProps={{ iconName: 'LikeSolid' }}
-            />
-          }
-          {this.props.onCancel &&
-            <OF.IconButton
-                className="ButtonIcon ButtonPrimary FloatRight"
-                onClick={this.props.onCancel}
-                iconProps={{ iconName: 'DislikeSolid' }}
-            />
-          }
+        <div className="FooterHolder"> 
+          <div className="FooterContent"> 
+            {this.props.onConfirm &&
+              <OF.IconButton
+                  className="ButtonIcon ButtonPrimary FloatLeft"
+                  onClick={this.props.onConfirm}
+                  iconProps={{ iconName: 'LikeSolid' }}
+              />
+            }
+            {this.props.onCancel &&
+              <OF.IconButton
+                  className="ButtonIcon ButtonPrimary FloatRight"
+                  onClick={this.props.onCancel}
+                  iconProps={{ iconName: 'DislikeSolid' }}
+              />
+            }
+          </div>
         </div>
       </div>
     );

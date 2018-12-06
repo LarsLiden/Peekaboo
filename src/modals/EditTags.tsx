@@ -77,8 +77,10 @@ class EditTags extends React.Component<ReceivedProps, ComponentState> {
   public render() {
     return (
       <div className="ModalPage">
-        <div className="ContentHeader FilterHeader">
-          Tags
+        <div className="HeaderHolder">
+          <div className="HeaderContent">
+            Tags
+          </div>
         </div>
         <div className="ModalBody">
           <OF.List
@@ -87,19 +89,19 @@ class EditTags extends React.Component<ReceivedProps, ComponentState> {
             onRenderCell={this.onRenderCell}
           />
         </div>
-        <div
-          className="ContentFooter"
-        >
-          <OF.IconButton
-              className="ButtonIcon ButtonPrimary FloatLeft"
-              onClick={this.onClickSave}
-              iconProps={{ iconName: 'Save' }}
-          />
-          <OF.IconButton
-              className="ButtonIcon ButtonPrimary FloatRight"
-              onClick={this.props.onCancel}
-              iconProps={{ iconName: 'ChromeClose' }}
-          />
+        <div className="FooterHolder"> 
+          <div className="FooterContent">
+            <OF.IconButton
+                className="ButtonIcon ButtonPrimary FloatLeft"
+                onClick={this.onClickSave}
+                iconProps={{ iconName: 'Save' }}
+            />
+            <OF.IconButton
+                className="ButtonIcon ButtonPrimary FloatRight"
+                onClick={this.props.onCancel}
+                iconProps={{ iconName: 'ChromeClose' }}
+            />
+          </div>
         </div>
       </div>
     );

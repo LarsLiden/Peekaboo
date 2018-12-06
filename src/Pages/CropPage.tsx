@@ -79,19 +79,19 @@ class CropPage extends React.Component<ReceivedProps, ComponentState> {
               onChange={this.onCropChange} 
               keepSelection={true}
             />
-            <div
-              className="ContentFooter"
-            >
-                <OF.IconButton
-                    className="ButtonIcon ButtonPrimary"
-                    onClick={this.onSave}
-                    iconProps={{ iconName: 'Save' }}
-                />
-                <OF.IconButton
-                    className="ButtonIcon ButtonPrimary"
-                    onClick={this.props.onClose}
-                    iconProps={{ iconName: 'ChromeClose' }}
-                />
+            <div className="FooterHolder"> 
+              <div className="FooterContent">
+                  <OF.IconButton
+                      className="ButtonIcon ButtonPrimary"
+                      onClick={this.onSave}
+                      iconProps={{ iconName: 'Save' }}
+                  />
+                  <OF.IconButton
+                      className="ButtonIcon ButtonPrimary"
+                      onClick={this.props.onClose}
+                      iconProps={{ iconName: 'ChromeClose' }}
+                  />
+              </div>
             </div>
           </div>
         }

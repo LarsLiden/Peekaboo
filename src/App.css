@@ -311,6 +311,9 @@
   height: 100%;
   overflow-y: auto;
   margin-top: 10px;
+  max-width: 500px;
+  margin-left: auto;
+  margin-right: auto;
 }
 
 .ModalBodyThin {
@@ -389,11 +392,6 @@
   padding-top: 15px;
 }
 
-.FilterHeader {
-  height: 45px !important;
-  font-size: 20px;
-}
-
 .FilterCheckbox {
   display: inline-block !important;
 }
@@ -465,7 +463,7 @@
   text-align: left;
 }
 
-.PerformanceText2 {
+.PerformanceResult {
   display: inline-block;
   font-size: 20px;
   width: 50px;

@@ -140,13 +140,15 @@ class EditRelationships extends React.Component<ReceivedProps, ComponentState> {
   
     return (
       <div className="ModalPage">
-        <div className="ContentHeader FilterHeader">
-          <OF.IconButton
-              className="ButtonIcon ButtonPrimary ButtonTopLeft"
-              onClick={this.onClickAdd}
-              iconProps={{ iconName: 'CircleAddition' }}
-          />
-          Relationships
+        <div className="HeaderHolder">
+          <div className="HeaderContent">
+            <OF.IconButton
+                className="ButtonIcon ButtonPrimary ButtonTopLeft"
+                onClick={this.onClickAdd}
+                iconProps={{ iconName: 'CircleAddition' }}
+            />
+            Relationships
+          </div>
         </div>
         <div className="ModalBody">
           <OF.List
@@ -155,19 +157,19 @@ class EditRelationships extends React.Component<ReceivedProps, ComponentState> {
             onRenderCell={this.onRenderCell}
           />
         </div>
-        <div
-          className="ContentFooter"
-        >
-          <OF.IconButton
-              className="ButtonIcon ButtonPrimary FloatLeft"
-              onClick={this.onClickSave}
-              iconProps={{ iconName: 'Save' }}
-          />
-          <OF.IconButton
-              className="ButtonIcon ButtonPrimary FloatRight"
-              onClick={this.props.onCancel}
-              iconProps={{ iconName: 'ChromeClose' }}
-          />
+        <div className="FooterHolder"> 
+          <div className="FooterContent">
+            <OF.IconButton
+                className="ButtonIcon ButtonPrimary FloatLeft"
+                onClick={this.onClickSave}
+                iconProps={{ iconName: 'Save' }}
+            />
+            <OF.IconButton
+                className="ButtonIcon ButtonPrimary FloatRight"
+                onClick={this.props.onCancel}
+                iconProps={{ iconName: 'ChromeClose' }}
+            />
+          </div>
         </div>
         {this.state.searchTarget &&
             <Search

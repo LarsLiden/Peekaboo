@@ -18,56 +18,68 @@ export interface ReceivedProps {
 class ViewPerformance extends React.Component<ReceivedProps, {}> {
 
   public render() {
-    let avgTime = Math.round(this.props.performance.avgTime / 100)
-    let bestTime = Math.round(this.props.performance.bestTime / 100)
-    let worstTime = Math.round(this.props.performance.worstTime || MAX_TIME / 100)
+    let avgTime = Math.round(this.props.performance.avgTime / 100) 
+    let bestTime = Math.round(this.props.performance.bestTime / 100) 
+    let worstTime = Math.round(this.props.performance.worstTime || MAX_TIME / 100) 
     let date = new Date(this.props.performance.lastTested).toLocaleDateString()
     return (
       <div className="ModalPage">
-          <div className="ContentHeader FilterHeader">
-            Performance
+          <div className="HeaderHolder">
+            <div className="HeaderContent">
+              Performance
+            </div>
           </div>
           <div>
             <div className="ModalBody">
               <div className="FilterList">
                 <div>
                   <div className="PerformanceText">Average Time: </div>
-                  <div className="InlineBlock">
-                    <ScaledColor scale={avgTime} />
+                  <div className="PerformanceResult">
+                    {this.props.performance.numPresentations > 0 ? 
+                      <ScaledColor scale={avgTime} /> : "-"
+                    }
                   </div>  
                 </div>
                 <div>
                   <div className="PerformanceText">Best Time: </div>
-                  <div className="InlineBlock">
-                    <ScaledColor scale={bestTime} />
+                  <div className="PerformanceResult">
+                    {this.props.performance.numPresentations > 0 ? 
+                      <ScaledColor scale={bestTime} /> : "-"
+                    }
                   </div>  
                 </div>
                 <div>
                   <div className="PerformanceText">Worst Time: </div>
-                  <div className="InlineBlock">
-                    <ScaledColor scale={worstTime} />
+                  <div className="PerformanceResult">
+                    {this.props.performance.numPresentations > 0 ? 
+                      <ScaledColor scale={worstTime} /> : "-"
+                    }
                   </div>  
                 </div>
                 <div>
                   <div className="PerformanceText">Presentations: </div>
-                  <div className="PerformanceText2">
+                  <div className="PerformanceResult">
                     {this.props.performance.numPresentations.toString()}
                   </div>  
                 </div>
                 <div>
                   <div className="PerformanceText">Last Tested: </div>
-                  <div className="PerformanceText2">
-                    {date}
+                  <div className="PerformanceResult">
+                    {this.props.performance.numPresentations > 0 ? 
+                      date : "Never"
+                    }
                   </div>  
                 </div>
               </div>
             </div>
-            <div className="ContentFooter">
-              <OF.IconButton
-                  className="ButtonIcon ButtonPrimary FloatRight"
-                  onClick={this.props.onClose}
-                  iconProps={{ iconName: 'ChromeClose' }}
-              />
+            <div className="FooterHolder">
+              <div className="FooterContent">
+                <OF.IconButton
+                    className="ButtonIcon ButtonPrimary FloatRight"
+                    onClick={this.props.onClose}
+                    iconProps={{ iconName: 'ChromeClose' }}
+                />
+              </div>
             </div>
           </div>
       </div>

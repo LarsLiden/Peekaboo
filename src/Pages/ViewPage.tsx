@@ -127,43 +127,45 @@ class ViewPage extends React.Component<ReceivedProps, ComponentState> {
     return (
       <div>
         <div className="ViewPage">
-          <div className="ContentHeader">
-            <div className="ViewBodyNameColumn">      
-              <DetailText className="DetailName" text={this.props.person.firstName}/>
-              {this.props.person.nickName &&
-                <DetailText className="DetailName" text={`"${this.props.person.nickName}"`}/>
-              }
-              <DetailText className="DetailName" text={this.props.person.lastName}/>
-              <div 
-                className="ViewScale" 
-                onClick={this.onClickViewPerformance}
-                role="button"
-              >
-                <ScaledColor
-                  scale={scale}
+          <div className="HeaderHolder HeaderTall">
+            <div className="HeaderContent HeaderNoPadding">
+              <div className="ViewBodyNameColumn">      
+                <DetailText className="DetailName" text={this.props.person.firstName}/>
+                {this.props.person.nickName &&
+                  <DetailText className="DetailName" text={`"${this.props.person.nickName}"`}/>
+                }
+                <DetailText className="DetailName" text={this.props.person.lastName}/>
+                <div 
+                  className="ViewScale" 
+                  onClick={this.onClickViewPerformance}
+                  role="button"
+                >
+                  <ScaledColor
+                    scale={scale}
+                  />
+                </div> 
+              </div>
+              <div className="ViewImageColumn">
+                <OF.Image
+                  className="QuizImageHolder"
+                  src={photoBlobName}
+                  width={width}
+                  height={height}
                 />
-              </div> 
-            </div>
-            <div className="ViewImageColumn">
-              <OF.Image
-                className="QuizImageHolder"
-                src={photoBlobName}
-                width={width}
-                height={height}
-              />
-              <div className="InlineBlock">
-                <DetailIndexer
-                  isVertical={true}
-                  onPrev={this.onPrevPhoto}
-                  onNext={this.onNextPhoto}
-                  currentIndex={this.state.photoIndex}
-                  total={this.props.person.photoFilenames.length}
-                />
-                <OF.IconButton
-                    className="ButtonIcon ButtonDark"
-                    onClick={this.props.onEdit}
-                    iconProps={{ iconName: 'EditSolid12' }}
-                />
+                <div className="InlineBlock">
+                  <DetailIndexer
+                    isVertical={true}
+                    onPrev={this.onPrevPhoto}
+                    onNext={this.onNextPhoto}
+                    currentIndex={this.state.photoIndex}
+                    total={this.props.person.photoFilenames.length}
+                  />
+                  <OF.IconButton
+                      className="ButtonIcon ButtonDark"
+                      onClick={this.props.onEdit}
+                      iconProps={{ iconName: 'EditSolid12' }}
+                  />
+                </div>
               </div>
             </div>
           </div>
@@ -192,77 +194,79 @@ class ViewPage extends React.Component<ReceivedProps, ComponentState> {
           {this.props.filterSet 
           ?
             <div>
-              <div className="ViewIndexer">
-                <DetailIndexer
-                  isVertical={false}
-                  onPrev={this.onPrevPerson}
-                  onNext={this.onNextPerson}
-                  currentIndex={this.props.filterSet.selectedIndex}
-                  total={this.props.filterSet.people.length}
-                />
+              <div className="IndexerHolder">
+                <div className="IndexerContent">
+                  <DetailIndexer
+                    isVertical={false}
+                    onPrev={this.onPrevPerson}
+                    onNext={this.onNextPerson}
+                    currentIndex={this.props.filterSet.selectedIndex}
+                    total={this.props.filterSet.people.length}
+                  />
+                </div>
               </div>
-              <div
-                className="ContentFooter"
-              >
-                {(this.props.filter.required.length > 0 || this.props.filter.blocked.length > 0) 
-                  ?
-                  <OF.IconButton
-                    className="ButtonIcon ButtonPrimary FloatLeft ButtonOutlined"
-                    onClick={() => this.props.onClickFilter()}
-                    iconProps={{ iconName: 'FilterSolid' }}
-                  />
-                  :
-                  <OF.IconButton
-                    className="ButtonIcon ButtonPrimary FloatLeft"
-                    onClick={() => this.props.onClickFilter()}
-                    iconProps={{ iconName: 'Filter' }}
-                  />
-                }
+              <div className="FooterHolder"> 
+                <div className="FooterContent">
+                  {(this.props.filter.required.length > 0 || this.props.filter.blocked.length > 0) 
+                    ?
+                    <OF.IconButton
+                      className="ButtonIcon ButtonPrimary FloatLeft ButtonOutlined"
+                      onClick={() => this.props.onClickFilter()}
+                      iconProps={{ iconName: 'FilterSolid' }}
+                    />
+                    :
+                    <OF.IconButton
+                      className="ButtonIcon ButtonPrimary FloatLeft"
+                      onClick={() => this.props.onClickFilter()}
+                      iconProps={{ iconName: 'Filter' }}
+                    />
+                  }
 
-                <OF.IconButton
-                    className="ButtonIcon ButtonPrimary FloatLeft"
-                    onClick={() => this.props.onClickSort()}
-                    iconProps={{ iconName: 'SortLines' }}
-                />
-                <OF.IconButton
-                    className="ButtonIcon ButtonPrimary FloatLeft"
-                    onClick={() => this.onClickSearch()}
-                    iconProps={{ iconName: 'Search' }}
-                />
-                <OF.IconButton
-                    className="ButtonIcon ButtonPrimary FloatLeft"
-                    onClick={() => this.props.onNewPerson()}
-                    iconProps={{ iconName: 'CirclePlus' }}
-                />
-                {this.props.user.isAdmin &&
                   <OF.IconButton
                       className="ButtonIcon ButtonPrimary FloatLeft"
-                      onClick={() => this.props.onClickAdmin()}
-                      iconProps={{ iconName: 'Settings' }}
+                      onClick={() => this.props.onClickSort()}
+                      iconProps={{ iconName: 'SortLines' }}
                   />
-                }
-                <OF.Button
-                    className="ButtonIcon ButtonPrimary FloatRight"
-                    onClick={() => this.props.onClickQuiz()}
-                >
-                  <OF.Image
-                    className="QuizImageHolder"
-                    src={"https://peekaboo.blob.core.windows.net/resources/quizicon.png"}
-                    width={100}
-                    height={30}
+                  <OF.IconButton
+                      className="ButtonIcon ButtonPrimary FloatLeft"
+                      onClick={() => this.onClickSearch()}
+                      iconProps={{ iconName: 'Search' }}
                   />
-                </OF.Button>
+                  <OF.IconButton
+                      className="ButtonIcon ButtonPrimary FloatLeft"
+                      onClick={() => this.props.onNewPerson()}
+                      iconProps={{ iconName: 'CirclePlus' }}
+                  />
+                  {this.props.user.isAdmin &&
+                    <OF.IconButton
+                        className="ButtonIcon ButtonPrimary FloatLeft"
+                        onClick={() => this.props.onClickAdmin()}
+                        iconProps={{ iconName: 'Settings' }}
+                    />
+                  }
+                  <OF.Button
+                      className="ButtonIcon ButtonPrimary FloatRight"
+                      onClick={() => this.props.onClickQuiz()}
+                  >
+                    <OF.Image
+                      className="QuizImageHolder"
+                      src={"https://peekaboo.blob.core.windows.net/resources/quizicon.png"}
+                      width={100}
+                      height={30}
+                    />
+                  </OF.Button>
+                </div>
               </div>
             </div>
           :
-            <div
-              className="ContentFooter"
-            >
-              <OF.IconButton
-                className="ButtonIcon ButtonPrimary"
-                onClick={this.props.onContinueQuiz}
-                iconProps={{ iconName: 'ChromeClose' }}
-              />
+            <div className="FooterHolder"> 
+              <div className="FooterContent">
+                <OF.IconButton
+                  className="ButtonIcon ButtonPrimary"
+                  onClick={this.props.onContinueQuiz}
+                  iconProps={{ iconName: 'ChromeClose' }}
+                />
+              </div>
             </div>
           }
         </div>

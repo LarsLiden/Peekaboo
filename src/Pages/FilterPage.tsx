@@ -145,25 +145,29 @@ class FilterPage extends React.Component<ReceivedProps, ComponentState> {
   public render() {
     return (
       <div className="FilterPage">
-        <div className="ContentHeader FilterHeader">
-          {this.state.filteredPeople.length} People Selected
+        <div className="HeaderHolder">
+          <div className="HeaderContent">
+            {this.state.filteredPeople.length} People Selected
+          </div>
         </div>
         <OF.List
           className="FilterList"
           items={this.state.filteredTags}
           onRenderCell={this.onRenderCell}
         />
-        <div className="ContentFooter" >
-          <OF.IconButton
-              className="ButtonIcon ButtonPrimary FloatLeft"
-              onClick={this.onClickClose}
-              iconProps={{ iconName: 'ChromeBack' }}
-          />
-          <OF.IconButton
-              className="ButtonIcon ButtonPrimary FloatRight"
-              onClick={this.onClickClear}
-              iconProps={{ iconName: 'ClearFilter' }}
-          />
+        <div className="FooterHolder">
+          <div className="FooterContent" >
+            <OF.IconButton
+                className="ButtonIcon ButtonPrimary FloatLeft"
+                onClick={this.onClickClose}
+                iconProps={{ iconName: 'ChromeBack' }}
+            />
+            <OF.IconButton
+                className="ButtonIcon ButtonPrimary FloatRight"
+                onClick={this.onClickClear}
+                iconProps={{ iconName: 'ClearFilter' }}
+            />
+          </div>
         </div>
       </div>
     );

@@ -6,29 +6,54 @@
   background-color: black;
 }
 
-.ViewIndexer {
+.IndexerContent {
+  background-color: black;
+  max-width: 500px;
+  border-top: 1px solid #ffffff;
+  margin-left: auto;
+  margin-right: auto;
+}
+
+.IndexerHolder {
   position: fixed;
   bottom: 63px;
   background-color: black;
   width: 100%;
-  border-top: 1px solid #ffffff;
 }
 
-.ContentHeader {
+.HeaderHolder {
+  position: fixed;
+  top: 0px;
+  height: 62px;
+  background-color: black;
+  width: 100%;
+  z-index: 100
+}
+
+.HeaderContent {
+  max-width: 500px;
   margin-left: auto;
   margin-right: auto;
   padding-top: 20px;
+  padding-bottom: 15px;
   top: 0px;
-  height: 180px;
   border-bottom: white 1px solid;
   margin-bottom: 10px;
-  position: fixed;
-  background-color: black;
   z-index: 10;
+  font-size: 20px;
   width: 100%;
+  position: relative;
 }
 
-.ContentHeaderThin {
+.HeaderTall {
+  height: 200px;
+}
+
+.HeaderNoPadding {
+  padding-bottom: 0px;
+}
+
+.HeaderContentThin {
   height: var(--modal-thin-height)
 }
 
@@ -37,12 +62,12 @@
   width: 150px;
   vertical-align: top;
   display: inline-block;
-  height: 100%;
+  height: 180px;
 }
 
 .ViewScale {
   position: absolute;
-  bottom: 2px;
+  bottom: 0px;
   right: 15px;
 }
 
@@ -63,13 +88,18 @@
   padding: 0px !important;
 }
 
-.ContentFooter {
+.FooterHolder {
+  width: 100%;
   position: fixed;
-  bottom: 0px;
+  bottom: 0;
+  height: 62px;
+  background: #000000;
+}
+
+.FooterContent {
+  max-width: 500px;
   margin-left: auto;
   margin-right: auto;
-  width: 100%;
-  background: #000000;
   border-top: white;
   border-width: 1px;
   border-top-style: solid;

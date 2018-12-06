@@ -119,9 +119,11 @@ class AdminPage extends React.Component<ReceivedProps, ComponentState> {
   public render() {
     return (
       <div className="ModalPage">
-        <div className="ContentHeader FilterHeader">
-          Admin
-        </div >
+        <div className="HeaderHolder">
+          <div className="HeaderContent">
+            Admin
+          </div>
+        </div>
         <div className="ModalBody">
           <OF.List
             className="FilterList"
@@ -129,12 +131,14 @@ class AdminPage extends React.Component<ReceivedProps, ComponentState> {
             onRenderCell={this.onRenderCell}
           />
         </div>
-        <div className="ContentFooter" >
-          <OF.IconButton
-              className="ButtonIcon ButtonPrimary FloatLeft"
-              onClick={this.onClickClose}
-              iconProps={{ iconName: 'ChromeBack' }}
-          />
+        <div className="FooterHolder">
+          <div className="FooterContent" >
+            <OF.IconButton
+                className="ButtonIcon ButtonPrimary FloatLeft"
+                onClick={this.onClickClose}
+                iconProps={{ iconName: 'ChromeBack' }}
+            />
+          </div>
         </div>
         {this.state.isConfirmDeleteUser &&
           <ConfirmModal
