@@ -462,6 +462,9 @@ class EditPage extends React.Component<ReceivedProps, ComponentState> {
             </div>
             <div className="ContentBody EditContent">
               <div className='EditSection'>
+                <div className={`DetailTitle DetailEditTitle`}>
+                  Basic Info
+                </div>
                 <div className="DetailText DetailEdit">
                   <DetailText title="Last Name" text={this.props.person.lastName} isLong={true}/>
                   <DetailText title="First Name" text={this.props.person.firstName} isLong={true}/>                

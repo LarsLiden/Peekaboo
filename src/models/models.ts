@@ -20,6 +20,7 @@ export interface User {
     photoBlobPrefix?: string,
     hwmid?: string
     isAdmin?: string
+    isSpoof?: boolean
     numPeople?: number
     numPhotos?: number,
     numTestResults?: number

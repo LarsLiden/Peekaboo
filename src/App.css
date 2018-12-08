@@ -181,6 +181,8 @@
   border-style: none;
   height: 50px;
   border-radius: 10px;
+  font-family: "Arial Black", Gadget, sans-serif !important;
+  font-size: 16px;
 }
 
 .SearchInput {
@@ -361,9 +363,14 @@
   font-size: large;
 }
 
+
 @keyframes App-logo-spin {
   from { transform: rotate(0deg); }
   to { transform: rotate(360deg); }
+}
+
+.Spoof {
+  border-left: 5px solid #ff0000
 }
 
 .LoadTitle {

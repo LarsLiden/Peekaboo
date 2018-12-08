@@ -46,11 +46,12 @@
 }
 
 .HeaderTall {
-  height: 200px;
+  height: 201px;
 }
 
 .HeaderNoPadding {
   padding-bottom: 0px;
+  margin-bottom: 0px;
 }
 
 .HeaderContentThin {
@@ -115,7 +116,7 @@
   margin-left: auto;
   margin-right: auto;
   width: 350px;
-  margin-top: 195px;
+  margin-top: 180px;
   margin-bottom: 90px;
   padding-top: 10px;
 }

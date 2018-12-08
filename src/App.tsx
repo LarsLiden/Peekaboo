@@ -130,9 +130,7 @@ class App extends React.Component<{}, ComponentState> {
   @OF.autobind 
   async viewLibraryPerson() {
     if (this.state.allPeople.length === 0) {
-      this.setState({
-        page: Page.NEWUSER
-      })
+      this.handleNoUsers()
       return
     }
 
@@ -523,14 +521,22 @@ class App extends React.Component<{}, ComponentState> {
     })
   }
 
+  handleNoUsers() {
+    if (this.state.user!.isAdmin) {
+      this.setState({page: Page.ADMIN})
+    }
+    else {
+      this.setState({
+        page: Page.NEWUSER
+      })
+    }
+  }
   updateFilterSet() {
     let filterSet = Convert.getFilterSet(this.state.allPeople, this.state.filter)
     
     // TODO: also might trigger if overconstrained filter
     if (filterSet.people.length === 0) {
-      this.setState({
-        page: Page.NEWUSER
-      })
+      this.handleNoUsers()
     }
     else {
       this.setState({
@@ -540,8 +546,12 @@ class App extends React.Component<{}, ComponentState> {
   }
 
   public render() {
+    let baseClass = 'App'
+    if (this.state.user && this.state.user.isSpoof) {
+      baseClass = `${baseClass} Spoof`
+    }
     return (
-      <div className="App">
+      <div className={baseClass}>
         {this.state.page === Page.LOGIN &&
          <LoginPage
           onLoginComplete={this.onLoginComplete}
@@ -619,7 +629,9 @@ class App extends React.Component<{}, ComponentState> {
             filterSet={this.state.filterSet}
             onDeleteUser={this.onDeleteUser}
             onExportToUser={this.onExportToUser}
+            onImport={this.onClickImport}
             onClose={this.onCloseAdminPage}
+            onLogin={this.onLoginComplete}
           />
         }
         {this.state.page === Page.QUIZ && 

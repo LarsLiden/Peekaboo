@@ -6,6 +6,7 @@ import * as React from 'react';
 import * as OF from 'office-ui-fabric-react'
 import { User, FilterSet } from '../models/models'
 import ConfirmModal from '../modals/Confirm'
+import Client from '../service/client'
 
 export interface ReceivedProps {
   user: User
@@ -13,19 +14,23 @@ export interface ReceivedProps {
   filterSet: FilterSet
   onDeleteUser: (user: User) => {}
   onExportToUser: (user: User) => {}
+  onImport: () => {}
   onClose: () => {}
+  onLogin: (user: User) => {} 
 }
 
 interface ComponentState {
   isConfirmDeleteUser: User | null
   isConfirmExportToUser: User | null
+  isConfirmImportOpen: boolean
 }
 
 class AdminPage extends React.Component<ReceivedProps, ComponentState> {
 
   state: ComponentState = {
     isConfirmDeleteUser: null,
-    isConfirmExportToUser: null
+    isConfirmExportToUser: null,
+    isConfirmImportOpen: false
   }
 
   // --- DELETE USER ---
@@ -70,6 +75,35 @@ class AdminPage extends React.Component<ReceivedProps, ComponentState> {
     }
   }
 
+  // --- IMPORT TO SELF ---
+  @OF.autobind
+  onClickImport(): void {
+    this.setState({isConfirmImportOpen: true})
+  }
+
+  @OF.autobind
+  onCancelImport(): void {
+    this.setState({isConfirmImportOpen: false})
+  }
+
+  @OF.autobind
+  async onConfirmImport(): Promise<void> {
+      await this.props.onImport()
+      this.setState({
+        isConfirmImportOpen: false
+      })
+  }
+
+  @OF.autobind
+  async onLoginAs(user: User) {
+    let foundUser = await Client.Login(user)
+    
+    if (foundUser) {
+      foundUser.isSpoof = true
+      this.props.onLogin(foundUser)
+    }
+  }
+
   @OF.autobind
   onClickClose() {
     this.props.onClose()
@@ -109,6 +143,11 @@ class AdminPage extends React.Component<ReceivedProps, ComponentState> {
                 onClick={() => this.onExportToUser(user)}
                 iconProps={{ iconName: 'IncreaseIndentLegacy' }}
               />
+              <OF.IconButton
+                className="ButtonIcon ButtonDark FloatRight"
+                onClick={() => this.onLoginAs(user)}
+                iconProps={{ iconName: 'FollowUser' }}
+              />
             </div>
           }
         </div>
@@ -138,6 +177,11 @@ class AdminPage extends React.Component<ReceivedProps, ComponentState> {
                 onClick={this.onClickClose}
                 iconProps={{ iconName: 'ChromeBack' }}
             />
+            <OF.IconButton
+              className="ButtonIcon ButtonPrimary FloatRight"
+              onClick={this.onClickImport}
+              iconProps={{ iconName: 'IncreaseIndentLegacy' }}
+            />  
           </div>
         </div>
         {this.state.isConfirmDeleteUser &&
@@ -154,6 +198,13 @@ class AdminPage extends React.Component<ReceivedProps, ComponentState> {
             subtitle={this.state.isConfirmExportToUser.name}
             onCancel={this.onCancelExportToUser}
             onConfirm={this.onConfirmExportToUser}
+          />
+        }
+        {this.state.isConfirmImportOpen &&
+          <ConfirmModal
+            title={`Are you sure you want to start the import?`}
+            onCancel={this.onCancelImport}
+            onConfirm={this.onConfirmImport}
           />
         }
       </div>
