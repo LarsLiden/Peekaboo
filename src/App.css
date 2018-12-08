@@ -69,9 +69,6 @@
   --color-wc-bot: #eceff1;
   --gutter-width: 100px;
   --nav-link-padding: 1em 2em;
-
-  /* Vars */
-  --modal-thin-height: 30px;
 }
 
 .ms-DetailsRow {
@@ -187,6 +184,9 @@
 
 .SearchInput {
   text-align: center;
+  width: 300px;
+  margin-left: auto !important;
+  margin-right: auto !important;
 }
 
 .SearchLabel {
@@ -309,7 +309,7 @@
   z-index: 100;
 }
 
-.ModalBody {
+.ModalBodyHolder {
   height: 100%;
   overflow-y: auto;
   margin-top: 10px;
@@ -318,8 +318,17 @@
   margin-right: auto;
 }
 
-.ModalBodyThin {
-  margin-top: var(--modal-thin-height)
+.ModalBodyContent {
+  width: 300px;
+  overflow-x: hidden;
+  margin-left: auto;
+  margin-right: auto;
+  margin-bottom: 90px;
+  margin-top: 60px;
+}
+
+.ModalBodyContentTall {
+  margin-top: 90px;
 }
 
 .ConfirmTitle {
@@ -385,7 +394,6 @@
 }
 
 .FilterList {
-  overflow-y: auto;
   width: 300px;
   overflow-x: hidden;
   margin-left: auto;
@@ -529,6 +537,15 @@
   margin-right: auto;
   margin-top: 25px;
   display: inline-block;
+}
+
+.ms-TextField-wrapper {
+  border-bottom-width: 0px !important;
+}
+
+.ms-TextField-field {
+  background-color: #002A4C !important;
+  border-radius: 10px !important;
 }
 
 .ms-Checkbox-checkbox {

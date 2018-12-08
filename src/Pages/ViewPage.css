@@ -30,6 +30,10 @@
   z-index: 100
 }
 
+.HeaderHolderTall {
+  height: 98px
+}
+
 .HeaderContent {
   max-width: 500px;
   margin-left: auto;
@@ -52,10 +56,6 @@
 .HeaderNoPadding {
   padding-bottom: 0px;
   margin-bottom: 0px;
-}
-
-.HeaderContentThin {
-  height: var(--modal-thin-height)
 }
 
 .ViewBodyNameColumn {

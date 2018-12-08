@@ -150,12 +150,13 @@ class EditRelationships extends React.Component<ReceivedProps, ComponentState> {
             Relationships
           </div>
         </div>
-        <div className="ModalBody">
-          <OF.List
-            className="FilterList"
-            items={this.state.relationships}
-            onRenderCell={this.onRenderCell}
-          />
+        <div className="ModalBodyHolder">
+          <div className="ModalBodyContent">
+            <OF.List
+              items={this.state.relationships}
+              onRenderCell={this.onRenderCell}
+            />
+          </div>
         </div>
         <div className="FooterHolder"> 
           <div className="FooterContent">

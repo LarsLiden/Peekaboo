@@ -30,8 +30,8 @@ class ViewPerformance extends React.Component<ReceivedProps, {}> {
             </div>
           </div>
           <div>
-            <div className="ModalBody">
-              <div className="FilterList">
+            <div className="ModalBodyHolder">
+              <div className="ModalBodyContent">
                 <div>
                   <div className="PerformanceText">Average Time: </div>
                   <div className="PerformanceResult">

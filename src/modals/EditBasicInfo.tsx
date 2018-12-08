@@ -25,7 +25,7 @@ interface ComponentState {
   description: string
 }
 
-class EditStrings extends React.Component<ReceivedProps, ComponentState> {
+class EditBasicInfo extends React.Component<ReceivedProps, ComponentState> {
 
   state: ComponentState = {
     firstName: "",
@@ -113,39 +113,41 @@ class EditStrings extends React.Component<ReceivedProps, ComponentState> {
               Basic Info
             </div>
           </div>
-          <div className="ModalBody">
-            <DetailEditText
-              label="First Name"
-              onChanged={text => this.onFirstNameChanged(text)}
-              value={this.state.firstName}
-            />
-            <DetailEditText
-              label="Last Name"
-              onChanged={text => this.onLastNameChanged(text)}
-              value={this.state.lastName}
-            />
-            <DetailEditText
-              label="Nickname"
-              onChanged={text => this.onNickNameChanged(text)}
-              value={this.state.nickName}
-            />    
-            <DetailEditText
-              label="Maiden Name"
-              onChanged={text => this.onMaidenNameChanged(text)}
-              value={this.state.maidenName}
-            />
-            <DetailEditText
-              label="Alternate Name"
-              onChanged={text => this.onAlternativeNameChanged(text)}
-              value={this.state.alternateName}
-            />
-            <DetailEditText
-              // multiline={true}
-              // rows={4}
-              label="Description"
-              onChanged={text => this.onDescriptionNameChanged(text)}
-              value={this.state.description}
-            />
+          <div className="ModalBodyHolder">
+            <div className="ModalBodyContent">
+              <DetailEditText
+                label="First Name"
+                onChanged={text => this.onFirstNameChanged(text)}
+                value={this.state.firstName}
+              />
+              <DetailEditText
+                label="Last Name"
+                onChanged={text => this.onLastNameChanged(text)}
+                value={this.state.lastName}
+              />
+              <DetailEditText
+                label="Nickname"
+                onChanged={text => this.onNickNameChanged(text)}
+                value={this.state.nickName}
+              />    
+              <DetailEditText
+                label="Maiden Name"
+                onChanged={text => this.onMaidenNameChanged(text)}
+                value={this.state.maidenName}
+              />
+              <DetailEditText
+                label="Alternate Name"
+                onChanged={text => this.onAlternativeNameChanged(text)}
+                value={this.state.alternateName}
+              />
+              <DetailEditText
+                // multiline={true}
+                // rows={4}
+                label="Description"
+                onChanged={text => this.onDescriptionNameChanged(text)}
+                value={this.state.description}
+              />
+            </div>
           </div>
           <div className="FooterHolder"> 
             <div className="FooterContent">
@@ -166,4 +168,4 @@ class EditStrings extends React.Component<ReceivedProps, ComponentState> {
   }
 }
 
-export default EditStrings;
+export default EditBasicInfo;

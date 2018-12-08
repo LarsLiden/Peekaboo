@@ -14,7 +14,7 @@ import DetailTags from '../Detail/DetailTags'
 import DetailText from '../Detail/DetailText'
 import ReactCrop from 'react-image-crop'
 import ConfirmModal from '../modals/Confirm'
-import EditStrings from '../modals/EditStrings'
+import EditBasicInfo from '../modals/EditBasicInfo'
 import EditTags from '../modals/EditTags'
 import EditRelationships from '../modals/EditRelationships'
 import EditEvents from '../modals/EditEvents'
@@ -408,6 +408,17 @@ class EditPage extends React.Component<ReceivedProps, ComponentState> {
     }
     let width = 160
     let height = (PHOTO_HEIGHT / PHOTO_WIDTH) * width
+    const modalOpen = 
+      this.state.isConfirmDeletePhotoOpen
+      || this.state.isConfirmArchiveOpen
+      || this.state.isConfirmDeleteOpen
+      || this.state.isEditSocialNetworksOpen
+      || this.state.isEditKeyValuesOpen
+      || this.state.isEditEventsOpen
+      || this.state.isEditRelationshipsOpen
+      || this.state.isEditTagsOpen
+      || this.state.isEditStringsOpen
+      || this.state.imageURL
 
     return (
       <div className="QuizPage">
@@ -418,7 +429,7 @@ class EditPage extends React.Component<ReceivedProps, ComponentState> {
             onSave={(imageData) => this.onSaveCrop(imageData)}
           />
         }
-        {!this.state.imageURL &&
+        {!modalOpen &&
           <div>
             <div className="HeaderHolder HeaderTall">
               <div className="HeaderContent HeaderNoPadding">
@@ -466,8 +477,8 @@ class EditPage extends React.Component<ReceivedProps, ComponentState> {
                   Basic Info
                 </div>
                 <div className="DetailText DetailEdit">
-                  <DetailText title="Last Name" text={this.props.person.lastName} isLong={true}/>
                   <DetailText title="First Name" text={this.props.person.firstName} isLong={true}/>                
+                  <DetailText title="Last Name" text={this.props.person.lastName} isLong={true}/>
                   <DetailText title="Nickname" text={this.props.person.nickName} isLong={true}/>
                   <DetailText title="Alt Name" text={this.props.person.alternateName} isLong={true}/>
                   <DetailText title="Maiden Name" text={this.props.person.maidenName} isLong={true}/>
@@ -564,7 +575,7 @@ class EditPage extends React.Component<ReceivedProps, ComponentState> {
           </div>
         }
         {this.state.isEditStringsOpen &&
-          <EditStrings
+          <EditBasicInfo
             person={this.props.person}
             onCancel={this.onCancelEditStrings}
             onSave={this.onSaveEditStrings}

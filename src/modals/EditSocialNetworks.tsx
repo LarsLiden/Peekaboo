@@ -119,12 +119,13 @@ class EditSocialNetworks extends React.Component<ReceivedProps, ComponentState> 
             Key Values
           </div>
         </div>
-        <div className="ModalBody">
-          <OF.List
-            className="FilterList"
-            items={this.state.socialNets}
-            onRenderCell={this.onRenderCell}
-          />
+        <div className="ModalBodyHolder">
+          <div className="ModalBodyContent">
+            <OF.List
+              items={this.state.socialNets}
+              onRenderCell={this.onRenderCell}
+            />
+          </div>
         </div>
         <div className="FooterHolder"> 
           <div className="FooterContent">

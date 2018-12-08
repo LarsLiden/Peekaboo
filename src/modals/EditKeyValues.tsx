@@ -108,12 +108,13 @@ class EditKeyValues extends React.Component<ReceivedProps, ComponentState> {
             Key Values
           </div>
         </div>
-        <div className="ModalBody">
-          <OF.List
-            className="FilterList"
-            items={this.state.keyValues}
-            onRenderCell={this.onRenderCell}
-          />
+        <div className="ModalBodyHolder">
+          <div className="ModalBodyContent">
+            <OF.List
+              items={this.state.keyValues}
+              onRenderCell={this.onRenderCell}
+            />
+          </div>
         </div>
         <div className="FooterHolder"> 
           <div className="FooterContent">

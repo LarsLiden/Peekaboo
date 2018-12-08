@@ -113,24 +113,27 @@ class Search extends React.Component<ReceivedProps, ComponentState> {
   public render() {
     return (
       <div className="ModalPage">
-        <div className="HeaderContent HeaderContentThin">
-          <OF.Label className="SearchLabel">
-            Search:
-          </OF.Label>
-          <OF.TextField
-            className="SearchInput"
-            underlined={true}
-            onChanged={text => this.onSearchChanged(text)}
-            value={this.state.searchText}
-            autoFocus={true}
-          />  
+        <div className="HeaderHolder HeaderHolderTall">
+          <div className="HeaderContent">
+            <OF.Label className="SearchLabel">
+              Search:
+            </OF.Label>
+            <OF.TextField
+              className="SearchInput"
+              underlined={true}
+              onChanged={text => this.onSearchChanged(text)}
+              value={this.state.searchText}
+              autoFocus={true}
+            />  
+          </div>
         </div>
-        <div className="ModalBody ModalBodyThin">
-          <OF.List
-            className="FilterList"
-            items={this.state.results}
-            onRenderCell={this.onRenderCell}
-          />
+        <div className="ModalBodyHolder">
+          <div className="ModalBodyContent ModalBodyContentTall">
+            <OF.List
+              items={this.state.results}
+              onRenderCell={this.onRenderCell}
+            />
+          </div>
         </div>
         <div className="FooterHolder">
           <div className="FooterContent">

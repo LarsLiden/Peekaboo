@@ -82,12 +82,13 @@ class EditTags extends React.Component<ReceivedProps, ComponentState> {
             Tags
           </div>
         </div>
-        <div className="ModalBody">
-          <OF.List
-            className="FilterList"
-            items={this.state.editTags}
-            onRenderCell={this.onRenderCell}
-          />
+        <div className="ModalBodyHolder">
+          <div className="ModalBodyContent">
+            <OF.List
+              items={this.state.editTags}
+              onRenderCell={this.onRenderCell}
+            />
+          </div>
         </div>
         <div className="FooterHolder"> 
           <div className="FooterContent">

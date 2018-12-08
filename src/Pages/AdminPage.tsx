@@ -163,12 +163,13 @@ class AdminPage extends React.Component<ReceivedProps, ComponentState> {
             Admin
           </div>
         </div>
-        <div className="ModalBody">
-          <OF.List
-            className="FilterList"
-            items={this.props.users}
-            onRenderCell={this.onRenderCell}
-          />
+        <div className="ModalBodyHolder">
+          <div className="ModalBodyContent">
+            <OF.List
+              items={this.props.users}
+              onRenderCell={this.onRenderCell}
+            />
+          </div>
         </div>
         <div className="FooterHolder">
           <div className="FooterContent" >

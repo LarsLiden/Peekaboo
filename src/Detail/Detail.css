@@ -47,6 +47,7 @@
   text-transform: uppercase;
   font-size: 10px;
   color: var(--color-themeTertiary);
+  padding-bottom: 5px;
 }
 
 .DetailText {
