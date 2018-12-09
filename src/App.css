@@ -543,6 +543,10 @@
   display: inline-block;
 }
 
+.ms-DatePicker {
+  background-color: #004882 !important;
+}
+
 .ms-TextField-wrapper {
   border-bottom-width: 0px !important;
 }

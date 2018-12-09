@@ -100,7 +100,7 @@ class EditEvents extends React.Component<ReceivedProps, ComponentState> {
 
   @OF.autobind
   onFormatDate(date: Date): string {
-      return `${date.getMonth()}/${date.getDate() + 1}/${date.getFullYear()}`
+      return `${date.getMonth() + 1}/${date.getDate()}/${date.getFullYear()}`
   }
 
   @OF.autobind
@@ -121,8 +121,10 @@ class EditEvents extends React.Component<ReceivedProps, ComponentState> {
               value={event.location}
               autoFocus={event.description !== "" && event.location === ""}
             />
+            <div className="DetailTitle DetailEditTitle">
+              Date
+            </div>
             <OF.DatePicker
-              label="Date"
               isRequired={false}
               allowTextInput={true}
               ariaLabel="Date"
