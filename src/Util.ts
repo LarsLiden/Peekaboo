@@ -42,7 +42,7 @@ export function printDate(date: Date): string {
     return date.toLocaleDateString('en-US', options)
 }
 
-export function generateSaveName(firstName: string, lastName: string): string {
+export function generatePersonId(firstName: string, lastName: string): string {
 
     let d = new Date().getTime()
     let id = 'xxxxx'.replace(/[xy]/g, char => {

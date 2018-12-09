@@ -548,6 +548,10 @@
   border-radius: 10px !important;
 }
 
+.ms-TextField-field:focus {
+  background-color: #004882 !important
+}
+
 .ms-Checkbox-checkbox {
   width: 25px !important;
   height: 25px !important;

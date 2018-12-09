@@ -152,7 +152,7 @@ class EditEvents extends React.Component<ReceivedProps, ComponentState> {
                 onClick={this.onClickAdd}
                 iconProps={{ iconName: 'CircleAddition' }}
             />
-            Key Values
+            Events
           </div>
         </div>
         <div className="ModalBodyHolder">
@@ -166,12 +166,12 @@ class EditEvents extends React.Component<ReceivedProps, ComponentState> {
         <div className="FooterHolder"> 
           <div className="FooterContent">
             <OF.IconButton
-                className="ButtonIcon ButtonPrimary"
+                className="ButtonIcon ButtonPrimary FloatLeft"
                 onClick={this.onClickSave}
                 iconProps={{ iconName: 'Save' }}
             />
             <OF.IconButton
-                className="ButtonIcon ButtonPrimary"
+                className="ButtonIcon ButtonPrimary FloatRight"
                 onClick={this.props.onCancel}
                 iconProps={{ iconName: 'ChromeClose' }}
             />

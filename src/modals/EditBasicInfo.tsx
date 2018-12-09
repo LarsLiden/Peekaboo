@@ -6,7 +6,7 @@ import * as React from 'react';
 import * as OF from 'office-ui-fabric-react'
 import '../fabric.css'
 import { Person } from '../models/person'
-import { generateSaveName } from '../Util'
+import { generatePersonId } from '../Util'
 import DetailEditText from '../Detail/DetailEditText'
 import "../Pages/ViewPage.css"
 
@@ -94,8 +94,7 @@ class EditBasicInfo extends React.Component<ReceivedProps, ComponentState> {
     newPerson.description = this.state.description
 
     if (!this.props.person.personId) {
-      // TODO: check for duplicates when creating new name
-      newPerson.personId = generateSaveName(this.state.firstName, this.state.lastName)
+      newPerson.personId = generatePersonId(this.state.firstName, this.state.lastName)
     }
     this.props.onSave(newPerson)
   }

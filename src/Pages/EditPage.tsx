@@ -50,7 +50,7 @@ interface ComponentState {
   imageURL: string | null
   crop: ReactCrop.Crop
   file: File | null
-  isEditStringsOpen: boolean
+  isEditBasicInfoOpen: boolean
   isEditTagsOpen: boolean
   isEditRelationshipsOpen: boolean
   isEditEventsOpen: boolean
@@ -70,7 +70,7 @@ class EditPage extends React.Component<ReceivedProps, ComponentState> {
     imageURL: null,
     crop: {aspect: 1 / 1, x: 0, y: 0, width: 50, height: 50},
     file: null,
-    isEditStringsOpen: false,
+    isEditBasicInfoOpen: false,
     isEditTagsOpen: false,
     isEditRelationshipsOpen: false,
     isEditEventsOpen: false,
@@ -84,20 +84,20 @@ class EditPage extends React.Component<ReceivedProps, ComponentState> {
   // --- EDIT Strings ---
   @OF.autobind
   onCancelEditStrings(): void {
-    this.setState({isEditStringsOpen: false})
+    this.setState({isEditBasicInfoOpen: false})
   }
 
   @OF.autobind
   onSaveEditStrings(person: Person): void {
     this.props.onSavePerson(person)
     this.setState({
-      isEditStringsOpen: false
+      isEditBasicInfoOpen: false
     })
   }
 
   @OF.autobind
   onEditStrings(): void {
-    this.setState({isEditStringsOpen: true})
+    this.setState({isEditBasicInfoOpen: true})
   }
 
   // --- EDIT TAGS ---
@@ -401,6 +401,20 @@ class EditPage extends React.Component<ReceivedProps, ComponentState> {
   }
 
   public render() {
+
+    // If a brand new person
+    if (!this.props.person.firstName || !this.props.person.lastName) {
+      return (
+        <div>
+          <EditBasicInfo
+            person={this.props.person}
+            onCancel={this.onClickCancel}
+            onSave={this.onSaveEditStrings}
+          />
+        </div>
+      )
+    }
+
     let photoBlobName = HEAD_IMAGE
     if (this.props.person.photoFilenames.length > 0) {
       photoBlobName = baseBlob(this.props.user) 
@@ -417,7 +431,7 @@ class EditPage extends React.Component<ReceivedProps, ComponentState> {
       || this.state.isEditEventsOpen
       || this.state.isEditRelationshipsOpen
       || this.state.isEditTagsOpen
-      || this.state.isEditStringsOpen
+      || this.state.isEditBasicInfoOpen
       || this.state.imageURL
 
     return (
@@ -574,7 +588,7 @@ class EditPage extends React.Component<ReceivedProps, ComponentState> {
             </div>
           </div>
         }
-        {this.state.isEditStringsOpen &&
+        {this.state.isEditBasicInfoOpen &&
           <EditBasicInfo
             person={this.props.person}
             onCancel={this.onCancelEditStrings}
