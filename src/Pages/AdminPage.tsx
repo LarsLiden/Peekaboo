@@ -133,7 +133,8 @@ class AdminPage extends React.Component<ReceivedProps, ComponentState> {
           </div>
           {user.googleId !== this.props.user.googleId &&
             <div className="AdminButtons">
-              <OF.IconButton
+              <OF.IconButton 
+                disabled={user.googleId === "sample"}
                 className="ButtonIcon ButtonDark FloatRight"
                 onClick={() => this.onDeleteUser(user)}
                 iconProps={{ iconName: 'Delete' }}
