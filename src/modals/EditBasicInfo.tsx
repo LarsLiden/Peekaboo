@@ -151,6 +151,7 @@ class EditBasicInfo extends React.Component<ReceivedProps, ComponentState> {
           <div className="FooterHolder"> 
             <div className="FooterContent">
               <OF.IconButton
+                  disabled={!this.state.firstName || !this.state.lastName}
                   className="ButtonIcon ButtonPrimary FloatLeft"
                   onClick={this.onClickSave}
                   iconProps={{ iconName: 'Save' }}

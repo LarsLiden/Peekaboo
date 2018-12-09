@@ -146,7 +146,11 @@
 
 .ButtonPrimary {
   background-color: var(--color-themePrimary) !important;
+}
 
+.ButtonPrimary:disabled {
+  opacity: 0.5;
+  background-color: #555555 !important;
 }
 
 .ButtonThin {

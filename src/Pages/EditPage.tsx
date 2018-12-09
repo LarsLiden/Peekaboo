@@ -364,7 +364,7 @@ class EditPage extends React.Component<ReceivedProps, ComponentState> {
   }
 
   @OF.autobind
-  onClickCancel(): void {
+  onClickClose(): void {
     this.props.onClose()
   }
 
@@ -408,7 +408,7 @@ class EditPage extends React.Component<ReceivedProps, ComponentState> {
         <div>
           <EditBasicInfo
             person={this.props.person}
-            onCancel={this.onClickCancel}
+            onCancel={this.onClickClose}
             onSave={this.onSaveEditStrings}
           />
         </div>
@@ -567,7 +567,7 @@ class EditPage extends React.Component<ReceivedProps, ComponentState> {
               <div className="FooterContent">
                 <OF.IconButton
                     className="ButtonIcon ButtonPrimary FloatLeft"
-                    onClick={this.onClickCancel}
+                    onClick={this.onClickClose}
                     iconProps={{ iconName: 'ChromeBack' }}
                 />
                 {this.props.person.personId &&

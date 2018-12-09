@@ -50,7 +50,6 @@ interface ComponentState {
   filteredTags: Tag[]
   filteredPeopleCount: number
   selectedPerson: Person | null
-  newPerson: Person | null
   filter: Filter
   error: string | null
 }
@@ -74,7 +73,6 @@ class App extends React.Component<{}, ComponentState> {
     filteredPeopleCount: 0,
     page: Page.LOGIN,
     selectedPerson: null,
-    newPerson: null,
     filter: {
       required: [], 
       blocked: [], 
@@ -251,41 +249,9 @@ class App extends React.Component<{}, ComponentState> {
   }
 
   @OF.autobind 
-  async onCloseEditPage(person?: Person) {
-    if (person) {
-      try {
-        let people: Person[]
-        let filterSet = this.state.filterSet
-        await Client.putPerson(this.state.user!, person)
-
-        if (this.state.newPerson) {
-          // Add new person
-          people = [...this.state.allPeople, person]
-          // Recalculte filter set to include new person
-          filterSet = Convert.getFilterSet(people, this.state.filter, person)
-        }
-        else {
-          // Replace local
-          people = this.state.allPeople.filter(p => p.personId !== person.personId)
-        }
-        this.setState({
-          allPeople: people,
-          selectedPerson: person,
-          newPerson: null,
-          filterSet,
-          page: Page.VIEW
-        })
-      }
-      catch {
-        this.setState({error: `Failed to save ${person.fullName()}`})
-      }
-    }
-    else {
-      this.setState({
-        newPerson: null,
-        page: Page.VIEW
-      })
-    }
+  async onCloseEditPage() {
+    // TODO: handle edit w/in quiz
+    this.viewLibraryPerson()
   }
 
   @OF.autobind
@@ -321,7 +287,7 @@ class App extends React.Component<{}, ComponentState> {
       // Delete local
       let people = this.state.allPeople.filter(p => p.personId !== person.personId)
       // Recalculte filter set to exclude new person
-      let filterSet = Convert.getFilterSet(people, this.state.filter)
+      let filterSet = Convert.getFilterSet(people, this.state.filter, null)
       setStatePromise(this, {
         allPeople: people,
         filterSet,
@@ -342,7 +308,7 @@ class App extends React.Component<{}, ComponentState> {
       // Delete local
       let people = this.state.allPeople.filter(p => p.personId !== person.personId)
       // Recalculte filter set to exclude new person
-      let filterSet = Convert.getFilterSet(people, this.state.filter)
+      let filterSet = Convert.getFilterSet(people, this.state.filter, null)
       setStatePromise(this, {
         allPeople: people,
         filterSet,
@@ -360,15 +326,14 @@ class App extends React.Component<{}, ComponentState> {
     try {
       await Client.putPerson(this.state.user!, person)
 
-      // Replace local
+      // Replace or add to allPeople
       let people = this.state.allPeople.filter(p => p.personId !== person.personId)
       setStatePromise(this, {
+        selectedPerson: person,
         allPeople: [...people, person]
       })
 
-      if (this.state.selectedPerson && person.personId === this.state.selectedPerson.personId) {
-        this.setState({selectedPerson: person})
-      }
+      this.updateFilterSet()
     }
     catch {
       this.setState({error: `Failed to save ${person.fullName()}`})
@@ -444,9 +409,9 @@ class App extends React.Component<{}, ComponentState> {
 
   @OF.autobind
   async onNewPerson(): Promise<void> {
-    let newPerson = new Person()
+    let person = new Person()
     this.setState({
-      newPerson,
+      selectedPerson: person,
       page: Page.EDIT
     })
   }
@@ -532,7 +497,8 @@ class App extends React.Component<{}, ComponentState> {
     }
   }
   updateFilterSet() {
-    let filterSet = Convert.getFilterSet(this.state.allPeople, this.state.filter)
+    // TODO: if selected person not inclued, clear filter
+    let filterSet = Convert.getFilterSet(this.state.allPeople, this.state.filter, this.state.selectedPerson)
     
     // TODO: also might trigger if overconstrained filter
     if (filterSet.people.length === 0) {
@@ -588,11 +554,9 @@ class App extends React.Component<{}, ComponentState> {
             onClose={this.onClickImport}
           />
         }
-        {this.state.page === Page.EDIT 
-          && (this.state.selectedPerson || this.state.newPerson)   
-          &&
+        {this.state.page === Page.EDIT && this.state.selectedPerson &&
           <EditPage
-            person={this.state.newPerson || this.state.selectedPerson!}
+            person={this.state.selectedPerson}
             user={this.state.user!}
             filter={this.state.filter}
             allTags={this.state.allTags}
