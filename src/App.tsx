@@ -163,7 +163,7 @@ class App extends React.Component<{}, ComponentState> {
       let loaded: Person[][] = []
       this.setState({page: Page.LOAD})
 
-      const letters = "ABC"/*EFGHIJKLM"/*NOPQRSTUVWXYZ"*/.split("")
+      const letters = "ABCEFGHIJKLMNOPQRSTUVWXYZ".split("")
       for (let letter of letters) {
         Client.getPeopleStartingWith(this.state.user!, letter, async (people) => {
           if (!people) {
@@ -194,13 +194,7 @@ class App extends React.Component<{}, ComponentState> {
               else { return 0 }
             })
 
-            // Extract tags
-            let allTags = Convert.extractTags(allPeople)
-            allTags = allTags.sort((a, b) => {
-                if (a.name.toLowerCase() < b.name.toLowerCase()) { return -1 }
-                else if (b.name.toLowerCase() < a.name.toLowerCase()) { return 1 }
-                else { return 0 }
-            })
+            let allTags = this.calculateAllTags(allPeople)
             await setStatePromise(this, {
               allPeople,
               allTags
@@ -216,6 +210,33 @@ class App extends React.Component<{}, ComponentState> {
           }
         })
       }
+  }
+
+  @OF.autobind 
+  onAddTag(tagName: string) {
+    let newTag = {
+      name: tagName,
+      count: 0
+    }
+    let allTags = [...this.state.allTags, newTag]
+    allTags = this.sortTags(allTags)
+    this.setState({ allTags })
+
+  }
+
+  calculateAllTags(people: Person[]) {
+    let allTags = Convert.extractTags(people)
+    allTags = this.sortTags(allTags)
+    return allTags
+  }
+
+  sortTags(allTags: Tag[]) {
+    allTags = allTags.sort((a, b) => {
+        if (a.name.toLowerCase() < b.name.toLowerCase()) { return -1 }
+        else if (b.name.toLowerCase() < a.name.toLowerCase()) { return 1 }
+        else { return 0 }
+    })
+    return allTags
   }
 
   // Send stats back to server
@@ -571,6 +592,7 @@ class App extends React.Component<{}, ComponentState> {
             onArchivePerson={this.onArchivePerson}
             onDeletePhoto={this.onDeletePhoto}
             onSelectPerson={this.onSelectPerson}
+            onAddTag={this.onAddTag}
           />
         }
         {this.state.page === Page.FILTER &&

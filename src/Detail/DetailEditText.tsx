@@ -13,10 +13,20 @@ export interface ReceivedProps {
   rows?: number
   multiline?: boolean
   autoFocus?: boolean
+  onEnter?: (text: string) => void
   onChanged: (text: string) => void
 }
 
 class DetailText extends React.Component<ReceivedProps, {}> {
+
+  onKeyDown = (event: React.KeyboardEvent<HTMLInputElement>) => {
+    if (this.props.onEnter) {
+      // On enter attempt to create the entity as long as name is set
+      if (event.key === 'Enter' && this.props.value !== "") {
+          this.props.onEnter(this.props.value)
+      }
+    }
+}
 
   public render() {
 
@@ -33,6 +43,7 @@ class DetailText extends React.Component<ReceivedProps, {}> {
           className="DetailTextField"
           underlined={true}
           onChanged={text => this.props.onChanged(text)}
+          onKeyDown={this.props.onEnter ? this.onKeyDown : undefined}
           value={this.props.value}
         />   
       </div>

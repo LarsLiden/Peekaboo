@@ -41,6 +41,7 @@ export interface ReceivedProps {
   onArchivePerson: (person: Person) => void
   onClose: (person?: Person) => void
   onSelectPerson: (personId: string) => void
+  onAddTag: (tagName: string) => void
 }
 
 interface ComponentState { 
@@ -601,6 +602,7 @@ class EditPage extends React.Component<ReceivedProps, ComponentState> {
             personTags={this.props.person.tags}
             onCancel={this.onCancelEditTags}
             onSave={this.onSaveEditTags}
+            onAddTag={this.props.onAddTag}
           />
         }
         {this.state.isEditRelationshipsOpen &&
