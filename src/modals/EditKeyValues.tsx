@@ -7,6 +7,7 @@ import * as OF from 'office-ui-fabric-react'
 import DetailEditText from '../Detail/DetailEditText'
 import { Person } from '../models/person'
 import { KeyValue } from '../models/models'
+import { generateGUID } from '../Util';
 
 export interface ReceivedProps {
   person: Person
@@ -36,7 +37,7 @@ class EditKeyValues extends React.Component<ReceivedProps, ComponentState> {
   @OF.autobind
   onClickDelete(keyValue: KeyValue) {
     this.setState({
-      keyValues: this.state.keyValues.filter(k => k.key !== keyValue.key)
+      keyValues: this.state.keyValues.filter(k => k.keyValueId !== keyValue.keyValueId)
     }) 
   }
 
@@ -49,10 +50,11 @@ class EditKeyValues extends React.Component<ReceivedProps, ComponentState> {
   onClickAdd() {
     const newKeyValue: KeyValue = {
       key: "",
-      value: ""
+      value: "",
+      keyValueId: generateGUID()
     }
     this.setState({
-      keyValues: [...this.state.keyValues, newKeyValue]
+      keyValues: [newKeyValue, ...this.state.keyValues]
     }) 
   }
 
@@ -78,11 +80,13 @@ class EditKeyValues extends React.Component<ReceivedProps, ComponentState> {
               label="Key"
               onChanged={key => this.onKeyChanged(key, keyValue)}
               value={keyValue.key}
+              autoFocus={keyValue.key === ""}
             />
             <DetailEditText
               label="Value"
               onChanged={value => this.onValueChanged(value, keyValue)}
               value={keyValue.value}
+              autoFocus={keyValue.key !== "" && keyValue.value === ""}
             />
           </div>
           <OF.IconButton
@@ -111,6 +115,7 @@ class EditKeyValues extends React.Component<ReceivedProps, ComponentState> {
         <div className="ModalBodyHolder">
           <div className="ModalBodyContent">
             <OF.List
+              getKey={item => { return item.keyValueId }}
               items={this.state.keyValues}
               onRenderCell={this.onRenderCell}
             />

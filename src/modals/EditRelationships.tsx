@@ -80,7 +80,7 @@ class EditRelationships extends React.Component<ReceivedProps, ComponentState> {
   @OF.autobind
   onClickDelete(relationship: Relationship) {
     this.setState({
-      relationships: this.state.relationships.filter(r => r.personId !== relationship.personId)
+      relationships: this.state.relationships.filter(r => r.relationshipId !== relationship.relationshipId)
     }) 
   }
 
@@ -92,12 +92,12 @@ class EditRelationships extends React.Component<ReceivedProps, ComponentState> {
   @OF.autobind
   onClickAdd() {
     const newRelationship: Relationship = {
-      id: generateGUID(),
+      relationshipId: generateGUID(),
       type: RelationshipType.getRelationshipType(RType.BOSS_OF),
       personId: "none"
     }
     this.setState({
-      relationships: [...this.state.relationships, newRelationship]
+      relationships: [newRelationship, ...this.state.relationships]
     }) 
   }
 

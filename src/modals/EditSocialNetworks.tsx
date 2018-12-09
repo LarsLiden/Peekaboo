@@ -59,7 +59,7 @@ class EditSocialNetworks extends React.Component<ReceivedProps, ComponentState> 
       netType: SocialNetType.LINKEDIN
     }
     this.setState({
-      socialNets: [...this.state.socialNets, newSocialNet]
+      socialNets: [newSocialNet, ...this.state.socialNets]
     }) 
   }
 
@@ -98,6 +98,7 @@ class EditSocialNetworks extends React.Component<ReceivedProps, ComponentState> 
               label="URL"
               onChanged={key => this.onURLChanged(key, socialNet)}
               value={socialNet.URL}
+              autoFocus={socialNet.URL === ""}
             />
           </div>
         </div>
@@ -116,7 +117,7 @@ class EditSocialNetworks extends React.Component<ReceivedProps, ComponentState> 
                 onClick={this.onClickAdd}
                 iconProps={{ iconName: 'CircleAddition' }}
             />
-            Key Values
+            Social Networks
           </div>
         </div>
         <div className="ModalBodyHolder">

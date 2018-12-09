@@ -118,6 +118,7 @@ class EditBasicInfo extends React.Component<ReceivedProps, ComponentState> {
                 label="First Name"
                 onChanged={text => this.onFirstNameChanged(text)}
                 value={this.state.firstName}
+                autoFocus={true}
               />
               <DetailEditText
                 label="Last Name"
@@ -140,8 +141,8 @@ class EditBasicInfo extends React.Component<ReceivedProps, ComponentState> {
                 value={this.state.alternateName}
               />
               <DetailEditText
-                // multiline={true}
-                // rows={4}
+                multiline={true}
+                rows={4}
                 label="Description"
                 onChanged={text => this.onDescriptionNameChanged(text)}
                 value={this.state.description}

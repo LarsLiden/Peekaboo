@@ -151,7 +151,10 @@ class App extends React.Component<{}, ComponentState> {
   }
 
   @OF.autobind async onLoginComplete(user: User) {
-    await setStatePromise(this, {user: user})
+    await setStatePromise(this, {
+      user: user,
+      selectedPerson: null
+    })
     this.loadPeople()
   }
 

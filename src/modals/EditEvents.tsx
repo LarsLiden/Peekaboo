@@ -76,7 +76,7 @@ class EditEvents extends React.Component<ReceivedProps, ComponentState> {
       location: ""
     }
     this.setState({
-      events: [...this.state.events, newEvent]
+      events: [newEvent, ...this.state.events]
     }) 
   }
 
@@ -113,11 +113,13 @@ class EditEvents extends React.Component<ReceivedProps, ComponentState> {
               label="Description"
               onChanged={description => this.onDescriptionChanged(description, event)}
               value={event.description}
+              autoFocus={event.description === ""}
             />
             <DetailEditText
               label="Location"
               onChanged={location => this.onLocationChanged(location, event)}
               value={event.location}
+              autoFocus={event.description !== "" && event.location === ""}
             />
             <OF.DatePicker
               label="Date"

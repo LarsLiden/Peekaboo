@@ -171,7 +171,7 @@ class EditPage extends React.Component<ReceivedProps, ComponentState> {
 
   makeReverseRelationship(relationship: Relationship, personId: string): Relationship {
     return {
-      id: relationship.id,
+      relationshipId: relationship.relationshipId,
       personId,
       type: RelationshipType.getRelationshipType(relationship.type.to)
     }
@@ -180,10 +180,10 @@ class EditPage extends React.Component<ReceivedProps, ComponentState> {
   saveReverseRelationships(relationships: Relationship[]) {
 
     // Identify changes
-    let removed = this.props.person.relationships.filter(or => !relationships.find(er => er.id === or.id))
-    let added = relationships.filter(or => !this.props.person.relationships.find(er => er.id === or.id))
+    let removed = this.props.person.relationships.filter(or => !relationships.find(er => er.relationshipId === or.relationshipId))
+    let added = relationships.filter(or => !this.props.person.relationships.find(er => er.relationshipId === or.relationshipId))
     let changed = relationships.filter(or => {
-      let found = this.props.person.relationships.find(er => er.id === or.id)
+      let found = this.props.person.relationships.find(er => er.relationshipId === or.relationshipId)
       return (found && found.type !== or.type)
     })
 
@@ -215,7 +215,7 @@ class EditPage extends React.Component<ReceivedProps, ComponentState> {
       let reversePerson = this.getReversePerson(updatedPeople, changedRelationship)
       if (reversePerson) {
         // Remove the existing relationship
-        reversePerson.relationships = reversePerson.relationships.filter(r => r.id !== changedRelationship.id)
+        reversePerson.relationships = reversePerson.relationships.filter(r => r.relationshipId !== changedRelationship.relationshipId)
 
         // Create and add reverse new relationship
         let reverseRelationship = this.makeReverseRelationship(changedRelationship, this.props.person.personId!)

@@ -75,6 +75,7 @@ export interface Event {
 }
 
 export interface KeyValue {
+    keyValueId: string
     key: string
     value: string
 }
