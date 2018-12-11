@@ -116,7 +116,7 @@ class AdminPage extends React.Component<ReceivedProps, ComponentState> {
     return (
       <div className="FilterLine">
         <div className='AdminUserSection'>
-          <div className={`AdminUserText${user.isAdmin ? ' SearchBold' : ''}`}>
+          <div className={`AdminUserText${user.isAdmin || user.googleId === "sample" ? ' SearchBold' : ''}`}>
             {user.name}
           </div>
           <div className="AdminUserText">

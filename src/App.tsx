@@ -33,7 +33,8 @@ export enum Page {
   QUIZ = "QUIZ",
   VIEW = "VIEW",
   VIEWQUIZ = "VIEWQUIZ",
-  EDIT = "EDIT"
+  EDIT = "EDIT",
+  EDITQUIZ = "EDITQUIZ"
 }
 
 interface ComponentState {
@@ -120,9 +121,16 @@ class App extends React.Component<{}, ComponentState> {
 
   @OF.autobind 
   async onEdit() {
-    this.setState({
-      page: Page.EDIT
-    })
+    if (this.state.page === Page.VIEWQUIZ) {
+      this.setState({
+        page: Page.EDITQUIZ
+      })
+    }
+    else {
+      this.setState({
+        page: Page.EDIT
+      })
+    }
   }
 
   @OF.autobind 
@@ -289,8 +297,12 @@ class App extends React.Component<{}, ComponentState> {
 
   @OF.autobind 
   async onCloseEditPage() {
-    // TODO: handle edit w/in quiz
-    this.viewLibraryPerson()
+    if (this.state.page === Page.EDITQUIZ) {
+      this.setState({ page: Page.QUIZ})
+    }
+    else {
+      this.viewLibraryPerson()
+    }
   }
 
   @OF.autobind
@@ -593,7 +605,7 @@ class App extends React.Component<{}, ComponentState> {
             onClose={this.viewLibraryPerson}
           />
         }
-        {this.state.page === Page.EDIT && this.state.selectedPerson &&
+        {(this.state.page === Page.EDIT || this.state.page === Page.EDITQUIZ) && this.state.selectedPerson &&
           <EditPage
             person={this.state.selectedPerson}
             user={this.state.user!}
