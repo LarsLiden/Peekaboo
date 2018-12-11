@@ -19,7 +19,8 @@ export interface User {
     email: string,
     photoBlobPrefix?: string,
     hwmid?: string
-    isAdmin?: string
+    isAdmin?: boolean
+    isNew?: boolean
     isSpoof?: boolean
     numPeople?: number
     numPhotos?: number,

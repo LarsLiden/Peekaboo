@@ -11,34 +11,59 @@ export interface ReceivedProps {
 }
 
 interface ComponentState {
-  waitingCalloutText: string | null
-  userLoginValue: string
+  isFooterVisible: boolean
 }
 
 class NewUserPage extends React.Component<ReceivedProps, ComponentState> {
 
   state: ComponentState = {
-    waitingCalloutText: null,
-    userLoginValue: ""
+    isFooterVisible: true
+  }
+  
+  @OF.autobind
+  onClickDone() {
+    this.setState({isFooterVisible: false})
+    this.props.onClose()
   }
 
   public render() {
   
     return (
-      <div
-        className="LoginPage"
-      >
-        <OF.Image 
-          className="LoginImage"
-          src={HEAD_IMAGE}
-          imageFit={OF.ImageFit.cover}
-          maximizeFrame={true}
-        />
-        <OF.DefaultButton
-            className="QuizButton"
-            onClick={this.props.onClose}
-            text="Import"
-        />  
+      <div className="ModalPage">
+        <div 
+          className="ModalBodyHolder TopMarginZero"
+          style={{
+              backgroundImage: `url(${HEAD_IMAGE})`,
+              backgroundRepeat: 'no-repeat',
+              backgroundSize: 'cover'
+            }}
+        >
+          <div className="ModalBodyContent">
+            <div>
+              <div className="NewUserText1">
+                Remembering names and faces
+              </div>
+              <div className="NewUserText2">
+                (and things about people you've met)
+              </div>
+            </div>
+          </div>
+        </div>
+        <div className="FooterHolder"> 
+          <div 
+            className="FooterContent"
+            hidden={!this.state.isFooterVisible}
+          >
+            <div className="NewUserText3">
+              We've pre-populated your account with a few sample people so you can get a feel for how it works.
+            </div>
+            <OF.IconButton
+                className="ButtonIcon ButtonPrimary FloatRight"
+                onClick={this.onClickDone}
+                iconProps={{ iconName: 'LikeSolid' }}
+            />
+          </div>
+        </div>
       </div>
     )
   }

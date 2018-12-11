@@ -46,9 +46,6 @@ class LoginPage extends React.Component<ReceivedProps, ComponentState> {
         waitingCalloutText: "Login Failure"
       })
     }
-
-    //console.log('Image URL: ' + profile.getImageUrl());
-    //console.log('Email: ' + profile.getEmail()); // This is null if the 'email' scope is not present.
   }
 
   @OF.autobind
@@ -59,21 +56,25 @@ class LoginPage extends React.Component<ReceivedProps, ComponentState> {
   public render() {
   
     return (
-      <div
-      className="LoginPage"
-    >
-      <OF.Image className="LoginImage"
-        src={HEAD_IMAGE}
-        imageFit={OF.ImageFit.cover}
-        maximizeFrame={true}
-      />
-      <GoogleLogin
-        className="LoginButton"
-        clientId="757831696321-kdog1rehu946i1ch7rb3pvmf5r3rr2r4.apps.googleusercontent.com"
-        buttonText="Have We Met?"
-        onSuccess={this.loginSuccess}
-        onFailure={()=>{}}
-      />
+      <div className="ModalPage">
+     <div 
+        className="ModalBodyHolder TopMarginZero"
+        style={{
+        backgroundImage: `url(${HEAD_IMAGE})`,
+        backgroundRepeat: 'no-repeat',
+        backgroundSize: 'cover'
+        }}
+      >
+       
+        <GoogleLogin
+            className="LoginButton"
+            clientId="757831696321-kdog1rehu946i1ch7rb3pvmf5r3rr2r4.apps.googleusercontent.com"
+            buttonText="Have We Met?"
+            onSuccess={this.loginSuccess}
+            onFailure={()=>{}}
+          />
+
+      </div>
       <OF.Callout
           role={'alertdialog'}
           gapSpace={0}

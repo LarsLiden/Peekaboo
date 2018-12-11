@@ -120,6 +120,18 @@
   display: inline-block;
 }
 
+.TopMarginZero {
+  margin-top: 0px !important;
+}
+
+.BackgroundImage {
+  position: absolute !important;
+  top: 0px;
+  left: 0px;
+  opacity: 0.7;
+  width: 100% !important;
+}
+
 .ButtonIcon {
   height: 50px !important;
   width: 50px !important;
@@ -166,17 +178,12 @@
   background-color: black;
 }
 
-.LoginPage {
-  margin-left: auto !important;
-  margin-right: auto !important;
-}
-
 .LoginButton {
   width: 150px;
   margin-left: auto;
   margin-right: auto;
   position: relative;
-  top: -130px;
+  top: 185px;
   color: #ffffff;
   background-color: var(--color-themePrimary);
   border-style: none;
@@ -241,11 +248,6 @@
 
 .AdminButtons {
   float: right;
-}
-
-.LoginImage {
-  opacity: 0.7;
-  height: 500px !important;
 }
 
 .EditImageColumn {
@@ -452,6 +454,27 @@
 .FilterSpacer {
   display: inline-block;
   width: 10px;
+}
+
+.NewUserText1 {
+  font-size: 32px;
+  margin-top: 55px;
+  width: 235px;
+  margin-left: auto;
+  margin-right: auto;
+}
+
+.NewUserText2 {
+  margin-top: 20px;
+  font-style: italic;
+}
+
+.NewUserText3 {
+  float: left;
+  max-width: 330px;
+  text-align: right;
+  margin-left: 50px;
+  margin-top: 10px;
 }
 
 .TagUnselected {

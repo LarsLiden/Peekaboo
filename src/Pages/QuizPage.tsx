@@ -195,7 +195,7 @@ class QuizPage extends React.Component<ReceivedProps, ComponentState> {
             </div>
             <OF.IconButton
               className="ButtonIcon ButtonPrimary"
-              onClick={()=> this.props.onViewDetail(this.state.quizPerson!)}
+              onClick={() => this.props.onViewDetail(this.state.quizPerson!)}
               iconProps={{ iconName: 'DrillDownSolid' }}
             />
           </div>

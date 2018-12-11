@@ -187,6 +187,15 @@ class App extends React.Component<{}, ComponentState> {
             let allPeople: Person[] = []
             loaded.forEach(p => allPeople = [...allPeople, ...p])
 
+            // Something went wrong, go back to login
+            // TODO: show error message first
+            if (allPeople.length === 0) {
+              this.setState({
+                page: Page.LOGIN
+              })
+              return
+            }
+
             // Sort people alphabetically
             allPeople = allPeople.sort((a, b) => {
               if (a.fullName().toLowerCase() < b.fullName().toLowerCase()) { return -1 }
@@ -203,10 +212,16 @@ class App extends React.Component<{}, ComponentState> {
             // Create initial filter set
             this.updateFilterSet()
 
-            // Open library
-            this.viewLibraryPerson()
-
             await this.sendUserStats()
+
+            if (this.state.user!.isNew) {
+              this.setState({
+                page: Page.NEWUSER
+              })
+            } else {
+              // Open library
+              this.viewLibraryPerson()
+            }
           }
         })
       }
@@ -575,7 +590,7 @@ class App extends React.Component<{}, ComponentState> {
         }
         {this.state.page === Page.NEWUSER && 
           <NewUserPage
-            onClose={this.onClickImport}
+            onClose={this.viewLibraryPerson}
           />
         }
         {this.state.page === Page.EDIT && this.state.selectedPerson &&
