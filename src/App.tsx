@@ -339,7 +339,7 @@ class App extends React.Component<{}, ComponentState> {
       let people = this.state.allPeople.filter(p => p.personId !== person.personId)
       // Recalculte filter set to exclude new person
       let filterSet = Convert.getFilterSet(people, this.state.filter, null)
-      setStatePromise(this, {
+      await setStatePromise(this, {
         allPeople: people,
         filterSet,
         page: Page.VIEW
@@ -360,7 +360,7 @@ class App extends React.Component<{}, ComponentState> {
       let people = this.state.allPeople.filter(p => p.personId !== person.personId)
       // Recalculte filter set to exclude new person
       let filterSet = Convert.getFilterSet(people, this.state.filter, null)
-      setStatePromise(this, {
+      await setStatePromise(this, {
         allPeople: people,
         filterSet,
         page: Page.VIEW
@@ -379,7 +379,7 @@ class App extends React.Component<{}, ComponentState> {
 
       // Replace or add to allPeople
       let people = this.state.allPeople.filter(p => p.personId !== person.personId)
-      setStatePromise(this, {
+      await setStatePromise(this, {
         selectedPerson: person,
         allPeople: [...people, person]
       })
@@ -416,7 +416,7 @@ class App extends React.Component<{}, ComponentState> {
       // Upldate local copy
       person.photoFilenames.push(newPhotoName)
       let allPeople = replacePerson(this.state.allPeople, person)
-      setStatePromise(this, {
+      await setStatePromise(this, {
         allPeople
       })
     }
@@ -499,18 +499,15 @@ class App extends React.Component<{}, ComponentState> {
   async onSelectPerson(personId: string): Promise<void> {
     if (this.state.filterSet) {
       let selectedIndex = this.state.filterSet.people.findIndex(p => p.personId === personId)
+      
+      // If person not in filter, clear the filter and try again
       if (selectedIndex < 0) {
-        selectedIndex = this.state.allPeople.findIndex(p => p.personId === personId)
-        // Clear filter set
-        let filterSet: FilterSet = {
-          people: this.state.allPeople, 
-          selectedIndex
-        }
-        await setStatePromise(this, {filterSet})
+        await this.clearFilter()
+        this.onSelectPerson(personId)
+        return
       }
-      else {
-        await setStatePromise(this, {filterSet: {...this.state.filterSet, selectedIndex}})
-      }
+
+      await setStatePromise(this, {filterSet: {...this.state.filterSet, selectedIndex}})
       this.viewLibraryPerson()
     }
   }
@@ -547,6 +544,18 @@ class App extends React.Component<{}, ComponentState> {
       })
     }
   }
+
+  async clearFilter() {
+    await setStatePromise(this, {
+      filter: {...this.state.filter,
+        required: [],
+        blocked: [],
+        perfType: PerfType.PHOTO
+      }
+    })
+    this.updateFilterSet()
+  }
+
   updateFilterSet() {
     // TODO: if selected person not inclued, clear filter
     let filterSet = Convert.getFilterSet(this.state.allPeople, this.state.filter, this.state.selectedPerson)

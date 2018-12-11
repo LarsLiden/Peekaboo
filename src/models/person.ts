@@ -61,13 +61,14 @@ export class Person {
                 return new Performance(this.descPerformance)
             case PerfType.NAME:
                 return new Performance(this.namePerformance)
+            default:
+                throw new Error("Invalid Performance Type")
         }
         throw new Error("invalid perfType")
     }
 
     // Does person have data to take test type?
-    public hasTestData(perfType: PerfType): boolean
-    {
+    public hasTestData(perfType: PerfType): boolean {
         // TODO: separate function for actual testing
         return true
         /*

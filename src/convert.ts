@@ -79,8 +79,9 @@ export function getFilterSet(people: Person[], filter: Filter, selectedPerson: P
     // Filter people by tags
     let filtered = filteredPeople(people, filter)
     let selectedIndex = selectedPerson ? filtered.findIndex(p => p.personId === selectedPerson.personId) : 0
+    // If selected person isn't in filter, select first person in filter
     if (selectedIndex < 0) {
-        throw new Error("Invalid person in filter")
+        selectedIndex = 0
     }
     return { people: filtered, selectedIndex }
 }
@@ -126,9 +127,9 @@ export function extractTags(people: Person[]) : Tag[] {
 export function filteredTags(filteredPeople: Person[], allPeople: Person[], filter: Filter): Tag[] {
     let tags = [...extractTags(filteredPeople), ...extractBlockedTags(allPeople, filter.blocked)]
     tags = tags.sort((a, b) => {
-        if (a.name.toLowerCase() < b.name.toLowerCase()) return -1
-        else if (b.name.toLowerCase() < a.name.toLowerCase()) return 1
-        else return 0
+        if (a.name.toLowerCase() < b.name.toLowerCase()) { return -1 }
+        else if (b.name.toLowerCase() < a.name.toLowerCase()) { return 1 }
+        else { return 0 }
     })
     return tags
 }
@@ -203,9 +204,11 @@ export function quizSet(people: Person[], filter: Filter): QuizSet
         // Now give each person a range depending on the frequency
         let frequencyTotal = 0
 
+        /* Debug
         console.log("--------" + filter.perfType + "--------");
         console.log("HIGH:" + maxAverageTime);
         console.log("LOW:" + minAverageTime);
+        */
 
         let logstrings: string[] = []
         quizPeople.forEach(person => {
@@ -215,7 +218,7 @@ export function quizSet(people: Person[], filter: Filter): QuizSet
             person.performance.familiarity = calcFamiliarity(minAverageTime, maxAverageTime, person.performance.avgTime)
             frequencyTotal += person.performance.frequency
 
-            logstrings.push(`${person.performance.avgTime + (10 * MAX_TIME)} \t${person.performance.frequency} \t${person.performance.frequencyOffsetStart} \t${person.performance.frequencyOffsetEnd} \t${person.fullName}`)
+            logstrings.push(`${person.performance.avgTime + (MAX_TIME * 10)} \t${person.performance.frequency} \t${person.performance.frequencyOffsetStart} \t${person.performance.frequencyOffsetEnd} \t${person.fullName}`)
         })
 
         logstrings.sort()
@@ -228,16 +231,14 @@ export function quizSet(people: Person[], filter: Filter): QuizSet
     }
 
     /// Set relative familiarity value, with respect to all people in this category
-    export function calcFamiliarity(minAverageTime: number, maxAverageTime:number, myAverageTime: number): number
+    export function calcFamiliarity(minAverageTime: number, maxAverageTime: number, myAverageTime: number): number
     {
         // If haven't done any testing
-        if (maxAverageTime === minAverageTime)
-        {
+        if (maxAverageTime === minAverageTime) {
             return 0.5
         }
         // Otherwise calculate relative to other people
-        else
-        {
+        else {
             const totalDiff = maxAverageTime - minAverageTime;
             const myOffset = myAverageTime - minAverageTime;
             return 1 -  (myOffset / totalDiff);

@@ -133,7 +133,6 @@ class EditEvents extends React.Component<ReceivedProps, ComponentState> {
               value={event.date ? new Date(event.date) : new Date()}
               onSelectDate={date => this.onDateChanged(date, event)}
               formatDate={this.onFormatDate}
-             //TODO  parseDateFromString={this._onParseDateFromString}
             />
           </div>
           <OF.IconButton
