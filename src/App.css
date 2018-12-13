@@ -336,8 +336,12 @@
   max-width: var(--max-width);
 }
 
-.ModalBodyContentTall {
+.ModalBodyHeaderMedium {
   margin-top: 90px;
+}
+
+.ModalBodyHeaderHolderTall {
+  margin-top: 189px;
 }
 
 .ConfirmTitle {

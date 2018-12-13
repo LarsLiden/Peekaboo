@@ -68,7 +68,8 @@
 .DetailEdit {
   display: inline-block;
   margin-top: 5px;
-  width: 284px;
+  width: 240px;
+  text-align: left;
 }
 
 .DetailEditKeyValue {

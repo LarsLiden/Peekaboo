@@ -128,7 +128,7 @@ class Search extends React.Component<ReceivedProps, ComponentState> {
           </div>
         </div>
         <div className="ModalBodyHolder">
-          <div className="ModalBodyContent ModalBodyContentTall">
+          <div className="ModalBodyContent ModalBodyHeaderMedium">
             <OF.List
               items={this.state.results}
               onRenderCell={this.onRenderCell}

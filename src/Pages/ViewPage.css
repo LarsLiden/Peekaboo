@@ -31,10 +31,6 @@
   z-index: 100;
 }
 
-.HeaderHolderTall {
-  height: 98px
-}
-
 .HeaderContent {
   max-width: 500px;
   margin-left: auto;
@@ -51,8 +47,8 @@
   max-width: var(--max-width);
 }
 
-.HeaderTall {
-  height: 201px;
+.HeaderHolderTall {
+  height: 200px;
 }
 
 .HeaderNoPadding {

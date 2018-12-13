@@ -125,9 +125,8 @@ class ViewPage extends React.Component<ReceivedProps, ComponentState> {
     let height = (PHOTO_HEIGHT / PHOTO_WIDTH) * width
     let scale = 100 - Math.round((1 - (this.props.person.photoPerformance.avgTime / MAX_TIME)) * 100)
     return (
-      <div>
-        <div className="ViewPage">
-          <div className="HeaderHolder HeaderTall">
+        <div className="ModalPage">
+          <div className="HeaderHolder HeaderHolderTall">
             <div className="HeaderContent HeaderNoPadding">
               <div className="ViewBodyNameColumn">      
                 <DetailText className="DetailName" text={this.props.person.firstName}/>
@@ -169,27 +168,29 @@ class ViewPage extends React.Component<ReceivedProps, ComponentState> {
               </div>
             </div>
           </div>
-          <div className="ContentBody">
-            <DetailText title="Alt Name" text={this.props.person.alternateName} isLong={true}/>          
-            <DetailText title="Description" text={this.props.person.description} isLong={true}/>
-            <DetailTags 
-              tags={this.props.person.tags}
-              filter={this.props.filter}
-            />
-            <DetailRelationships
-              relationships={this.props.person.relationships}
-              allPeople={this.props.allPeople}
-              onSelectPerson={this.props.onSelectPerson}
-            />
-            <DetailEvents
-              events={this.props.person.events}
-            />
-            <DetailKeyValues
-              keyValues={this.props.person.keyValues}
-            />
-            <DetailSocialNetworks
-              socialNets={this.props.person.socialNets}
-            />
+          <div className="ModalBodyHolder">
+            <div className="ModalBodyContent ModalBodyHeaderHolderTall">
+              <DetailText title="Alt Name" text={this.props.person.alternateName} isLong={true}/>          
+              <DetailText title="Description" text={this.props.person.description} isLong={true}/>
+              <DetailTags 
+                tags={this.props.person.tags}
+                filter={this.props.filter}
+              />
+              <DetailRelationships
+                relationships={this.props.person.relationships}
+                allPeople={this.props.allPeople}
+                onSelectPerson={this.props.onSelectPerson}
+              />
+              <DetailEvents
+                events={this.props.person.events}
+              />
+              <DetailKeyValues
+                keyValues={this.props.person.keyValues}
+              />
+              <DetailSocialNetworks
+                socialNets={this.props.person.socialNets}
+              />
+            </div>
           </div>
           {this.props.filterSet 
           ?
@@ -269,7 +270,6 @@ class ViewPage extends React.Component<ReceivedProps, ComponentState> {
               </div>
             </div>
           }
-        </div>
         {this.state.isSearchOpen &&
           <Search
             people={this.props.allPeople}

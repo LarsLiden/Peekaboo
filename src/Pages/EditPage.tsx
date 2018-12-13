@@ -436,7 +436,7 @@ class EditPage extends React.Component<ReceivedProps, ComponentState> {
       || this.state.imageURL*/
 
     return (
-      <div className="QuizPage">
+      <div className="ModalPage">
         {this.state.imageURL &&
           <CropPage
             imageURL={this.state.imageURL}
@@ -445,149 +445,151 @@ class EditPage extends React.Component<ReceivedProps, ComponentState> {
           />
         }
      
-          <div>
-            <div className="HeaderHolder HeaderTall">
-              <div className="HeaderContent HeaderNoPadding">
-                <div className="EditImageColumn">
-                  <FilePicker
-                    extensions={['png', 'jpeg', 'jpg']}
-                    onChange={this.onChangeFile}
-                    //TODO onError={(error: string) => this.props.setErrorDisplay(ErrorType.Error, error, [], null)}
-                    maxSize={10}
-                  >
-                    <div>
-                        <OF.IconButton
-                          className="ButtonIcon ButtonDark ButtonTopFlush"
-                          iconProps={{ iconName: 'CircleAddition' }}
-                        />
-                    </div>
-                  </FilePicker>
-                  <div className='EditButtonSpacer'/>
-                  <OF.IconButton
-                    className="ButtonIcon ButtonDark"
-                    onClick={this.onDeletePhoto}
-                    iconProps={{ iconName: 'Delete' }}
-                  />
+        <div className="HeaderHolder HeaderHolderTall">
+          <div className="HeaderContent HeaderNoPadding">
+            <div className="EditImageColumn">
+              <FilePicker
+                extensions={['png', 'jpeg', 'jpg']}
+                onChange={this.onChangeFile}
+                //TODO onError={(error: string) => this.props.setErrorDisplay(ErrorType.Error, error, [], null)}
+                maxSize={10}
+              >
+                <div>
+                    <OF.IconButton
+                      className="ButtonIcon ButtonDark ButtonTopFlush"
+                      iconProps={{ iconName: 'CircleAddition' }}
+                    />
                 </div>
-                <OF.Image
-                  className="QuizImageHolder"
-                  src={photoBlobName}
-                  width={width}
-                  height={height}
-                />
-                <div className="InlineBlock">
-                  <DetailIndexer
-                    isVertical={true}
-                    onPrev={this.onPrevPhoto}
-                    onNext={this.onNextPhoto}
-                    currentIndex={this.state.photoIndex}
-                    total={this.props.person.photoFilenames.length}
-                  />
-                </div>
-              </div>
+              </FilePicker>
+              <div className='EditButtonSpacer'/>
+              <OF.IconButton
+                className="ButtonIcon ButtonDark"
+                onClick={this.onDeletePhoto}
+                iconProps={{ iconName: 'Delete' }}
+              />
             </div>
-            <div className="ContentBody EditContent">
-              <div className='EditSection'>
-                <div className={`DetailTitle DetailEditTitle`}>
-                  Basic Info
-                </div>
-                <div className="DetailText DetailEdit">
-                  <DetailText title="First Name" text={this.props.person.firstName} isLong={true}/>                
-                  <DetailText title="Last Name" text={this.props.person.lastName} isLong={true}/>
-                  <DetailText title="Nickname" text={this.props.person.nickName} isLong={true}/>
-                  <DetailText title="Alt Name" text={this.props.person.alternateName} isLong={true}/>
-                  <DetailText title="Maiden Name" text={this.props.person.maidenName} isLong={true}/>
-                  <DetailText title="Description" text={this.props.person.description} isLong={true}/>
-                </div>                  
-                <OF.IconButton
-                    className="ButtonIcon ButtonDark"
-                    onClick={this.onEditStrings}
-                    iconProps={{ iconName: 'Edit' }}
-                />
-              </div>
-              <div className='EditSection'>
-                <DetailTags 
-                  inEdit={true}
-                  tags={this.props.person.tags}
-                  filter={this.props.filter}
-                />
-                <OF.IconButton
-                    className="ButtonIcon ButtonDark"
-                    onClick={this.onEditTags}
-                    iconProps={{ iconName: 'Edit' }}
-                />
-              </div>
-              <div className='EditSection'>
-                <DetailRelationships
-                  inEdit={true}
-                  relationships={this.props.person.relationships}
-                  allPeople={this.props.allPeople}
-                  onSelectPerson={this.props.onSelectPerson}
-                />
-                <OF.IconButton
-                    className="ButtonIcon ButtonDark"
-                    onClick={this.onEditRelationships}
-                    iconProps={{ iconName: 'Edit' }}
-                />
-              </div>
-              <div className='EditSection'>
-                <DetailEvents
-                  inEdit={true}
-                  events={this.props.person.events}
-                />
-                <OF.IconButton
-                  className="ButtonIcon ButtonDark"
-                  onClick={this.onEditEvents}
-                  iconProps={{ iconName: 'Edit' }}
-                />
-              </div>
-              <div className='EditSection'>
-                <DetailKeyValues
-                  inEdit={true}
-                  keyValues={this.props.person.keyValues}
-                />
-                <OF.IconButton
-                    className="ButtonIcon ButtonDark"
-                    onClick={this.onEditKeyValues}
-                    iconProps={{ iconName: 'Edit' }}
-                />
-              </div>
-              <div className='EditSection'>
-                <DetailSocialNetworks
-                  inEdit={true}
-                  socialNets={this.props.person.socialNets}
-                />
-                <OF.IconButton
-                    className="ButtonIcon ButtonDark"
-                    onClick={this.onEditSocialNetworks}
-                    iconProps={{ iconName: 'Edit' }}
-                />
-              </div>
-            </div>
-            <div className="FooterHolder">
-              <div className="FooterContent">
-                <OF.IconButton
-                    className="ButtonIcon ButtonPrimary FloatLeft"
-                    onClick={this.onClickClose}
-                    iconProps={{ iconName: 'ChromeBack' }}
-                />
-                {this.props.person.personId &&
-                  <OF.IconButton
-                      className="ButtonIcon ButtonPrimary FloatRight"
-                      onClick={this.onClickDelete}
-                      iconProps={{ iconName: 'Trash' }}
-                  />
-                }
-                {this.props.user.isAdmin &&
-                  <OF.IconButton
-                      className="ButtonIcon ButtonPrimary FloatRight"
-                      onClick={this.onClickArchive}
-                      iconProps={{ iconName: 'Archive' }}
-                  />
-                }
-              </div>
+            <OF.Image
+              className="QuizImageHolder"
+              src={photoBlobName}
+              width={width}
+              height={height}
+            />
+            <div className="InlineBlock">
+              <DetailIndexer
+                isVertical={true}
+                onPrev={this.onPrevPhoto}
+                onNext={this.onNextPhoto}
+                currentIndex={this.state.photoIndex}
+                total={this.props.person.photoFilenames.length}
+              />
             </div>
           </div>
+        </div>
+
+        <div className="ModalBodyHolder">
+          <div className="ModalBodyContent ModalBodyHeaderHolderTall">
+            <div className='EditSection'>
+              <div className={`DetailTitle DetailEditTitle`}>
+                Basic Info
+              </div>
+              <div className="DetailText DetailEdit">
+                <DetailText title="First Name" text={this.props.person.firstName} isLong={true}/>                
+                <DetailText title="Last Name" text={this.props.person.lastName} isLong={true}/>
+                <DetailText title="Nickname" text={this.props.person.nickName} isLong={true}/>
+                <DetailText title="Alt Name" text={this.props.person.alternateName} isLong={true}/>
+                <DetailText title="Maiden Name" text={this.props.person.maidenName} isLong={true}/>
+                <DetailText title="Description" text={this.props.person.description} isLong={true}/>
+              </div>                  
+              <OF.IconButton
+                  className="ButtonIcon ButtonDark"
+                  onClick={this.onEditStrings}
+                  iconProps={{ iconName: 'Edit' }}
+              />
+            </div>
+            <div className='EditSection'>
+              <DetailTags 
+                inEdit={true}
+                tags={this.props.person.tags}
+                filter={this.props.filter}
+              />
+              <OF.IconButton
+                  className="ButtonIcon ButtonDark"
+                  onClick={this.onEditTags}
+                  iconProps={{ iconName: 'Edit' }}
+              />
+            </div>
+            <div className='EditSection'>
+              <DetailRelationships
+                inEdit={true}
+                relationships={this.props.person.relationships}
+                allPeople={this.props.allPeople}
+                onSelectPerson={this.props.onSelectPerson}
+              />
+              <OF.IconButton
+                  className="ButtonIcon ButtonDark"
+                  onClick={this.onEditRelationships}
+                  iconProps={{ iconName: 'Edit' }}
+              />
+            </div>
+            <div className='EditSection'>
+              <DetailEvents
+                inEdit={true}
+                events={this.props.person.events}
+              />
+              <OF.IconButton
+                className="ButtonIcon ButtonDark"
+                onClick={this.onEditEvents}
+                iconProps={{ iconName: 'Edit' }}
+              />
+            </div>
+            <div className='EditSection'>
+              <DetailKeyValues
+                inEdit={true}
+                keyValues={this.props.person.keyValues}
+              />
+              <OF.IconButton
+                  className="ButtonIcon ButtonDark"
+                  onClick={this.onEditKeyValues}
+                  iconProps={{ iconName: 'Edit' }}
+              />
+            </div>
+            <div className='EditSection'>
+              <DetailSocialNetworks
+                inEdit={true}
+                socialNets={this.props.person.socialNets}
+              />
+              <OF.IconButton
+                  className="ButtonIcon ButtonDark"
+                  onClick={this.onEditSocialNetworks}
+                  iconProps={{ iconName: 'Edit' }}
+              />
+            </div>
+          </div>
+        </div>
+
+        <div className="FooterHolder">
+          <div className="FooterContent">
+            <OF.IconButton
+                className="ButtonIcon ButtonPrimary FloatLeft"
+                onClick={this.onClickClose}
+                iconProps={{ iconName: 'ChromeBack' }}
+            />
+            {this.props.person.personId &&
+              <OF.IconButton
+                  className="ButtonIcon ButtonPrimary FloatRight"
+                  onClick={this.onClickDelete}
+                  iconProps={{ iconName: 'Trash' }}
+              />
+            }
+            {this.props.user.isAdmin &&
+              <OF.IconButton
+                  className="ButtonIcon ButtonPrimary FloatRight"
+                  onClick={this.onClickArchive}
+                  iconProps={{ iconName: 'Archive' }}
+              />
+            }
+          </div>
+        </div>
         
         {this.state.isEditBasicInfoOpen &&
           <EditBasicInfo

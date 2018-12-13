@@ -55,6 +55,7 @@ interface ComponentState {
   filter: Filter
   error: string | null
   isFull: boolean
+  pageHash: number
 }
 
 class App extends React.Component<{}, ComponentState> {
@@ -83,7 +84,32 @@ class App extends React.Component<{}, ComponentState> {
       sortType: SortType.NAME, 
       sortDirection: SortDirection.UP},
     error: null,
-    isFull: false
+    isFull: false,
+    pageHash: 0
+  }
+
+  async onSetPage(page: Page) {
+    let pageHash = this.state.pageHash + 1
+    await setStatePromise(this, {
+      page,
+      pageHash
+    })
+    location.hash = page
+  }
+
+  componentDidMount() {
+    window.onhashchange = this.onPageNavigate
+  }
+
+  @OF.autobind
+  onPageNavigate() {
+    let page = location.hash.substring(1) as Page
+    if (page !== this.state.page) {
+      // Back only allowed to certain pages
+      if (page !== Page.LOAD) {
+       this.setState({page}) 
+      }
+    }  
   }
 
   @OF.autobind 
@@ -94,22 +120,15 @@ class App extends React.Component<{}, ComponentState> {
       let tags = Convert.filteredTags(filteredPeople, this.state.allPeople, this.state.filter)
       this.setState({
         filteredTags: tags,
-        filteredPeopleCount: filteredPeople.length,
-        page: Page.FILTER
+        filteredPeopleCount: filteredPeople.length
       })
     }
-    else {
-        this.setState({
-        page: Page.FILTER
-      })
-    }
+    this.onSetPage(Page.FILTER)
   }
 
   @OF.autobind 
   async onClickSort() {
-    this.setState({
-      page: Page.SORT
-    })
+    this.onSetPage(Page.SORT)
   }
 
   @OF.autobind 
@@ -117,23 +136,19 @@ class App extends React.Component<{}, ComponentState> {
     if (this.state.user) {
       let users = await Client.getUsers(this.state.user) 
       this.setState({
-        page: Page.ADMIN,
         users
       })
+      this.onSetPage(Page.ADMIN)
     }
   }
 
   @OF.autobind 
   async onEdit() {
     if (this.state.page === Page.VIEWQUIZ) {
-      this.setState({
-        page: Page.EDITQUIZ
-      })
+      this.onSetPage(Page.EDITQUIZ)
     }
     else {
-      this.setState({
-        page: Page.EDIT
-      })
+      this.onSetPage(Page.EDIT)
     }
   }
 
@@ -147,19 +162,18 @@ class App extends React.Component<{}, ComponentState> {
     let personId = this.state.filterSet.people[this.state.filterSet.selectedIndex].personId
     let selectedPerson = Convert.getPerson(this.state.allPeople, personId!) || null
     this.setState({
-      selectedPerson,
-      page: Page.VIEW
+      selectedPerson
     })
-
+    this.onSetPage(Page.VIEW)
   }
 
   @OF.autobind 
   viewQuizDetail(quizPerson: QuizPerson) {
       let selectedPerson = Convert.getPerson(this.state.allPeople, quizPerson.personId) || null
       this.setState({
-        selectedPerson,
-        page: Page.VIEWQUIZ
+        selectedPerson
       })
+      this.onSetPage(Page.VIEWQUIZ)
   }
 
   @OF.autobind async onLoginComplete(user: User) {
@@ -174,7 +188,7 @@ class App extends React.Component<{}, ComponentState> {
   @OF.autobind 
   async loadPeople() {
       let loaded: Person[][] = []
-      this.setState({page: Page.LOAD})
+      this.onSetPage(Page.LOAD)
 
       const letters = "ABCEFGHIJKLMNOPQRSTUVWXYZ".split("")
       for (let letter of letters) {
@@ -182,8 +196,8 @@ class App extends React.Component<{}, ComponentState> {
           if (!people) {
             this.setState({
               error: `Failed find your peeps`,
-              page: Page.LOGIN
             })
+            this.onSetPage(Page.LOGIN)
             return
           }
           console.log(`GOT ${letter}`)
@@ -203,9 +217,7 @@ class App extends React.Component<{}, ComponentState> {
             // Something went wrong, go back to login
             // TODO: show error message first
             if (allPeople.length === 0) {
-              this.setState({
-                page: Page.LOGIN
-              })
+              this.onSetPage(Page.LOGIN)
               return
             }
 
@@ -228,9 +240,7 @@ class App extends React.Component<{}, ComponentState> {
             await this.sendUserStats()
 
             if (this.state.user!.isNew) {
-              this.setState({
-                page: Page.NEWUSER
-              })
+              this.onSetPage(Page.NEWUSER)
             } else {
               // Open library
               this.viewLibraryPerson()
@@ -290,9 +300,9 @@ class App extends React.Component<{}, ComponentState> {
   async onQuiz() {
       let quizSet = Convert.quizSet(this.state.allPeople, this.state.filter) 
       this.setState({
-        quizSet,
-        page: Page.QUIZ
+        quizSet
       })
+      this.onSetPage(Page.QUIZ)
   }
 
   @OF.autobind
@@ -303,7 +313,7 @@ class App extends React.Component<{}, ComponentState> {
   @OF.autobind 
   async onCloseEditPage() {
     if (this.state.page === Page.EDITQUIZ) {
-      this.setState({ page: Page.QUIZ})
+      this.onSetPage(Page.QUIZ)
     }
     else {
       this.viewLibraryPerson()
@@ -346,9 +356,9 @@ class App extends React.Component<{}, ComponentState> {
       let filterSet = Convert.getFilterSet(people, this.state.filter, null)
       await setStatePromise(this, {
         allPeople: people,
-        filterSet,
-        page: Page.VIEW
+        filterSet
       })
+      this.onSetPage(Page.VIEW)
       this.viewLibraryPerson()
     }
     catch {
@@ -367,9 +377,9 @@ class App extends React.Component<{}, ComponentState> {
       let filterSet = Convert.getFilterSet(people, this.state.filter, null)
       await setStatePromise(this, {
         allPeople: people,
-        filterSet,
-        page: Page.VIEW
+        filterSet
       })
+      this.onSetPage(Page.VIEW)
       this.viewLibraryPerson()
     }
     catch {
@@ -432,9 +442,7 @@ class App extends React.Component<{}, ComponentState> {
 
   @OF.autobind 
   async onContinueQuiz() {
-      this.setState({
-        page: Page.QUIZ
-      })
+    this.onSetPage(Page.QUIZ)
   }
 
   @OF.autobind 
@@ -458,18 +466,16 @@ class App extends React.Component<{}, ComponentState> {
       catch {
         this.setState({error: `Failed to save Test Results`})  
       }
-      this.setState({
-        page: Page.VIEW
-      })
+      this.onSetPage(Page.VIEW)
   }
 
   @OF.autobind
   async onNewPerson(): Promise<void> {
     let person = new Person()
     this.setState({
-      selectedPerson: person,
-      page: Page.EDIT
+      selectedPerson: person
     })
+    this.onSetPage(Page.EDIT)
   }
 
   @OF.autobind
@@ -519,9 +525,7 @@ class App extends React.Component<{}, ComponentState> {
 
   @OF.autobind
   async onCloseAdminPage() {
-    await setStatePromise(this, {
-      page: Page.VIEW
-    })
+    await this.onSetPage(Page.VIEW)
   }
 
   @OF.autobind
@@ -534,19 +538,17 @@ class App extends React.Component<{}, ComponentState> {
     let personId = this.state.filterSet.people[this.state.filterSet.selectedIndex].personId
     let selectedPerson = Convert.getPerson(this.state.allPeople, personId!) || null
     await setStatePromise(this, {
-      page: Page.VIEW,
       selectedPerson
     })
+    await this.onSetPage(Page.VIEW)
   }
 
   handleNoUsers() {
     if (this.state.user!.isAdmin) {
-      this.setState({page: Page.ADMIN})
+      this.onSetPage(Page.ADMIN)
     }
     else {
-      this.setState({
-        page: Page.NEWUSER
-      })
+      this.onSetPage(Page.NEWUSER)
     }
   }
 
