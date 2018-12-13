@@ -69,6 +69,8 @@
   --color-wc-bot: #eceff1;
   --gutter-width: 100px;
   --nav-link-padding: 1em 2em;
+
+  --max-width: 350px;
 }
 
 .ms-DetailsRow {
@@ -134,7 +136,7 @@
 
 .ButtonIcon {
   height: 50px !important;
-  width: 50px !important;
+  width: 40px !important;
   border-radius: 10px !important;
   color: white !important;
   margin: 5px;
@@ -319,7 +321,7 @@
   height: 100%;
   overflow-y: auto;
   margin-top: 10px;
-  max-width: 500px;
+  max-width: 410px;
   margin-left: auto;
   margin-right: auto;
 }
@@ -331,6 +333,7 @@
   margin-right: auto;
   margin-bottom: 90px;
   margin-top: 60px;
+  max-width: var(--max-width);
 }
 
 .ModalBodyContentTall {
@@ -471,10 +474,10 @@
 
 .NewUserText3 {
   float: left;
-  max-width: 330px;
+  max-width: 230px;
   text-align: right;
   margin-left: 50px;
-  margin-top: 10px;
+  margin-top: 0px;
 }
 
 .TagUnselected {

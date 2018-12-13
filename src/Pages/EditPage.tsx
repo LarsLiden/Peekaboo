@@ -423,7 +423,7 @@ class EditPage extends React.Component<ReceivedProps, ComponentState> {
     }
     let width = 160
     let height = (PHOTO_HEIGHT / PHOTO_WIDTH) * width
-    const modalOpen = 
+    /*const modalOpen = 
       this.state.isConfirmDeletePhotoOpen
       || this.state.isConfirmArchiveOpen
       || this.state.isConfirmDeleteOpen
@@ -433,7 +433,7 @@ class EditPage extends React.Component<ReceivedProps, ComponentState> {
       || this.state.isEditRelationshipsOpen
       || this.state.isEditTagsOpen
       || this.state.isEditBasicInfoOpen
-      || this.state.imageURL
+      || this.state.imageURL*/
 
     return (
       <div className="QuizPage">
@@ -444,7 +444,7 @@ class EditPage extends React.Component<ReceivedProps, ComponentState> {
             onSave={(imageData) => this.onSaveCrop(imageData)}
           />
         }
-        {!modalOpen &&
+     
           <div>
             <div className="HeaderHolder HeaderTall">
               <div className="HeaderContent HeaderNoPadding">
@@ -588,7 +588,7 @@ class EditPage extends React.Component<ReceivedProps, ComponentState> {
               </div>
             </div>
           </div>
-        }
+        
         {this.state.isEditBasicInfoOpen &&
           <EditBasicInfo
             person={this.props.person}

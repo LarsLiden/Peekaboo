@@ -193,11 +193,6 @@ class QuizPage extends React.Component<ReceivedProps, ComponentState> {
             <div className='QuizDescription'>
               {this.state.quizPerson.description}
             </div>
-            <OF.IconButton
-              className="ButtonIcon ButtonPrimary"
-              onClick={() => this.props.onViewDetail(this.state.quizPerson!)}
-              iconProps={{ iconName: 'DrillDownSolid' }}
-            />
           </div>
         }
         <div className="FooterHolder">
@@ -207,11 +202,19 @@ class QuizPage extends React.Component<ReceivedProps, ComponentState> {
               onClick={this.onClickKnow}
               iconProps={{ iconName: 'LikeSolid' }}
             />
-            <OF.IconButton
+            {this.state.showName ? 
+              <OF.IconButton
+                className="ButtonIcon ButtonPrimary"
+                onClick={() => this.props.onViewDetail(this.state.quizPerson!)}
+                iconProps={{ iconName: 'ContactInfo' }}
+              />
+            :
+              <OF.IconButton
                 className="ButtonIcon ButtonPrimary"
                 onClick={this.onClickQuit}
                 iconProps={{ iconName: 'ChromeClose' }}
-            />
+              />
+            }
             {this.state.showName ? 
               <OF.IconButton
                 className="ButtonIcon  ButtonPrimary FloatRight"
@@ -221,7 +224,7 @@ class QuizPage extends React.Component<ReceivedProps, ComponentState> {
               <OF.IconButton
                 className="ButtonIcon  ButtonPrimary FloatRight"
                 onClick={this.onClickQuestion}
-                iconProps={{ iconName: 'UnknownSolid' }}
+                iconProps={{ iconName: 'Help' }}
               />
             }
           </div>

@@ -9,8 +9,8 @@ import { Person } from '../models/person'
 
 export default class Client {
 
-    //public static baseUrl = "https://peekabooserver.azurewebsites.net/api"
-    public static baseUrl = "http://localhost:8080/api"
+    public static baseUrl = "https://peekabooserver.azurewebsites.net/api"
+    //public static baseUrl = "http://localhost:8080/api"
 
     public static async Login(user: User): Promise<User | null> {
 

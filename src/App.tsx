@@ -22,6 +22,7 @@ import AdminPage from './Pages/AdminPage'
 import LoginPage from './Pages/LoginPage'
 import ViewPage from './Pages/ViewPage'
 import EditPage from './Pages/EditPage'
+import Fullscreen from "react-full-screen"
 
 export enum Page {
   LOGIN = "MENU",
@@ -53,6 +54,7 @@ interface ComponentState {
   selectedPerson: Person | null
   filter: Filter
   error: string | null
+  isFull: boolean
 }
 
 class App extends React.Component<{}, ComponentState> {
@@ -80,11 +82,13 @@ class App extends React.Component<{}, ComponentState> {
       perfType: PerfType.PHOTO, 
       sortType: SortType.NAME, 
       sortDirection: SortDirection.UP},
-    error: null
+    error: null,
+    isFull: false
   }
 
   @OF.autobind 
   async onClickFilter() {
+    this.goFull()
     if (this.state.filteredTags.length === 0) {
       let filteredPeople = Convert.filteredPeople(this.state.allPeople, this.state.filter)
       let tags = Convert.filteredTags(filteredPeople, this.state.allPeople, this.state.filter)
@@ -159,6 +163,7 @@ class App extends React.Component<{}, ComponentState> {
   }
 
   @OF.autobind async onLoginComplete(user: User) {
+    this.goFull()
     await setStatePromise(this, {
       user: user,
       selectedPerson: null
@@ -571,12 +576,24 @@ class App extends React.Component<{}, ComponentState> {
     }
   }
 
+  @OF.autobind
+  goFull() {
+    this.setState({ isFull: true });
+  }
+
   public render() {
     let baseClass = 'App'
     if (this.state.user && this.state.user.isSpoof) {
       baseClass = `${baseClass} Spoof`
     }
     return (
+      <Fullscreen
+          enabled={this.state.isFull}
+          onChange={isFull => this.setState({isFull})}
+      >
+      <button onClick={this.goFull}>
+          Go Fullscreen
+        </button>
       <div className={baseClass}>
         {this.state.page === Page.LOGIN &&
          <LoginPage
@@ -675,6 +692,7 @@ class App extends React.Component<{}, ComponentState> {
           />
         }
       </div>
+      </Fullscreen>
     );
   }
 }

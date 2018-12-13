@@ -30,6 +30,7 @@ class LoginPage extends React.Component<ReceivedProps, ComponentState> {
 
   @OF.autobind
   private async loginSuccess(googleUser: any) {
+
     let profile = googleUser.getBasicProfile();
     let user: User = {
       googleId: profile.getId(),
@@ -62,18 +63,16 @@ class LoginPage extends React.Component<ReceivedProps, ComponentState> {
         style={{
         backgroundImage: `url(${HEAD_IMAGE})`,
         backgroundRepeat: 'no-repeat',
-        backgroundSize: 'cover'
+        backgroundSize: 'contain'
         }}
       >
-       
         <GoogleLogin
             className="LoginButton"
             clientId="757831696321-kdog1rehu946i1ch7rb3pvmf5r3rr2r4.apps.googleusercontent.com"
             buttonText="Have We Met?"
             onSuccess={this.loginSuccess}
             onFailure={()=>{}}
-          />
-
+        />
       </div>
       <OF.Callout
           role={'alertdialog'}

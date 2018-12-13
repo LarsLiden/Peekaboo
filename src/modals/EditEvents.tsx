@@ -139,7 +139,7 @@ class EditEvents extends React.Component<ReceivedProps, ComponentState> {
             className="ButtonIcon ButtonDark FloatRight"
             onClick={() => this.onClickDelete(event)}
             iconProps={{ iconName: 'Delete' }}
-        />
+          />
         </div>
       </div>
     );
