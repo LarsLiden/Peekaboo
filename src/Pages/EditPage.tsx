@@ -34,6 +34,8 @@ export interface ReceivedProps {
   filter: Filter
   allTags: Tag[]
   allPeople: Person[]
+  subpage: string | null
+  onSetSubpage: (subpage: string | null) => void
   onSavePhoto: (person: Person, photoData: string) => void
   onSavePerson: (person: Person) => void
   onDeletePhoto: (person: Person, photoName: string) => void
@@ -44,6 +46,15 @@ export interface ReceivedProps {
   onAddTag: (tagName: string) => void
 }
 
+export enum SubPage {
+  BASIC = "BASIC",
+  TAGS = "TAGS",
+  RELATIONSHIPS = "RELATIONSHIPS",
+  EVENTS = "EVENTS",
+  KEYVALUES = "KEYVALUES",
+  SOCIALNETWORKS = "SOCIALNETWORKS"
+} 
+
 interface ComponentState { 
   edited: boolean
   photoIndex: number
@@ -51,12 +62,6 @@ interface ComponentState {
   imageURL: string | null
   crop: ReactCrop.Crop
   file: File | null
-  isEditBasicInfoOpen: boolean
-  isEditTagsOpen: boolean
-  isEditRelationshipsOpen: boolean
-  isEditEventsOpen: boolean
-  isEditKeyValuesOpen: boolean
-  isEditSocialNetworksOpen: boolean
   isConfirmDeletePhotoOpen: boolean
   isConfirmDeleteOpen: boolean,
   isConfirmArchiveOpen: boolean
@@ -71,12 +76,6 @@ class EditPage extends React.Component<ReceivedProps, ComponentState> {
     imageURL: null,
     crop: {aspect: 1 / 1, x: 0, y: 0, width: 50, height: 50},
     file: null,
-    isEditBasicInfoOpen: false,
-    isEditTagsOpen: false,
-    isEditRelationshipsOpen: false,
-    isEditEventsOpen: false,
-    isEditKeyValuesOpen: false,
-    isEditSocialNetworksOpen: false,
     isConfirmDeletePhotoOpen: false,
     isConfirmDeleteOpen: false,
     isConfirmArchiveOpen: false
@@ -84,29 +83,12 @@ class EditPage extends React.Component<ReceivedProps, ComponentState> {
 
   // --- EDIT Strings ---
   @OF.autobind
-  onCancelEditStrings(): void {
-    this.setState({isEditBasicInfoOpen: false})
-  }
-
-  @OF.autobind
   onSaveEditStrings(person: Person): void {
     this.props.onSavePerson(person)
-    this.setState({
-      isEditBasicInfoOpen: false
-    })
-  }
-
-  @OF.autobind
-  onEditStrings(): void {
-    this.setState({isEditBasicInfoOpen: true})
+    this.props.onSetSubpage(null)
   }
 
   // --- EDIT TAGS ---
-  @OF.autobind
-  onCancelEditTags(): void {
-    this.setState({isEditTagsOpen: false})
-  }
-
   @OF.autobind
   onSaveEditTags(tags: string[]): void {
 
@@ -114,38 +96,17 @@ class EditPage extends React.Component<ReceivedProps, ComponentState> {
     newPerson.tags = tags
     this.props.onSavePerson(newPerson)
 
-    this.setState({
-      isEditTagsOpen: false
-    })
-  }
-
-  @OF.autobind
-  onEditTags(): void {
-    this.setState({isEditTagsOpen: true})
+    this.props.onSetSubpage(null)
   }
 
   // --- EDIT REPLATIONSHIPS ---
   @OF.autobind
-  onCancelEditRelationships(): void {
-    this.setState({isEditRelationshipsOpen: false})
-  }
-
-  @OF.autobind
   onSaveEditRelationships(relationships: Relationship[]): void {
     this.saveReverseRelationships(relationships)
-
     let newPerson = new Person({...this.props.person})
     newPerson.relationships = relationships
     this.props.onSavePerson(newPerson)
-
-    this.setState({
-      isEditRelationshipsOpen: false
-    })
-  }
-
-  @OF.autobind
-  onEditRelationships(): void {
-    this.setState({isEditRelationshipsOpen: true})
+    this.props.onSetSubpage(null)
   }
 
   getReversePerson(updatedPeople: Person[], relationship: Relationship): Person | null {
@@ -230,68 +191,30 @@ class EditPage extends React.Component<ReceivedProps, ComponentState> {
 
   // --- EDIT Events ---
   @OF.autobind
-  onCancelEditEvents(): void {
-    this.setState({isEditEventsOpen: false})
-  }
-
-  @OF.autobind
   onSaveEditEvents(events: Event[]): void {
     let newPerson = new Person({...this.props.person})
     newPerson.events = events
     this.props.onSavePerson(newPerson)
-
-    this.setState({
-      isEditEventsOpen: false
-    })
-  }
-
-  @OF.autobind
-  onEditEvents(): void {
-    this.setState({isEditEventsOpen: true})
+    this.props.onSetSubpage(null)
   }
 
   // --- EDIT KeyValues ---
-  @OF.autobind
-  onCancelEditKeyValues(): void {
-    this.setState({isEditKeyValuesOpen: false})
-  }
-
   @OF.autobind
   onSaveEditKeyValues(keyValues: KeyValue[]): void {
     let newPerson = new Person({...this.props.person})
     newPerson.keyValues = keyValues
     this.props.onSavePerson(newPerson)
-
-    this.setState({
-      isEditKeyValuesOpen: false
-    })
-  }
-
-  @OF.autobind
-  onEditKeyValues(): void {
-    this.setState({isEditKeyValuesOpen: true})
+    this.props.onSetSubpage(null)
   }
 
   // --- EDIT SocialNetworks ---
-  @OF.autobind
-  onCancelEditSocialNetworks(): void {
-    this.setState({isEditSocialNetworksOpen: false})
-  }
 
   @OF.autobind
   onSaveEditSocialNetworks(socialNets: SocialNet[]): void {
     let newPerson = new Person({...this.props.person})
     newPerson.socialNets = socialNets
     this.props.onSavePerson(newPerson)
-
-    this.setState({
-      isEditSocialNetworksOpen: false
-    })
-  }
-
-  @OF.autobind
-  onEditSocialNetworks(): void {
-    this.setState({isEditSocialNetworksOpen: true})
+    this.props.onSetSubpage(null)
   }
 
   // --- DELETE PHOTO ---
@@ -502,7 +425,7 @@ class EditPage extends React.Component<ReceivedProps, ComponentState> {
               </div>                  
               <OF.IconButton
                   className="ButtonIcon ButtonDark"
-                  onClick={this.onEditStrings}
+                  onClick={() => this.props.onSetSubpage(SubPage.BASIC)}
                   iconProps={{ iconName: 'Edit' }}
               />
             </div>
@@ -514,7 +437,7 @@ class EditPage extends React.Component<ReceivedProps, ComponentState> {
               />
               <OF.IconButton
                   className="ButtonIcon ButtonDark"
-                  onClick={this.onEditTags}
+                  onClick={() => this.props.onSetSubpage(SubPage.TAGS)}
                   iconProps={{ iconName: 'Edit' }}
               />
             </div>
@@ -527,7 +450,7 @@ class EditPage extends React.Component<ReceivedProps, ComponentState> {
               />
               <OF.IconButton
                   className="ButtonIcon ButtonDark"
-                  onClick={this.onEditRelationships}
+                  onClick={() => this.props.onSetSubpage(SubPage.RELATIONSHIPS)}
                   iconProps={{ iconName: 'Edit' }}
               />
             </div>
@@ -538,7 +461,7 @@ class EditPage extends React.Component<ReceivedProps, ComponentState> {
               />
               <OF.IconButton
                 className="ButtonIcon ButtonDark"
-                onClick={this.onEditEvents}
+                onClick={() => this.props.onSetSubpage(SubPage.EVENTS)}
                 iconProps={{ iconName: 'Edit' }}
               />
             </div>
@@ -549,7 +472,7 @@ class EditPage extends React.Component<ReceivedProps, ComponentState> {
               />
               <OF.IconButton
                   className="ButtonIcon ButtonDark"
-                  onClick={this.onEditKeyValues}
+                  onClick={() => this.props.onSetSubpage(SubPage.KEYVALUES)}
                   iconProps={{ iconName: 'Edit' }}
               />
             </div>
@@ -560,7 +483,7 @@ class EditPage extends React.Component<ReceivedProps, ComponentState> {
               />
               <OF.IconButton
                   className="ButtonIcon ButtonDark"
-                  onClick={this.onEditSocialNetworks}
+                  onClick={() => this.props.onSetSubpage(SubPage.SOCIALNETWORKS)}
                   iconProps={{ iconName: 'Edit' }}
               />
             </div>
@@ -591,48 +514,48 @@ class EditPage extends React.Component<ReceivedProps, ComponentState> {
           </div>
         </div>
         
-        {this.state.isEditBasicInfoOpen &&
+        {this.props.subpage === SubPage.BASIC &&
           <EditBasicInfo
             person={this.props.person}
-            onCancel={this.onCancelEditStrings}
+            onCancel={() => this.props.onSetSubpage(null)}
             onSave={this.onSaveEditStrings}
           />
         }
-        {this.state.isEditTagsOpen &&
+        {this.props.subpage === SubPage.TAGS &&
           <EditTags
             allTags={this.props.allTags}
             personTags={this.props.person.tags}
-            onCancel={this.onCancelEditTags}
+            onCancel={() => this.props.onSetSubpage(null)}
             onSave={this.onSaveEditTags}
             onAddTag={this.props.onAddTag}
           />
         }
-        {this.state.isEditRelationshipsOpen &&
+        {this.props.subpage === SubPage.RELATIONSHIPS &&
           <EditRelationships
             allPeople={this.props.allPeople}
             person={this.props.person}
-            onCancel={this.onCancelEditRelationships}
+            onCancel={() => this.props.onSetSubpage(null)}
             onSave={this.onSaveEditRelationships}
           />
         }
-        {this.state.isEditEventsOpen &&
+        {this.props.subpage === SubPage.EVENTS &&
           <EditEvents
             person={this.props.person}
-            onCancel={this.onCancelEditEvents}
+            onCancel={() => this.props.onSetSubpage(null)}
             onSave={this.onSaveEditEvents}
           />
         }
-        {this.state.isEditKeyValuesOpen &&
+        {this.props.subpage === SubPage.KEYVALUES &&
           <EditKeyValues
             person={this.props.person}
-            onCancel={this.onCancelEditKeyValues}
+            onCancel={() => this.props.onSetSubpage(null)}
             onSave={this.onSaveEditKeyValues}
           />
         }
-        {this.state.isEditSocialNetworksOpen &&
+        {this.props.subpage === SubPage.SOCIALNETWORKS &&
           <EditSocialNetworks
             person={this.props.person}
-            onCancel={this.onCancelEditSocialNetworks}
+            onCancel={() => this.props.onSetSubpage(null)}
             onSave={this.onSaveEditSocialNetworks}
           />
         }

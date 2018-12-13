@@ -8,8 +8,6 @@ import '../fabric.css'
 import { Person } from '../models/person'
 import { Filter, FilterSet, User } from '../models/models'
 import { HEAD_IMAGE, baseBlob, getPhotoBlobName, PHOTO_HEIGHT, PHOTO_WIDTH } from '../Util'
-import Search from '../modals/Search'
-import ViewPerformance from '../modals/ViewPerformance'
 import ScaledColor from '../modals/ScaledColor'
 import DetailText from '../Detail/DetailText'
 import DetailTags from '../Detail/DetailTags'
@@ -18,6 +16,7 @@ import DetailRelationships from '../Detail/DetailRelationships'
 import DetailEvents from '../Detail/DetailEvents'
 import DetailKeyValues from '../Detail/DetailKeyValues'
 import DetailSocialNetworks from '../Detail/DetailSocialNetworks'
+import { Page } from '../App'
 import "./ViewPage.css"
 import { MAX_TIME } from '../models/const';
 
@@ -27,6 +26,7 @@ export interface ReceivedProps {
   user: User
   allPeople: Person[]
   filter: Filter
+  onSetPage: (page: Page, backpage: Page | null) => void
   onClickQuiz: () => void
   onContinueQuiz: () => void
   onEdit: () => void
@@ -41,46 +41,12 @@ export interface ReceivedProps {
 
 interface ComponentState { 
   photoIndex: number
-  isSearchOpen: boolean
-  isViewPerformanceOpen: boolean
 }
 
 class ViewPage extends React.Component<ReceivedProps, ComponentState> {
 
   state: ComponentState = {
-    photoIndex: 0,
-    isSearchOpen: false,
-    isViewPerformanceOpen: false
-  }
-
-  // --- Search ---
-  @OF.autobind
-  onCloseSearch(): void {
-    this.setState({isSearchOpen: false})
-  }
-
-  @OF.autobind
-  onSelectSearch(person:  Person): void {
-    this.setState({
-      isSearchOpen: false
-    })
-    this.props.onSelectPerson(person.personId!)
-  }
-
-  @OF.autobind
-  onClickSearch(): void {
-    this.setState({isSearchOpen: true})
-  }
-
-  // --- Performance ---
-  @OF.autobind
-  onCloseViewPerformance(): void {
-    this.setState({isViewPerformanceOpen: false})
-  }
-
-  @OF.autobind
-  onClickViewPerformance(): void {
-    this.setState({isViewPerformanceOpen: true})
+    photoIndex: 0
   }
 
   @OF.autobind
@@ -136,7 +102,7 @@ class ViewPage extends React.Component<ReceivedProps, ComponentState> {
                 <DetailText className="DetailName" text={this.props.person.lastName}/>
                 <div 
                   className="ViewScale" 
-                  onClick={this.onClickViewPerformance}
+                  onClick={() => this.props.onSetPage(Page.PERFORMANCE, Page.VIEW)}
                   role="button"
                 >
                   <ScaledColor
@@ -230,7 +196,7 @@ class ViewPage extends React.Component<ReceivedProps, ComponentState> {
                   />
                   <OF.IconButton
                       className="ButtonIcon ButtonPrimary FloatLeft"
-                      onClick={() => this.onClickSearch()}
+                      onClick={() => this.props.onSetPage(Page.SEARCH, Page.VIEW)}
                       iconProps={{ iconName: 'Search' }}
                   />
                   <OF.IconButton
@@ -270,19 +236,6 @@ class ViewPage extends React.Component<ReceivedProps, ComponentState> {
               </div>
             </div>
           }
-        {this.state.isSearchOpen &&
-          <Search
-            people={this.props.allPeople}
-            onCancel={this.onCloseSearch}
-            onSelect={this.onSelectSearch}
-          />
-        }
-        {this.state.isViewPerformanceOpen &&
-          <ViewPerformance
-            performance={this.props.person.photoPerformance}
-            onClose={this.onCloseViewPerformance}
-          />
-        }
       </div>
     );
   }
