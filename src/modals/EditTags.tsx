@@ -103,7 +103,7 @@ class EditTags extends React.Component<ReceivedProps, ComponentState> {
   @OF.autobind
   onRenderCell(tag: Tag, index: number, isScrolling: boolean): JSX.Element {
     return (
-      <div className="SectionBorder">
+      <div>
         <div className="FilterName">
           {tag.name}
         </div>

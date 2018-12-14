@@ -159,9 +159,24 @@ class App extends React.Component<{}, ComponentState> {
 
   @OF.autobind
   addToPersonList() {
-    this.setState({
-      personList: [...this.state.personList, this.state.selectedPerson!.personId!]
-    })
+    if (this.state.selectedPerson && this.state.selectedPerson.personId) {
+      let selectedPersonId = this.state.selectedPerson.personId
+      // Remove
+      if (this.state.personList.find(p => p === selectedPersonId)) {
+        this.setState({
+          personList: this.state.personList.filter(p => p != selectedPersonId)
+        })
+      }
+      // Or add
+      else {
+        this.setState({
+          personList: [...this.state.personList, this.state.selectedPerson!.personId!]
+        })
+      }
+    }
+    else {
+      console.log("WARNING: Unexpected missing selectdPerson or PersonId")
+    }
   }
   @OF.autobind 
   async onEdit() {

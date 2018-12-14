@@ -356,6 +356,93 @@ class EditPage extends React.Component<ReceivedProps, ComponentState> {
         />
       )
     }
+    else if (this.props.subpage === SubPage.BASIC) {
+      return (
+        <EditBasicInfo
+          person={this.props.person}
+          onCancel={() => this.props.onSetSubpage(null)}
+          onSave={this.onSaveEditStrings}
+        />
+      )
+    }
+    else if (this.props.subpage === SubPage.TAGS) {
+      return (
+        <EditTags
+          allTags={this.props.allTags}
+          personTags={this.props.person.tags}
+          onCancel={() => this.props.onSetSubpage(null)}
+          onSave={this.onSaveEditTags}
+          onAddTag={this.props.onAddTag}
+        />
+      )
+    }
+    else if (this.props.subpage === SubPage.RELATIONSHIPS) {
+      return (
+        <EditRelationships
+          allPeople={this.props.allPeople}
+          person={this.props.person}
+          onCancel={() => this.props.onSetSubpage(null)}
+          onSave={this.onSaveEditRelationships}
+        />
+      )
+    }
+    else if (this.props.subpage === SubPage.EVENTS) {
+      return (
+        <EditEvents
+          person={this.props.person}
+          onCancel={() => this.props.onSetSubpage(null)}
+          onSave={this.onSaveEditEvents}
+        />
+      )
+    }
+    else if (this.props.subpage === SubPage.KEYVALUES) {
+      return (
+        <EditKeyValues
+          person={this.props.person}
+          onCancel={() => this.props.onSetSubpage(null)}
+          onSave={this.onSaveEditKeyValues}
+        />
+      )
+    }
+    else if (this.props.subpage === SubPage.SOCIALNETWORKS) {
+      return (
+        <EditSocialNetworks
+          person={this.props.person}
+          onCancel={() => this.props.onSetSubpage(null)}
+          onSave={this.onSaveEditSocialNetworks}
+        />
+      )
+    }
+    else if (this.state.isConfirmDeleteOpen) {
+      return (
+        <ConfirmModal
+          title="Are you sure you want to delete"
+          subtitle={this.props.person.fullName()}
+          onCancel={this.onCancelDelete}
+          onConfirm={this.onConfirmDelete}
+        />
+      )
+    }
+    else if (this.state.isConfirmArchiveOpen) {
+      return (
+        <ConfirmModal
+          title="Are you sure you want to archive"
+          subtitle={this.props.person.fullName()}
+          onCancel={this.onCancelArchive}
+          onConfirm={this.onConfirmArchive}
+        />
+      )
+    }
+    else if (this.state.isConfirmDeletePhotoOpen) {
+      return (
+        <ConfirmModal
+          title="Are you sure you want to delete this photo?"
+          onCancel={this.onCancelDeletePhoto}
+          onConfirm={this.onConfirmDeletePhoto}
+        />
+      )
+    }
+
     return (
       <div className="ModalPage">
         <div className="HeaderHolder HeaderHolderTall">
@@ -541,75 +628,6 @@ class EditPage extends React.Component<ReceivedProps, ComponentState> {
             }
           </div>
         </div>
-        
-        {this.props.subpage === SubPage.BASIC &&
-          <EditBasicInfo
-            person={this.props.person}
-            onCancel={() => this.props.onSetSubpage(null)}
-            onSave={this.onSaveEditStrings}
-          />
-        }
-        {this.props.subpage === SubPage.TAGS &&
-          <EditTags
-            allTags={this.props.allTags}
-            personTags={this.props.person.tags}
-            onCancel={() => this.props.onSetSubpage(null)}
-            onSave={this.onSaveEditTags}
-            onAddTag={this.props.onAddTag}
-          />
-        }
-        {this.props.subpage === SubPage.RELATIONSHIPS &&
-          <EditRelationships
-            allPeople={this.props.allPeople}
-            person={this.props.person}
-            onCancel={() => this.props.onSetSubpage(null)}
-            onSave={this.onSaveEditRelationships}
-          />
-        }
-        {this.props.subpage === SubPage.EVENTS &&
-          <EditEvents
-            person={this.props.person}
-            onCancel={() => this.props.onSetSubpage(null)}
-            onSave={this.onSaveEditEvents}
-          />
-        }
-        {this.props.subpage === SubPage.KEYVALUES &&
-          <EditKeyValues
-            person={this.props.person}
-            onCancel={() => this.props.onSetSubpage(null)}
-            onSave={this.onSaveEditKeyValues}
-          />
-        }
-        {this.props.subpage === SubPage.SOCIALNETWORKS &&
-          <EditSocialNetworks
-            person={this.props.person}
-            onCancel={() => this.props.onSetSubpage(null)}
-            onSave={this.onSaveEditSocialNetworks}
-          />
-        }
-        {this.state.isConfirmDeleteOpen &&
-          <ConfirmModal
-            title="Are you sure you want to delete"
-            subtitle={this.props.person.fullName()}
-            onCancel={this.onCancelDelete}
-            onConfirm={this.onConfirmDelete}
-          />
-        }
-        {this.state.isConfirmArchiveOpen &&
-          <ConfirmModal
-            title="Are you sure you want to archive"
-            subtitle={this.props.person.fullName()}
-            onCancel={this.onCancelArchive}
-            onConfirm={this.onConfirmArchive}
-          />
-        }
-        {this.state.isConfirmDeletePhotoOpen &&
-          <ConfirmModal
-            title="Are you sure you want to delete this photo?"
-            onCancel={this.onCancelDeletePhoto}
-            onConfirm={this.onConfirmDeletePhoto}
-          />
-        }
       </div>
     );
   }

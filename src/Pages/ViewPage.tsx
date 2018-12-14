@@ -109,10 +109,10 @@ class ViewPage extends React.Component<ReceivedProps, ComponentState> {
  
   @OF.autobind
   onSwipeEnd(event: any) {
-    if (this.state.xMove > 50) {
+    if (this.state.xMove > 100 && Math.abs(this.state.yMove) < 80) {
       this.onNextPerson()
     }
-    else if (this.state.xMove < 50) {
+    else if (this.state.xMove < 100 && Math.abs(this.state.yMove) < 80) {
       this.onPrevPerson()
     }
   }
@@ -150,11 +150,13 @@ class ViewPage extends React.Component<ReceivedProps, ComponentState> {
                     {this.props.person.lastName}
                 </div>
                 {this.props.user.isAdmin &&
-                  <OF.Button
-                      className={`ButtonIcon ButtonListCount${inList ? ' ButtonListCountSelected' : ''}`}
+                  <div
+                      className={`ButtonListCount${inList ? ' ButtonListCountSelected' : ''}`}
                       onClick={this.props.onAddToPersonList}
-                      text={this.props.personList.length.toString()}
-                  />
+                      role="button"
+                  >
+                    {this.props.personList.length.toString()}
+                  </div>
                 }
                 <div 
                   className="ViewScale" 
