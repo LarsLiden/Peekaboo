@@ -22,10 +22,10 @@ class DetailTags extends React.Component<ReceivedProps, {}> {
       }
       return (
         <div className={`DetailText ${this.props.inEdit ? 'DetailEdit'  : ''}`}>
-          <div className={`DetailTitle ${this.props.inEdit ? 'DetailEditTitle'  : ''}`}>
+          <div className={`DetailTitle`}>
             Tags
           </div>          
-          <div className="DetailTags">
+          <div className="DetailBody">
               {this.props.tags.map(tag => {
                 const delimeter = tag !== this.props.tags[this.props.tags.length - 1] ? ",  " : ""
                 const isSelected = this.props.filter.required.find(r => r === tag)

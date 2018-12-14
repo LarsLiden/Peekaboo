@@ -130,16 +130,25 @@ class ViewPage extends React.Component<ReceivedProps, ComponentState> {
       
     return (
         <Swipe
-          onSwipeEnd={this.onSwipeEnd}>
+          onSwipeStart={this.onSwipeStart}
+          onSwipeEnd={this.onSwipeEnd}
+          onSwipeMove={this.onSwipeMove}
+        >
         <div className="ModalPage">
           <div className="HeaderHolder HeaderHolderTall">
             <div className="HeaderContent HeaderNoPadding">
               <div className="ViewBodyNameColumn">      
-                <DetailText className="DetailName" text={this.props.person.firstName}/>
+                <div className="DetailName">
+                  {this.props.person.firstName}
+                </div>
                 {this.props.person.nickName &&
-                  <DetailText className="DetailName" text={`"${this.props.person.nickName}"`}/>
+                  <div className="DetailName">
+                    {`"${this.props.person.nickName}"`}
+                  </div>
                 }
-                <DetailText className="DetailName" text={this.props.person.lastName}/>
+                <div className="DetailName">
+                    {this.props.person.lastName}
+                </div>
                 {this.props.user.isAdmin &&
                   <OF.Button
                       className={`ButtonIcon ButtonListCount${inList ? ' ButtonListCountSelected' : ''}`}

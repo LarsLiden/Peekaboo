@@ -44,10 +44,10 @@ class DetailRelationships extends React.Component<ReceivedProps, {}> {
     }
       return (
         <div className={`DetailText ${this.props.inEdit ? 'DetailEdit'  : ''}`}>
-          <div className={`DetailTitle ${this.props.inEdit ? 'DetailEditTitle'  : ''}`}>
+          <div className={`DetailTitle`}>
             Relationships
           </div>
-          <div className="DetailLongBody">
+          <div className="DetailBody DetailLongBody">
             <OF.List
                 className="DetailRelationshipList"
                 items={this.props.relationships}

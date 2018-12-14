@@ -73,8 +73,8 @@ class EditKeyValues extends React.Component<ReceivedProps, ComponentState> {
   @OF.autobind
   onRenderCell(keyValue: KeyValue, index: number, isScrolling: boolean): JSX.Element {
     return (
-      <div className="FilterLine">
-        <div className='EditSection EditKeyValueSection'>
+      <div className="SectionBorder">
+        <div className='EditKeyValueSection'>
           <div className="DetailText DetailEditKeyValue">
             <DetailEditText
               label="Key"

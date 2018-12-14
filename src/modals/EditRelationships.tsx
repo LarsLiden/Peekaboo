@@ -106,8 +106,8 @@ class EditRelationships extends React.Component<ReceivedProps, ComponentState> {
     const person = this.props.allPeople.find(p => p.personId === relationship.personId)
     const name = person ? person.fullName() : "--"
     return (
-      <div className="FilterLine">
-        <div className='EditSection EditRelationshipSection'>
+      <div className="SectionBorder">
+        <div className='EditRelationshipSection'>
           <div>
             <OF.Dropdown
               className="EditDropdown"
@@ -126,7 +126,7 @@ class EditRelationships extends React.Component<ReceivedProps, ComponentState> {
               {name}
             </OF.Label>
             <OF.IconButton
-                className="ButtonIcon ButtonDark FloatRight"
+                className="ButtonIcon ButtonDark EditRelationshipSearchButton"
                 onClick={() => this.onClickSearch(relationship)}
                 iconProps={{ iconName: 'Search' }}
             />

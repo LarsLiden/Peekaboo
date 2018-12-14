@@ -78,8 +78,8 @@ class EditSocialNetworks extends React.Component<ReceivedProps, ComponentState> 
   @OF.autobind
   onRenderCell(socialNet: SocialNet, index: number, isScrolling: boolean): JSX.Element {
     return (
-      <div className="FilterLine">
-        <div className='EditSection'>
+      <div className="SectionBorder">
+        <div>
           <div className='EditDropdownSection'>
             <OF.Dropdown
               className="EditDropdown"

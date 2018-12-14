@@ -32,7 +32,7 @@ class DetailText extends React.Component<ReceivedProps, {}> {
 
     return (
       <div className={`DetailText AlignLeft"}`}>
-        <div className="DetailTitle DetailEditTitle">
+        <div className="DetailTitle DetailTitlePlain">
           {this.props.label}
         </div>
         <OF.TextField

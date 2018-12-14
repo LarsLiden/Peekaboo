@@ -95,7 +95,7 @@ class Search extends React.Component<ReceivedProps, ComponentState> {
     }
 
     return (
-      <div className="FilterLine">
+      <div className="SectionBorder">
         <OF.Button 
           className="SearchText"
           onClick={() => {

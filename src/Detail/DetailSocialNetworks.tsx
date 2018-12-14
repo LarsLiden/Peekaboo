@@ -42,10 +42,10 @@ class DetailSocialNetworks extends React.Component<ReceivedProps, {}> {
     }
       return (
         <div className={`DetailText ${this.props.inEdit ? 'DetailEdit'  : ''}`}>
-          <div className={`DetailTitle ${this.props.inEdit ? 'DetailEditTitle'  : ''}`}>
+          <div className={`DetailTitle`}>
             SOCIAL NETWORK
           </div>
-          <div className="DetailLongBody">
+          <div className="DetailBody DetailLongBody">
             <OF.DetailsList
                 isHeaderVisible={false}
                 compact={true}

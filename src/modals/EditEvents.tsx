@@ -106,8 +106,8 @@ class EditEvents extends React.Component<ReceivedProps, ComponentState> {
   @OF.autobind
   onRenderCell(event: Event, index: number, isScrolling: boolean): JSX.Element {
     return (
-      <div className="FilterLine">
-        <div className='EditSection EditKeyValueSection'>
+      <div className="SectionBorder">
+        <div className='EditKeyValueSection'>
           <div className="DetailText DetailEditKeyValue">
             <DetailEditText
               label="Description"
@@ -121,7 +121,7 @@ class EditEvents extends React.Component<ReceivedProps, ComponentState> {
               value={event.location}
               autoFocus={event.description !== "" && event.location === ""}
             />
-            <div className="DetailTitle DetailEditTitle">
+            <div className="DetailTitle DetailTitlePlain">
               Date
             </div>
             <OF.DatePicker

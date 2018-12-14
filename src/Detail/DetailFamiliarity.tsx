@@ -33,21 +33,17 @@ class DetailFamiliarity extends React.Component<ReceivedProps, ComponentState> {
       let r: number
       let g: number
 
-      if (familiarity <= 50)
-      {
+      if (familiarity <= 50) {
           r = 255;
       }
-      else
-      {
+      else {
           r = (255*(1-(familiarity-50.0)/50))
       }
 
-      if (familiarity > 50)
-      {
+      if (familiarity > 50) {
           g = 255
       }
-      else
-      {
+      else {
           g = (255*(familiarity/50))
       }
 

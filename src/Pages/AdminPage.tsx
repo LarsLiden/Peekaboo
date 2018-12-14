@@ -115,7 +115,7 @@ class AdminPage extends React.Component<ReceivedProps, ComponentState> {
     let joined = new Date(user.createdDateTime).toLocaleDateString()
     let last = new Date(user.lastUsedDatTime).toLocaleDateString()
     return (
-      <div className="FilterLine">
+      <div className="SectionBorder">
         <div className='AdminUserSection'>
           <div className={`AdminUserText${user.isAdmin || user.googleId === "sample" ? ' SearchBold' : ''}`}>
             {user.name}

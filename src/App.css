@@ -71,21 +71,22 @@
   --nav-link-padding: 1em 2em;
 
   --max-width: 350px;
+  --color-bodybackground: #002644;
 }
 
 .ms-DetailsRow {
-  background-color: #000000 !important;
+  background-color: var(--color-bodybackground) !important;
   color: white !important;
   font-size: 14px
 }
 
 .ms-DetailsRow:hover {
-  background-color: #000000 !important;
+  background-color: var(--color-bodybackground) !important;
   color: white !important;
 }
 
 .ms-DetailsRow:focus {
-  background-color: #000000 !important;
+  background-color: var(--color-bodybackground) !important;
   color: white !important;
 }
 
@@ -126,6 +127,10 @@
   margin-top: 0px !important;
 }
 
+.SectionBorder {
+  border-bottom: solid 1px var(--color-themePrimary);
+
+}
 .BackgroundImage {
   position: absolute !important;
   top: 0px;
@@ -253,7 +258,6 @@
 
 .AdminUserSection {
   display: inline-block;
-  border-top: solid 1px #555555;
 }
 
 .AdminUserText {
@@ -292,10 +296,6 @@
   text-align: left;
 }
 
-.EditSection {
-  border-top: solid 1px #555555;
-}
-
 .EditKeyValueSection {
   height: 100%;
 }
@@ -304,7 +304,19 @@
   height: 55px;
 }
 
+.EditPageSection {
+  position: relative;
+}
+
+.EditPageButton {
+  position: absolute !important;
+  top: 8px;
+  right: 3px;
+  margin: 0px;
+}
+
 .EditRelationshipSection {
+  position: relative;
   height: 120px;
 }
 
@@ -325,6 +337,12 @@
   margin-top: 25px !important;
 }
 
+.EditRelationshipSearchButton{
+  position: absolute !important;
+  top: 60px;
+  right: 0px;
+}
+
 .LoginTextInput {
   width: 200px;
   margin-left: auto !important;
@@ -340,7 +358,7 @@
   top: 0px;
   left: 0px;
   background-color: #000000;
-  z-index: 100;
+ 
 }
 
 .ModalBodyHolder {
@@ -353,13 +371,12 @@
 }
 
 .ModalBodyContent {
-  width: 300px;
   overflow-x: hidden;
   margin-left: auto;
   margin-right: auto;
   margin-bottom: 90px;
   margin-top: 60px;
-  max-width: var(--max-width);
+  width: var(--max-width);
 }
 
 .ModalBodyHeaderMedium {

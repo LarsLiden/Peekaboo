@@ -118,7 +118,7 @@ class FilterPage extends React.Component<ReceivedProps, ComponentState> {
     let isRequired = this.state.filter.required.indexOf(item.name) > -1
     let isBlocked = this.state.filter.blocked.indexOf(item.name) > -1
     return (
-      <div className="FilterLine">
+      <div className="SectionBorder">
         <div 
           className={`FilterName${isBlocked ? ' StrikeThrough' : ''}`}
         >

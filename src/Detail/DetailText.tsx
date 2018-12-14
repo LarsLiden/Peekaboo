@@ -11,23 +11,16 @@ export interface ReceivedProps {
   className?: string
   text: string
   isLong?: boolean
+  showEmpty?: boolean
 }
 
-interface ComponentState { 
-  inEditMode: boolean
-}
-
-class DetailText extends React.Component<ReceivedProps, ComponentState> {
-
-  state: ComponentState = {
-    inEditMode: false
-  }
+class DetailText extends React.Component<ReceivedProps, {}> {
 
   public render() {
-    if (!this.props.text) {
+    if (!this.props.text && !this.props.showEmpty) {
       return null
     }
-    const bodyClass = this.props.isLong ? "DetailLongBody" : "DetailBody"
+    const bodyClass = `DetailBody${this.props.isLong ? " DetailLongBody" : ""}`
     return (
       <div className={`DetailText ${this.props.className ? this.props.className : ""}`}>
         {this.props.title &&

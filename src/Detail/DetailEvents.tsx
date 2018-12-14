@@ -22,23 +22,25 @@ class DetailEvents extends React.Component<ReceivedProps, {}> {
       }
       return (
         <div className={`DetailText ${this.props.inEdit ? 'DetailEdit'  : ''}`}>
-          <div className={`DetailTitle ${this.props.inEdit ? 'DetailEditTitle'  : ''}`}>
+          <div className={`DetailTitle`}>
             Events
           </div>
-          {this.props.events.map(event => {
-              let dateString = event.date ? printDate(new Date(event.date)) : ""
-              return (
-                <div className="DetailLongBody" key={event.description}>
-                  <div className="DetailEventDate">
-                    <DetailText text={dateString}/>
+          <div className="DetailBody">
+            {this.props.events.map(event => {
+                let dateString = event.date ? printDate(new Date(event.date)) : ""
+                return (
+                  <div className="DetailLongBody" key={event.description}>
+                    <div className="DetailEventDate">
+                      <DetailText text={dateString}/>
+                    </div>
+                    <div className="DetailEventBody">
+                      <DetailText text={event.location} />
+                      <DetailText text={event.description}/>
+                    </div>
                   </div>
-                  <div className="DetailEventBody">
-                    <DetailText text={event.location} />
-                    <DetailText text={event.description}/>
-                  </div>
-                </div>
-              )}
-          )}
+                )}
+            )}
+          </div>
         </div>
     )
   }

@@ -401,37 +401,75 @@ class EditPage extends React.Component<ReceivedProps, ComponentState> {
 
         <div className="ModalBodyHolder">
           <div className="ModalBodyContent ModalBodyHeaderHolderTall">
-            <div className='EditSection'>
-              <div className={`DetailTitle DetailEditTitle`}>
-                Basic Info
-              </div>
-              <div className="DetailText DetailEdit">
-                <DetailText title="First Name" text={this.props.person.firstName} isLong={true}/>                
-                <DetailText title="Last Name" text={this.props.person.lastName} isLong={true}/>
-                <DetailText title="Nickname" text={this.props.person.nickName} isLong={true}/>
-                <DetailText title="Alt Name" text={this.props.person.alternateName} isLong={true}/>
-                <DetailText title="Maiden Name" text={this.props.person.maidenName} isLong={true}/>
-                <DetailText title="Description" text={this.props.person.description} isLong={true}/>
-              </div>                  
+            <div className="EditPageSection">
+              <DetailText title="First Name" text={this.props.person.firstName} showEmpty={true} isLong={true}/>                
               <OF.IconButton
-                  className="ButtonIcon ButtonDark"
+                className="ButtonIcon ButtonDark EditPageButton"
+                onClick={() => this.props.onSetSubpage(SubPage.BASIC)}
+                iconProps={{ iconName: 'Edit' }}
+              />
+            </div>
+            <div className="EditPageSection">
+              <DetailText title="Description" text={this.props.person.description} showEmpty={true} isLong={true}/> 
+              <OF.IconButton
+                  className="ButtonIcon ButtonDark EditPageButton"
                   onClick={() => this.props.onSetSubpage(SubPage.BASIC)}
                   iconProps={{ iconName: 'Edit' }}
               />
             </div>
-            <div className='EditSection'>
+            <div className="EditPageSection">
+              <DetailText title="Last Name" text={this.props.person.lastName} showEmpty={true} isLong={true}/>
+              <OF.IconButton
+                  className="ButtonIcon ButtonDark EditPageButton"
+                  onClick={() => this.props.onSetSubpage(SubPage.BASIC)}
+                  iconProps={{ iconName: 'Edit' }}
+              />
+            </div>  
+            <div className="EditPageSection">
+              <DetailText title="Nickname" text={this.props.person.nickName} showEmpty={true} isLong={true}/>
+              <OF.IconButton
+                  className="ButtonIcon ButtonDark EditPageButton"
+                  onClick={() => this.props.onSetSubpage(SubPage.BASIC)}
+                  iconProps={{ iconName: 'Edit' }}
+              />
+            </div>
+            <div className="EditPageSection">
+              <DetailText title="Alt Name" text={this.props.person.alternateName} showEmpty={true} isLong={true}/>
+              <OF.IconButton
+                  className="ButtonIcon ButtonDark EditPageButton"
+                  onClick={() => this.props.onSetSubpage(SubPage.BASIC)}
+                  iconProps={{ iconName: 'Edit' }}
+              />
+            </div>
+            <div className="EditPageSection">
+              <DetailText title="Maiden Name" text={this.props.person.maidenName} showEmpty={true} isLong={true}/>
+              <OF.IconButton
+                  className="ButtonIcon ButtonDark EditPageButton"
+                  onClick={() => this.props.onSetSubpage(SubPage.BASIC)}
+                  iconProps={{ iconName: 'Edit' }}
+              />
+            </div>
+            <div className="EditPageSection">
+              <DetailText title="Description" text={this.props.person.description} showEmpty={true} isLong={true}/> 
+              <OF.IconButton
+                  className="ButtonIcon ButtonDark EditPageButton"
+                  onClick={() => this.props.onSetSubpage(SubPage.BASIC)}
+                  iconProps={{ iconName: 'Edit' }}
+              />
+            </div>
+            <div className="EditPageSection">
               <DetailTags 
                 inEdit={true}
                 tags={this.props.person.tags}
                 filter={this.props.filter}
               />
               <OF.IconButton
-                  className="ButtonIcon ButtonDark"
+                  className="ButtonIcon ButtonDark EditPageButton"
                   onClick={() => this.props.onSetSubpage(SubPage.TAGS)}
                   iconProps={{ iconName: 'Edit' }}
               />
             </div>
-            <div className='EditSection'>
+            <div className="EditPageSection">
               <DetailRelationships
                 inEdit={true}
                 relationships={this.props.person.relationships}
@@ -439,40 +477,40 @@ class EditPage extends React.Component<ReceivedProps, ComponentState> {
                 onSelectPerson={this.props.onSelectPerson}
               />
               <OF.IconButton
-                  className="ButtonIcon ButtonDark"
+                  className="ButtonIcon ButtonDark EditPageButton"
                   onClick={() => this.props.onSetSubpage(SubPage.RELATIONSHIPS)}
                   iconProps={{ iconName: 'Edit' }}
               />
             </div>
-            <div className='EditSection'>
+            <div className="EditPageSection">
               <DetailEvents
                 inEdit={true}
                 events={this.props.person.events}
               />
               <OF.IconButton
-                className="ButtonIcon ButtonDark"
+                className="ButtonIcon ButtonDark EditPageButton"
                 onClick={() => this.props.onSetSubpage(SubPage.EVENTS)}
                 iconProps={{ iconName: 'Edit' }}
               />
             </div>
-            <div className='EditSection'>
+            <div className="EditPageSection">
               <DetailKeyValues
                 inEdit={true}
                 keyValues={this.props.person.keyValues}
               />
               <OF.IconButton
-                  className="ButtonIcon ButtonDark"
+                  className="ButtonIcon ButtonDark EditPageButton"
                   onClick={() => this.props.onSetSubpage(SubPage.KEYVALUES)}
                   iconProps={{ iconName: 'Edit' }}
               />
             </div>
-            <div className='EditSection'>
+            <div className="EditPageSection">
               <DetailSocialNetworks
                 inEdit={true}
                 socialNets={this.props.person.socialNets}
               />
               <OF.IconButton
-                  className="ButtonIcon ButtonDark"
+                  className="ButtonIcon ButtonDark EditPageButton"
                   onClick={() => this.props.onSetSubpage(SubPage.SOCIALNETWORKS)}
                   iconProps={{ iconName: 'Edit' }}
               />
