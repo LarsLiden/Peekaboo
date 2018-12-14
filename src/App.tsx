@@ -58,6 +58,7 @@ interface ComponentState {
   filteredTags: Tag[]
   filteredPeopleCount: number
   selectedPerson: Person | null
+  personList: string[]
   filter: Filter
   error: string | null
   isFull: boolean
@@ -84,6 +85,7 @@ class App extends React.Component<{}, ComponentState> {
     subpage: null,
     backpage: null,
     selectedPerson: null,
+    personList: [],
     filter: {
       required: [], 
       blocked: [], 
@@ -98,14 +100,16 @@ class App extends React.Component<{}, ComponentState> {
   async onSetPage(page: Page, backpage: Page | null) {
     await setStatePromise(this, {
       page,
-      backpage
+      backpage,
+      isFull: true
     })
   }
   
   @OF.autobind
   async onSetSubpage(subpage: string | null) {
     await setStatePromise(this, {
-      subpage
+      subpage,
+      isFull: true
     })
   } 
 
@@ -131,7 +135,6 @@ class App extends React.Component<{}, ComponentState> {
 
   @OF.autobind 
   async onClickFilter() {
-    this.goFull()
     if (this.state.filteredTags.length === 0) {
       let filteredPeople = Convert.filteredPeople(this.state.allPeople, this.state.filter)
       let tags = Convert.filteredTags(filteredPeople, this.state.allPeople, this.state.filter)
@@ -154,6 +157,12 @@ class App extends React.Component<{}, ComponentState> {
     }
   }
 
+  @OF.autobind
+  addToPersonList() {
+    this.setState({
+      personList: [...this.state.personList, this.state.selectedPerson!.personId!]
+    })
+  }
   @OF.autobind 
   async onEdit() {
     if (this.state.page === Page.VIEWQUIZ) {
@@ -189,7 +198,6 @@ class App extends React.Component<{}, ComponentState> {
   }
 
   @OF.autobind async onLoginComplete(user: User) {
-    this.goFull()
     await setStatePromise(this, {
       user: user,
       selectedPerson: null
@@ -349,7 +357,9 @@ class App extends React.Component<{}, ComponentState> {
   @OF.autobind
   async onExportToUser(destination: User) {
     try {
-      let peopleIds = this.state.filterSet.people.map(p => p.personId!)
+      let peopleIds = this.state.personList.length > 0 
+        ? this.state.personList
+        : this.state.filterSet.people.map(p => p.personId!)
       await Client.exportToUser(this.state.user!, destination, peopleIds) 
     }
     catch {
@@ -580,11 +590,6 @@ class App extends React.Component<{}, ComponentState> {
     }
   }
 
-  @OF.autobind
-  goFull() {
-    this.setState({ isFull: true });
-  }
-
   public render() {
     let baseClass = 'App'
     if (this.state.user && this.state.user.isSpoof) {
@@ -593,11 +598,8 @@ class App extends React.Component<{}, ComponentState> {
     return (
       <Fullscreen
           enabled={this.state.isFull}
-          onChange={isFull => this.setState({isFull})}
+          onChange={isFull => this.setState({isFull: true})}
       >
-      <button onClick={this.goFull}>
-          Go Fullscreen
-        </button>
       <div className={baseClass}>
         {this.state.page === Page.LOGIN &&
          <LoginPage
@@ -618,6 +620,7 @@ class App extends React.Component<{}, ComponentState> {
             user={this.state.user!}
             filter={this.state.filter}
             allPeople={this.state.allPeople}
+            personList={this.state.personList}
             onSetPage={this.onSetPage}
             onClickQuiz={this.onQuiz}
             onContinueQuiz={() => this.onSetPage(Page.QUIZ, Page.VIEW)}
@@ -625,6 +628,7 @@ class App extends React.Component<{}, ComponentState> {
             onClickSort={() => this.onSetPage(Page.SORT, Page.VIEW)}
             onClickAdmin={this.onClickAdmin}
             onEdit={this.onEdit}
+            onAddToPersonList={this.addToPersonList}
             onNewPerson={this.onNewPerson}
             onNextPerson={this.onNextPerson}
             onPrevPerson={this.onPrevPerson}
@@ -676,6 +680,7 @@ class App extends React.Component<{}, ComponentState> {
             user={this.state.user}
             users={this.state.users}
             filterSet={this.state.filterSet}
+            personList={this.state.personList}
             onDeleteUser={this.onDeleteUser}
             onExportToUser={this.onExportToUser}
             onImport={this.onClickImport}

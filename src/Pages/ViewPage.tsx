@@ -16,6 +16,7 @@ import DetailRelationships from '../Detail/DetailRelationships'
 import DetailEvents from '../Detail/DetailEvents'
 import DetailKeyValues from '../Detail/DetailKeyValues'
 import DetailSocialNetworks from '../Detail/DetailSocialNetworks'
+import Swipe from 'react-easy-swipe'
 import { Page } from '../App'
 import "./ViewPage.css"
 import { MAX_TIME } from '../models/const';
@@ -26,6 +27,7 @@ export interface ReceivedProps {
   user: User
   allPeople: Person[]
   filter: Filter
+  personList: string[]
   onSetPage: (page: Page, backpage: Page | null) => void
   onClickQuiz: () => void
   onContinueQuiz: () => void
@@ -36,17 +38,22 @@ export interface ReceivedProps {
   onNewPerson: () => void
   onNextPerson: () => void
   onPrevPerson: () => void
+  onAddToPersonList: () => void
   onSelectPerson: (personId: string) => void
 }
 
 interface ComponentState { 
   photoIndex: number
+  xMove: number
+  yMove: number
 }
 
 class ViewPage extends React.Component<ReceivedProps, ComponentState> {
 
   state: ComponentState = {
-    photoIndex: 0
+    photoIndex: 0,
+    xMove: 0,
+    yMove: 0
   }
 
   @OF.autobind
@@ -81,6 +88,35 @@ class ViewPage extends React.Component<ReceivedProps, ComponentState> {
     this.props.onPrevPerson()
   }
 
+  @OF.autobind
+  onSwipeStart(event: any) {
+    this.setState({
+      xMove: 0,
+      yMove: 0
+    })
+    console.log('Start swiping...', event);
+  }
+ 
+  @OF.autobind
+  onSwipeMove(position: any, event: any) {
+    this.setState({
+      xMove: this.state.xMove + position.x,
+      yMove: this.state.yMove + position.y
+    })
+    console.log(`Moved ${position.x} pixels horizontally`, event);
+    console.log(`Moved ${position.y} pixels vertically`, event);
+  }
+ 
+  @OF.autobind
+  onSwipeEnd(event: any) {
+    if (this.state.xMove > 50) {
+      this.onNextPerson()
+    }
+    else if (this.state.xMove < 50) {
+      this.onPrevPerson()
+    }
+  }
+
   public render() {
     let photoBlobName = HEAD_IMAGE
     if (this.props.person.photoFilenames.length > 0) {
@@ -90,7 +126,11 @@ class ViewPage extends React.Component<ReceivedProps, ComponentState> {
     let width = 160
     let height = (PHOTO_HEIGHT / PHOTO_WIDTH) * width
     let scale = 100 - Math.round((1 - (this.props.person.photoPerformance.avgTime / MAX_TIME)) * 100)
+    let inList = this.props.personList.find(p => p === this.props.person.personId)
+      
     return (
+        <Swipe
+          onSwipeEnd={this.onSwipeEnd}>
         <div className="ModalPage">
           <div className="HeaderHolder HeaderHolderTall">
             <div className="HeaderContent HeaderNoPadding">
@@ -100,6 +140,13 @@ class ViewPage extends React.Component<ReceivedProps, ComponentState> {
                   <DetailText className="DetailName" text={`"${this.props.person.nickName}"`}/>
                 }
                 <DetailText className="DetailName" text={this.props.person.lastName}/>
+                {this.props.user.isAdmin &&
+                  <OF.Button
+                      className={`ButtonIcon ButtonListCount${inList ? ' ButtonListCountSelected' : ''}`}
+                      onClick={this.props.onAddToPersonList}
+                      text={this.props.personList.length.toString()}
+                  />
+                }
                 <div 
                   className="ViewScale" 
                   onClick={() => this.props.onSetPage(Page.PERFORMANCE, Page.VIEW)}
@@ -237,6 +284,7 @@ class ViewPage extends React.Component<ReceivedProps, ComponentState> {
             </div>
           }
       </div>
+        </Swipe>
     );
   }
 }

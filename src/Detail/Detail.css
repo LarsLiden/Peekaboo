@@ -39,8 +39,14 @@
 
 .DetailTitle {
   text-transform: uppercase;
-  font-size: 8px;
-  color: #777777;
+  font-size: 12px;
+  color: #aaaaaa;
+  background-color: #003763;
+  padding-left: 5px;
+  border-top-left-radius: 8px;
+  border-top-right-radius: 5px;
+  margin-top: 5px;
+  line-height: 16px;
 }
 
 .DetailEditTitle {
@@ -68,7 +74,7 @@
 .DetailEdit {
   display: inline-block;
   margin-top: 5px;
-  width: 240px;
+  width: 290px;
   text-align: left;
 }
 

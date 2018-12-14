@@ -82,12 +82,12 @@ class CropPage extends React.Component<ReceivedProps, ComponentState> {
             <div className="FooterHolder"> 
               <div className="FooterContent">
                   <OF.IconButton
-                      className="ButtonIcon ButtonPrimary"
+                      className="ButtonIcon ButtonPrimary FloatLeft"
                       onClick={this.onSave}
                       iconProps={{ iconName: 'Save' }}
                   />
                   <OF.IconButton
-                      className="ButtonIcon ButtonPrimary"
+                      className="ButtonIcon ButtonPrimary FloatRight"
                       onClick={this.props.onClose}
                       iconProps={{ iconName: 'ChromeClose' }}
                   />

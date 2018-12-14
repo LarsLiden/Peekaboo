@@ -163,6 +163,19 @@
   width: 40px !important;
 }
 
+.ButtonListCount {
+  width: 30px !important;
+  height: 20px !important;
+  position: absolute !important;
+  bottom: 38px;
+  right: 10px;
+  border-radius: 5px !important;
+  background-color: #555555 !important;
+}
+.ButtonListCountSelected {
+  background-color: #005500 !important;
+}
+
 .ButtonPrimary {
   background-color: var(--color-themePrimary) !important;
 }
@@ -193,6 +206,10 @@
   border-radius: 10px;
   font-family: "Arial Black", Gadget, sans-serif !important;
   font-size: 16px;
+}
+
+.LoginButton:focus {
+  outline: none !important;
 }
 
 .SearchInput {
@@ -250,6 +267,15 @@
 
 .AdminButtons {
   float: right;
+}
+
+.AdminPersonListCount {
+  width: 50px;
+  background-color: #006600;
+  display: inline-block;
+  border-radius: 5px;
+  line-height: 40px;
+  margin-top: 13px;
 }
 
 .EditImageColumn {

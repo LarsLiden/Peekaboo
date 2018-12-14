@@ -346,28 +346,18 @@ class EditPage extends React.Component<ReceivedProps, ComponentState> {
     }
     let width = 160
     let height = (PHOTO_HEIGHT / PHOTO_WIDTH) * width
-    /*const modalOpen = 
-      this.state.isConfirmDeletePhotoOpen
-      || this.state.isConfirmArchiveOpen
-      || this.state.isConfirmDeleteOpen
-      || this.state.isEditSocialNetworksOpen
-      || this.state.isEditKeyValuesOpen
-      || this.state.isEditEventsOpen
-      || this.state.isEditRelationshipsOpen
-      || this.state.isEditTagsOpen
-      || this.state.isEditBasicInfoOpen
-      || this.state.imageURL*/
 
+    if (this.state.imageURL) {
+      return (
+        <CropPage
+          imageURL={this.state.imageURL}
+          onClose={this.onCloseCropper}
+          onSave={(imageData) => this.onSaveCrop(imageData)}
+        />
+      )
+    }
     return (
       <div className="ModalPage">
-        {this.state.imageURL &&
-          <CropPage
-            imageURL={this.state.imageURL}
-            onClose={this.onCloseCropper}
-            onSave={(imageData) => this.onSaveCrop(imageData)}
-          />
-        }
-     
         <div className="HeaderHolder HeaderHolderTall">
           <div className="HeaderContent HeaderNoPadding">
             <div className="EditImageColumn">

@@ -13,6 +13,7 @@
     "office-ui-fabric-react": "^6.78.0",
     "react": "^16.5.2",
     "react-dom": "^16.5.2",
+    "react-easy-swipe": "0.0.17",
     "react-file-picker": "0.0.5",
     "react-full-screen": "^0.2.3",
     "react-google-login": "^3.2.1",

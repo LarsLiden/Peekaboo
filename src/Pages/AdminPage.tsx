@@ -12,6 +12,7 @@ export interface ReceivedProps {
   user: User
   users: User[]
   filterSet: FilterSet
+  personList: string[]
   onDeleteUser: (user: User) => {}
   onExportToUser: (user: User) => {}
   onImport: () => {}
@@ -179,6 +180,11 @@ class AdminPage extends React.Component<ReceivedProps, ComponentState> {
                 onClick={this.onClickClose}
                 iconProps={{ iconName: 'ChromeBack' }}
             />
+            {this.props.personList.length > 0 &&
+              <div className="AdminPersonListCount">
+                {this.props.personList.length.toString()}
+              </div>
+            }
             <OF.IconButton
               className="ButtonIcon ButtonPrimary FloatRight"
               onClick={this.onClickImport}
@@ -196,7 +202,9 @@ class AdminPage extends React.Component<ReceivedProps, ComponentState> {
         }
         {this.state.isConfirmExportToUser &&
           <ConfirmModal
-            title={`Are you sure you want to export ${this.props.filterSet.people.length} people to`}
+            title={this.props.personList.length === 0 
+              ? `Are you sure you want to export FILTER ${this.props.filterSet.people.length} people to`
+              : `Are you sure you want to export LIST ${this.props.personList.length} people to`}
             subtitle={this.state.isConfirmExportToUser.name}
             onCancel={this.onCancelExportToUser}
             onConfirm={this.onConfirmExportToUser}
