@@ -22,9 +22,10 @@ import AdminPage from './Pages/AdminPage'
 import LoginPage from './Pages/LoginPage'
 import ViewPage from './Pages/ViewPage'
 import EditPage from './Pages/EditPage'
+import InstallPage from './Pages/InstallPage'
 import Search from './modals/Search'
 import ViewPerformance from './modals/ViewPerformance'
-//import Screenfull from 'screenfull-react'
+import BeforeInstallPromptEvent from './models/beforeInstallPromptEvent'
 
 export enum Page {
   LOGIN = "MENU",
@@ -39,7 +40,8 @@ export enum Page {
   EDIT = "EDIT",
   EDITQUIZ = "EDITQUIZ",
   PERFORMANCE = "PERFORMANCE",
-  SEARCH = "SEARCH"
+  SEARCH = "SEARCH",
+  INSTALL = "INSTALL"
 }
 
 interface ComponentState {
@@ -62,7 +64,7 @@ interface ComponentState {
   personList: string[]
   filter: Filter
   error: string | null
-  isFull: boolean
+  installEvent: BeforeInstallPromptEvent | null
 }
 
 class App extends React.Component<{}, ComponentState> {
@@ -95,7 +97,7 @@ class App extends React.Component<{}, ComponentState> {
       sortType: SortType.NAME, 
       sortDirection: SortDirection.UP},
     error: null,
-    isFull: false,
+    installEvent: null
   }
 
   @OF.autobind
@@ -104,7 +106,6 @@ class App extends React.Component<{}, ComponentState> {
       page,
       backpage,
       pageHashChanged: true,
-      isFull: true
     })
     location.hash = `${this.state.page}`
   }
@@ -126,6 +127,14 @@ class App extends React.Component<{}, ComponentState> {
 
   componentDidMount() {
     window.onhashchange = this.onPageHashChanged
+
+    window.addEventListener('beforeinstallprompt', (e: BeforeInstallPromptEvent) => {
+      // Prevent Chrome 67 and earlier from automatically showing the prompt
+      e.preventDefault();
+      // Stash the event so it can be triggered later.
+    
+      this.setState({installEvent: e})
+    });
   }
 
   @OF.autobind
@@ -295,12 +304,24 @@ class App extends React.Component<{}, ComponentState> {
             // Create initial filter set
             this.updateFilterSet()
 
+            // Select initila person
+            let personId = this.state.filterSet.people[this.state.filterSet.selectedIndex].personId
+            let selectedPerson = Convert.getPerson(this.state.allPeople, personId!) || null
+            this.setState({
+              selectedPerson
+            })
+
             await this.sendUserStats()
 
             if (this.state.user!.isNew) {
               this.onSetPage(Page.NEWUSER, null)
-            } else {
-              // Open library
+            } 
+            // Prompt for install PWA
+            else if (this.state.installEvent) {
+              this.onSetPage(Page.INSTALL, Page.VIEW)
+            }
+            // Open library 
+            else {
               this.viewLibraryPerson()
             }
           }
@@ -593,6 +614,29 @@ class App extends React.Component<{}, ComponentState> {
     await this.onSetPage(Page.VIEW, null)
   }
 
+  @OF.autobind
+  showInstallPrompt() {
+    if (!this.state.installEvent) {
+      return
+    }
+
+    this.state.installEvent.prompt();
+  
+    // Wait for the user to respond to the prompt
+    this.state.installEvent.userChoice
+      .then((choiceResult) => {
+        if (choiceResult.outcome === 'accepted') {
+          console.log('User accepted the A2HS prompt');
+        } else {
+          console.log('User dismissed the A2HS prompt');
+        }
+        this.setState({
+          installEvent: null
+        })
+        this.onSetPage(Page.VIEW, null)
+      });
+  }
+  
   handleNoUsers() {
     if (this.state.user!.isAdmin) {
       this.onSetPage(Page.ADMIN, Page.VIEW)
@@ -629,12 +673,6 @@ class App extends React.Component<{}, ComponentState> {
   }
 
   public render() {
-          /*
-        <Screenfull 
-          forceFullScreen={true}
-          mobileOnly={false}
-        />*/
-
     let baseClass = 'App'
     if (this.state.user && this.state.user.isSpoof) {
       baseClass = `${baseClass} Spoof`
@@ -651,6 +689,12 @@ class App extends React.Component<{}, ComponentState> {
           <LoadPage
             letter={this.state.loadletter}
             count={this.state.loadpeoplecount}
+          />
+        }
+        {this.state.page === Page.INSTALL &&
+          <InstallPage
+            onCancel={() => this.onSetPage(Page.VIEW, null)}
+            onConfirm={this.showInstallPrompt}
           />
         }
         {(this.state.page === Page.VIEW || this.state.page === Page.VIEWQUIZ) 
