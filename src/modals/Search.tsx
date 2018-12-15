@@ -113,7 +113,7 @@ class Search extends React.Component<ReceivedProps, ComponentState> {
   public render() {
     return (
       <div className="ModalPage">
-        <div className="HeaderHolder HeaderHolderTall">
+        <div className="HeaderHolder HeaderHolderMedium">
           <div className="HeaderContent">
             <OF.Label className="SearchLabel">
               Search:

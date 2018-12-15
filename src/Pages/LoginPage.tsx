@@ -10,7 +10,7 @@ import { HEAD_IMAGE } from '../Util'
 import { User } from '../models/models'
 import GoogleLogin from 'react-google-login';
 
-const VERSION = "0.6"
+const VERSION = "0.8"
 
 export interface ReceivedProps {
   onLoginComplete: (user: User) => void

@@ -288,11 +288,17 @@ class ViewPage extends React.Component<ReceivedProps, ComponentState> {
           :
             <div className="FooterHolder"> 
               <div className="FooterContent">
-                <OF.IconButton
-                  className="ButtonIcon ButtonPrimary"
-                  onClick={this.props.onContinueQuiz}
-                  iconProps={{ iconName: 'ChromeClose' }}
-                />
+                <OF.Button
+                    className="ButtonIcon ButtonPrimary"
+                    onClick={this.props.onContinueQuiz}
+                >
+                  <OF.Image
+                    className="QuizImageHolder"
+                    src={"https://peekaboo.blob.core.windows.net/resources/quizicon.png"}
+                    width={100}
+                    height={30}
+                  />
+                </OF.Button>
               </div>
             </div>
           }

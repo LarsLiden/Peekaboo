@@ -47,6 +47,10 @@
   max-width: var(--max-width);
 }
 
+.HeaderHolderMedium {
+  height: 97px;
+}
+
 .HeaderHolderTall {
   height: 200px;
 }

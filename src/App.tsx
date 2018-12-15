@@ -204,7 +204,7 @@ class App extends React.Component<{}, ComponentState> {
   @OF.autobind 
   async onEdit() {
     if (this.state.page === Page.VIEWQUIZ) {
-      this.onSetPage(Page.EDITQUIZ, Page.QUIZ)
+      this.onSetPage(Page.EDITQUIZ, Page.VIEWQUIZ)
     }
     else {
       this.onSetPage(Page.EDIT, Page.VIEW)
@@ -371,7 +371,7 @@ class App extends React.Component<{}, ComponentState> {
   @OF.autobind 
   async onCloseEditPage() {
     if (this.state.page === Page.EDITQUIZ) {
-      this.onSetPage(Page.QUIZ, Page.VIEW)  // TODO save?
+      this.onSetPage(Page.VIEWQUIZ, Page.QUIZ)  
     }
     else {
       this.viewLibraryPerson()
