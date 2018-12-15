@@ -21,6 +21,8 @@ import { Page } from '../App'
 import "./ViewPage.css"
 import { MAX_TIME } from '../models/const';
 
+const SWIPE_THRESHOLD = 50
+
 export interface ReceivedProps {
   filterSet: FilterSet | null
   person: Person
@@ -100,8 +102,8 @@ class ViewPage extends React.Component<ReceivedProps, ComponentState> {
   @OF.autobind
   onSwipeMove(position: any, event: any) {
     this.setState({
-      xMove: this.state.xMove + position.x,
-      yMove: this.state.yMove + position.y
+      xMove: position.x,
+      yMove: position.y
     })
     console.log(`Moved ${position.x} pixels horizontally`, event);
     console.log(`Moved ${position.y} pixels vertically`, event);
@@ -109,11 +111,11 @@ class ViewPage extends React.Component<ReceivedProps, ComponentState> {
  
   @OF.autobind
   onSwipeEnd(event: any) {
-    if (this.state.xMove > 100 && Math.abs(this.state.yMove) < 80) {
-      this.onNextPerson()
-    }
-    else if (this.state.xMove < 100 && Math.abs(this.state.yMove) < 80) {
+    if (this.state.xMove > SWIPE_THRESHOLD && Math.abs(this.state.yMove) < SWIPE_THRESHOLD) {
       this.onPrevPerson()
+    }
+    else if (this.state.xMove < -SWIPE_THRESHOLD && Math.abs(this.state.yMove) < SWIPE_THRESHOLD) {
+      this.onNextPerson()
     }
   }
 
@@ -193,7 +195,7 @@ class ViewPage extends React.Component<ReceivedProps, ComponentState> {
             </div>
           </div>
           <div className="ModalBodyHolder">
-            <div className="ModalBodyContent ModalBodyHeaderHolderTall">
+            <div className="ModalBodyContent ModalBodyHeaderHolderTall ModalBodyHeaderHolderTallBottom">
               <DetailText title="Alt Name" text={this.props.person.alternateName} isLong={true}/>          
               <DetailText title="Description" text={this.props.person.description} isLong={true}/>
               <DetailTags 

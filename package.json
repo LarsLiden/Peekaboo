@@ -15,10 +15,10 @@
     "react-dom": "^16.5.2",
     "react-easy-swipe": "0.0.17",
     "react-file-picker": "0.0.5",
-    "react-full-screen": "^0.2.3",
     "react-google-login": "^3.2.1",
     "react-image-crop": "^6.0.4",
-    "react-scripts-ts": "2.17.0"
+    "react-scripts-ts": "2.17.0",
+    "screenfull-react": "0.0.1"
   },
   "devDependencies": {
     "@types/blob-to-buffer": "^1.2.0",

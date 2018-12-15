@@ -10,6 +10,8 @@ import { HEAD_IMAGE } from '../Util'
 import { User } from '../models/models'
 import GoogleLogin from 'react-google-login';
 
+const VERSION = "0.6"
+
 export interface ReceivedProps {
   onLoginComplete: (user: User) => void
 }
@@ -17,6 +19,7 @@ export interface ReceivedProps {
 interface ComponentState {
   waitingCalloutText: string | null
   userLoginValue: string
+  loginDisable: boolean
 }
 
 class LoginPage extends React.Component<ReceivedProps, ComponentState> {
@@ -25,12 +28,14 @@ class LoginPage extends React.Component<ReceivedProps, ComponentState> {
 
   state: ComponentState = {
     waitingCalloutText: null,
-    userLoginValue: ""
+    userLoginValue: "",
+    loginDisable: false
   }
 
   @OF.autobind
   private async loginSuccess(googleUser: any) {
 
+    this.setState({loginDisable: true})
     let profile = googleUser.getBasicProfile();
     let user: User = {
       googleId: profile.getId(),
@@ -44,7 +49,8 @@ class LoginPage extends React.Component<ReceivedProps, ComponentState> {
     }
     else {
       this.setState({
-        waitingCalloutText: "Login Failure"
+        waitingCalloutText: "Login Failure",
+        loginDisable: false
       })
     }
   }
@@ -66,6 +72,7 @@ class LoginPage extends React.Component<ReceivedProps, ComponentState> {
         backgroundSize: 'contain'
         }}
       >
+      {!this.state.loginDisable &&
         <GoogleLogin
             className="LoginButton"
             clientId="757831696321-kdog1rehu946i1ch7rb3pvmf5r3rr2r4.apps.googleusercontent.com"
@@ -73,6 +80,8 @@ class LoginPage extends React.Component<ReceivedProps, ComponentState> {
             onSuccess={this.loginSuccess}
             onFailure={()=>{}}
         />
+      }
+      <div className="LoginVersion">{VERSION}</div>
       </div>
       <OF.Callout
           role={'alertdialog'}

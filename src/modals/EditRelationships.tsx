@@ -138,6 +138,17 @@ class EditRelationships extends React.Component<ReceivedProps, ComponentState> {
 
   public render() {
   
+    if (this.state.searchTarget) {
+      return (
+      <Search
+        people={this.props.allPeople}
+        exclude={this.props.person}
+        onCancel={this.onCloseSearch}
+        onSelect={this.onSelectSearch}
+      />
+      )
+    }
+    
     return (
       <div className="ModalPage">
         <div className="HeaderHolder">
@@ -172,14 +183,6 @@ class EditRelationships extends React.Component<ReceivedProps, ComponentState> {
             />
           </div>
         </div>
-        {this.state.searchTarget &&
-            <Search
-              people={this.props.allPeople}
-              exclude={this.props.person}
-              onCancel={this.onCloseSearch}
-              onSelect={this.onSelectSearch}
-            />
-        }
       </div>
     );
   }

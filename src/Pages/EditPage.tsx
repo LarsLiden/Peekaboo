@@ -497,14 +497,6 @@ class EditPage extends React.Component<ReceivedProps, ComponentState> {
               />
             </div>
             <div className="EditPageSection">
-              <DetailText title="Description" text={this.props.person.description} showEmpty={true} isLong={true}/> 
-              <OF.IconButton
-                  className="ButtonIcon ButtonDark EditPageButton"
-                  onClick={() => this.props.onSetSubpage(SubPage.BASIC)}
-                  iconProps={{ iconName: 'Edit' }}
-              />
-            </div>
-            <div className="EditPageSection">
               <DetailText title="Last Name" text={this.props.person.lastName} showEmpty={true} isLong={true}/>
               <OF.IconButton
                   className="ButtonIcon ButtonDark EditPageButton"

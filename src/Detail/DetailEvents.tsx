@@ -5,7 +5,6 @@
 import * as React from 'react';
 import { Event } from '../models/models'
 import { printDate } from '../Util'
-import DetailText from './DetailText'
 import "./DetailEvents.css"
 import '../fabric.css'
 
@@ -31,11 +30,17 @@ class DetailEvents extends React.Component<ReceivedProps, {}> {
                 return (
                   <div className="DetailLongBody" key={event.description}>
                     <div className="DetailEventDate">
-                      <DetailText text={dateString}/>
+                      <div className="DetailBody NoPadding">
+                        {dateString}
+                      </div>
                     </div>
                     <div className="DetailEventBody">
-                      <DetailText text={event.location} />
-                      <DetailText text={event.description}/>
+                      <div className="DetailBody NoPadding">
+                        {event.location}
+                      </div>
+                      <div className="DetailBody NoPadding">
+                        {event.description}
+                      </div>
                     </div>
                   </div>
                 )}

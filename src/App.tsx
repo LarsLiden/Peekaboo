@@ -24,7 +24,7 @@ import ViewPage from './Pages/ViewPage'
 import EditPage from './Pages/EditPage'
 import Search from './modals/Search'
 import ViewPerformance from './modals/ViewPerformance'
-import Fullscreen from "react-full-screen"
+//import Screenfull from 'screenfull-react'
 
 export enum Page {
   LOGIN = "MENU",
@@ -53,6 +53,7 @@ interface ComponentState {
   page: Page
   subpage: string | null
   backpage: Page | null
+  pageHashChanged: boolean
   quizSet: QuizSet | null
   filterSet: FilterSet
   filteredTags: Tag[]
@@ -84,6 +85,7 @@ class App extends React.Component<{}, ComponentState> {
     page: Page.LOGIN,
     subpage: null,
     backpage: null,
+    pageHashChanged: false,
     selectedPerson: null,
     personList: [],
     filter: {
@@ -101,36 +103,57 @@ class App extends React.Component<{}, ComponentState> {
     await setStatePromise(this, {
       page,
       backpage,
+      pageHashChanged: true,
       isFull: true
     })
+    location.hash = `${this.state.page}`
   }
   
   @OF.autobind
   async onSetSubpage(subpage: string | null) {
     await setStatePromise(this, {
       subpage,
+      pageHashChanged: true,
       isFull: true
     })
+    if (subpage) {
+      location.hash = `${this.state.page}_${subpage}`
+    }
+    else {
+      location.hash = `${this.state.page}`
+    }
   } 
 
   componentDidMount() {
-    window.onhashchange = this.onPageNavigate
+    window.onhashchange = this.onPageHashChanged
   }
 
   @OF.autobind
-  onPageNavigate() {
-    if (this.state.subpage) {
+  async onPageHashChanged() {
+
+    // If page has was manually changed, ignore it
+    if (this.state.pageHashChanged) {
       this.setState({
-        subpage: null
+        pageHashChanged: false
       })
+    }
+    // Otherwise handle back event
+    else if (this.state.subpage) {
+      await setStatePromise(this, {
+        subpage: null,
+        pageHashChanged: (location.hash !== `#${this.state.page}`)
+      })
+      location.hash = `${this.state.page}`
     }
     else if (this.state.backpage) {
-      this.setState({
+      let backpage = this.state.backpage
+      await setStatePromise(this, {
         page: this.state.backpage,
-        backpage: null
+        backpage: null,
+        pageHashChanged: (location.hash !== `#${backpage}`)
       })
+      location.hash = backpage
     }
-    console.log("NAVIGATE!") // TEMP
   }
 
   @OF.autobind 
@@ -606,16 +629,19 @@ class App extends React.Component<{}, ComponentState> {
   }
 
   public render() {
+          /*
+        <Screenfull 
+          forceFullScreen={true}
+          mobileOnly={false}
+        />*/
+
     let baseClass = 'App'
     if (this.state.user && this.state.user.isSpoof) {
       baseClass = `${baseClass} Spoof`
     }
-    return (
-      <Fullscreen
-          enabled={this.state.isFull}
-          onChange={isFull => this.setState({isFull: true})}
-      >
+    return ( 
       <div className={baseClass}>
+
         {this.state.page === Page.LOGIN &&
          <LoginPage
           onLoginComplete={this.onLoginComplete}
@@ -732,7 +758,6 @@ class App extends React.Component<{}, ComponentState> {
           />
         }
       </div>
-      </Fullscreen>
     );
   }
 }
