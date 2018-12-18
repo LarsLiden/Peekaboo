@@ -12,6 +12,7 @@ export function toQuizPerson(person: Person, perfType: PerfType): QuizPerson {
         personId: person.personId!,
         fullName: `${person.firstName} ${person.lastName}`,
         description: person.description,
+        tags: person.tags.join(", "),
         photoBlobnames: person.photoFilenames.map(f => getPhotoBlobName(person, f)),
         performance: person.performance(perfType),
     }

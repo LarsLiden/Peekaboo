@@ -773,8 +773,9 @@ class App extends React.Component<{}, ComponentState> {
             onLogin={this.onLoginComplete}
           />
         }
-        {this.state.page === Page.QUIZ && 
+        {(this.state.page === Page.QUIZ || this.state.page === Page.VIEWQUIZ || this.state.page === Page.EDITQUIZ) && 
           <QuizPage
+            hidden={this.state.page !== Page.QUIZ}
             user={this.state.user!}
             quizSet={this.state.quizSet}
             onQuizDone={this.onQuizDone}

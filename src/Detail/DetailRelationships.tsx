@@ -20,11 +20,11 @@ class DetailRelationships extends React.Component<ReceivedProps, {}> {
   @OF.autobind
   onRenderCell(relationship: Relationship, index: number, isScrolling: boolean): JSX.Element {
     const person = this.props.allPeople.find(p => p.personId === relationship.personId)
-    const name = person ? person.fullName() : "MISSING PERSON"
+    const name = person ? person.fullName() : relationship.personId.split("_")[0]
     return (
       <div className="DetailRelationship">{`${relationship.type.from}`}
         <OF.Button 
-          className="DetailRelationshipLink"
+          className={`DetailRelationshipLink${person ? '' : ' DetailRelationshipLinkMissing'}`}
           onClick={() => {
             if (person) {
               this.props.onSelectPerson(relationship.personId)

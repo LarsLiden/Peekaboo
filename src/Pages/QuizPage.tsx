@@ -14,6 +14,7 @@ import { MAX_TIME } from '../models/const'
 export interface ReceivedProps {
   user: User
   quizSet: QuizSet | null
+  hidden: boolean
   onQuizDone: (testResults: TestResult[]) => Promise<void>
   onViewDetail: (quizperson: QuizPerson) => void
 }
@@ -76,7 +77,6 @@ class QuizPage extends React.Component<ReceivedProps, ComponentState> {
   }
   
   selectNextPerson(): void {
-    this.clearTimer()
 
     const quizPerson = this.getRandomPerson()
     const photoIndex = getRandomInt(0, quizPerson.photoBlobnames.length - 1)
@@ -138,6 +138,10 @@ class QuizPage extends React.Component<ReceivedProps, ComponentState> {
 
   @OF.autobind
   onImageLoaded() {
+    // If I'm just reloading the page after showing user, don't re-start timer
+    if (this.state.showName) {
+      return
+    }
     this.clearTimer()
     this.setState({
       timerValue: 0
@@ -164,7 +168,7 @@ class QuizPage extends React.Component<ReceivedProps, ComponentState> {
 
   public render() {
 
-    if (!this.state.quizPerson) {
+    if (!this.state.quizPerson || this.props.hidden) {
       return null
     }
     let width = 250
@@ -182,16 +186,18 @@ class QuizPage extends React.Component<ReceivedProps, ComponentState> {
           src={photoBlobname}
           width={width}
           height={height}
-          //imageFit={OF.ImageFit.center}
           onLoad={this.onImageLoaded}
         />
         {this.state.showName && 
-          <div>
+          <div className='QuizShow'>
             <div className='QuizName'>
               {this.state.quizPerson.fullName}
             </div>
             <div className='QuizDescription'>
               {this.state.quizPerson.description}
+            </div>
+            <div className='QuizDescription'>
+              {this.state.quizPerson.tags}
             </div>
           </div>
         }

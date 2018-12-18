@@ -86,6 +86,10 @@
   background-color: transparent;
 }
 
+.DetailRelationshipLinkMissing {
+  color: white;
+}
+
 .DetailRelationshipLink:hover {
   background-color: transparent;
 }

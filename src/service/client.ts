@@ -19,8 +19,8 @@ export default class Client {
             {user})
             return response.data as User
         }
-        catch (err) {
-            console.log(JSON.stringify(err))
+        catch (error) {
+            console.log(error.response)
             return null
         }
     }
@@ -51,7 +51,8 @@ export default class Client {
             let people = peopleJSON.map(p => new Person(p))
             callback(people)
         }
-        catch {
+        catch (error) {
+            console.log(error.response.data)
             callback(null)
         }
     }
@@ -95,8 +96,8 @@ export default class Client {
         try {
             await axios.post(`${this.baseUrl}/import`, null, this.getConfig(user))
         }
-        catch (err) {
-            console.log(JSON.stringify(err))
+        catch (error) {
+            console.log(error.response.data)
         }
     }
 

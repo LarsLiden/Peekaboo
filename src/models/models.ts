@@ -37,6 +37,7 @@ export interface QuizPerson {
     photoBlobnames: string[]
     fullName: string
     description: string
+    tags: string
     performance: Performance
 }
 
