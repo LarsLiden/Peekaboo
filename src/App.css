@@ -99,6 +99,11 @@
   background-color: #555555 !important;
 }
 
+.ms-TextField-errorMessage {
+  color: #ff9999 !important;
+  margin-left: 11px !important;
+}
+
 .StrikeThrough {
   text-decoration: line-through;
 }

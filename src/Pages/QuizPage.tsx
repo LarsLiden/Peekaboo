@@ -122,8 +122,6 @@ class QuizPage extends React.Component<ReceivedProps, ComponentState> {
   @OF.autobind
   onClickQuit() {
     this.clearTimer()
-    this.state.testResults.map(tr =>
-      console.log(JSON.stringify(tr)))
     this.props.onQuizDone(this.state.testResults/* PerfType*/)
   }
 

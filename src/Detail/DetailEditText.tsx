@@ -13,20 +13,39 @@ export interface ReceivedProps {
   rows?: number
   multiline?: boolean
   autoFocus?: boolean
+  maxLength?: number
+  minLength?: number
   onEnter?: (text: string) => void
   onChanged: (text: string) => void
 }
 
-class DetailText extends React.Component<ReceivedProps, {}> {
+class DetailEditText extends React.Component<ReceivedProps, {}> {
 
   onKeyDown = (event: React.KeyboardEvent<HTMLInputElement>) => {
+
+    if (this.props.maxLength && this.props.value.length > this.props.maxLength) {
+      return
+    }
+
     if (this.props.onEnter) {
       // On enter attempt to create the entity as long as name is set
       if (event.key === 'Enter' && this.props.value !== "") {
           this.props.onEnter(this.props.value)
       }
     }
-}
+  }
+
+  @OF.autobind
+  getErrorMessage(value: string): string {
+    let text = value.trim()
+    if (this.props.maxLength && text.length > this.props.maxLength) {
+      return `Must be less than ${this.props.maxLength} letters.`
+    }
+    else if (this.props.minLength && text.length < this.props.minLength) {
+      return `Required Value`
+    }
+    return ''
+  }
 
   public render() {
 
@@ -42,6 +61,7 @@ class DetailText extends React.Component<ReceivedProps, {}> {
           resizable={false}
           className="DetailTextField"
           underlined={true}
+          onGetErrorMessage={this.getErrorMessage}
           onChanged={text => this.props.onChanged(text)}
           onKeyDown={this.props.onEnter ? this.onKeyDown : undefined}
           value={this.props.value}
@@ -52,4 +72,4 @@ class DetailText extends React.Component<ReceivedProps, {}> {
   }
 }
 
-export default DetailText;
+export default DetailEditText;

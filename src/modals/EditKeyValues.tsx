@@ -7,7 +7,7 @@ import * as OF from 'office-ui-fabric-react'
 import DetailEditText from '../Detail/DetailEditText'
 import { Person } from '../models/person'
 import { KeyValue } from '../models/models'
-import { generateGUID } from '../Util';
+import { generateGUID, isValid, MAX_KEY_LENGTH, MAX_VALUE_LENGTH } from '../Util';
 
 export interface ReceivedProps {
   person: Person
@@ -60,14 +60,24 @@ class EditKeyValues extends React.Component<ReceivedProps, ComponentState> {
 
   @OF.autobind
   onKeyChanged(key: string, keyValue: KeyValue) {
-    let changed = this.state.keyValues.find(kv => kv.key === keyValue.key)
-    changed!.key = key
+    let existingKV = this.state.keyValues.find(kv => kv.keyValueId === keyValue.keyValueId)
+    let newKeyValue = {...existingKV!, key}
+
+    let index = this.state.keyValues.indexOf(keyValue)
+    let keyValues = [...this.state.keyValues]
+    keyValues[index] = newKeyValue
+    this.setState({keyValues})
   }
 
   @OF.autobind
   onValueChanged(value: string, keyValue: KeyValue) {
-    let changed = this.state.keyValues.find(kv => kv.key === keyValue.key)
-    changed!.value = value
+    let existingKV = this.state.keyValues.find(kv => kv.keyValueId === keyValue.keyValueId)
+    let newKeyValue = {...existingKV!, value}
+
+    let index = this.state.keyValues.indexOf(keyValue)
+    let keyValues = [...this.state.keyValues]
+    keyValues[index] = newKeyValue
+    this.setState({keyValues})
   }
 
   @OF.autobind
@@ -81,22 +91,39 @@ class EditKeyValues extends React.Component<ReceivedProps, ComponentState> {
               onChanged={key => this.onKeyChanged(key, keyValue)}
               value={keyValue.key}
               autoFocus={keyValue.key === ""}
+              maxLength={MAX_KEY_LENGTH}
+              minLength={1}
             />
             <DetailEditText
               label="Value"
               onChanged={value => this.onValueChanged(value, keyValue)}
               value={keyValue.value}
               autoFocus={keyValue.key !== "" && keyValue.value === ""}
+              maxLength={MAX_VALUE_LENGTH}
+              minLength={1}
+              rows={2}
+              multiline={true}
             />
           </div>
           <OF.IconButton
             className="ButtonIcon ButtonDark FloatRight"
             onClick={() => this.onClickDelete(keyValue)}
             iconProps={{ iconName: 'Delete' }}
-        />
+          />
         </div>
       </div>
     );
+  }
+
+  areValid(): boolean {
+    let valid = true
+    this.state.keyValues.forEach(kv => {
+        if (!isValid(kv.key, 1, MAX_KEY_LENGTH) ||
+          !isValid(kv.value, 1, MAX_VALUE_LENGTH)) {
+            valid = false
+          }
+    })
+    return valid
   }
 
   public render() {
@@ -124,6 +151,7 @@ class EditKeyValues extends React.Component<ReceivedProps, ComponentState> {
         <div className="FooterHolder"> 
           <div className="FooterContent">
             <OF.IconButton
+                disabled={!this.areValid()}
                 className="ButtonIcon ButtonPrimary FloatLeft"
                 onClick={this.onClickSave}
                 iconProps={{ iconName: 'Save' }}

@@ -5,6 +5,7 @@
 import * as React from 'react';
 import * as OF from 'office-ui-fabric-react'
 import '../fabric.css'
+import { isValid, MAX_TAG_LENGTH } from '../Util'
 import DetailEditText from '../Detail/DetailEditText'
 import "../Pages/ViewPage.css"
 
@@ -30,7 +31,9 @@ class AddTag extends React.Component<ReceivedProps, ComponentState> {
   
   @OF.autobind
   onClickSave(): void {
-    this.props.onCreate(this.state.tagName)
+    if (isValid(this.state.tagName, 1, MAX_TAG_LENGTH)) {
+      this.props.onCreate(this.state.tagName)
+    }
   }
 
   @OF.autobind
@@ -54,13 +57,14 @@ class AddTag extends React.Component<ReceivedProps, ComponentState> {
                 value={this.state.tagName}
                 onEnter={this.onClickSave}
                 autoFocus={true}
+                maxLength={MAX_TAG_LENGTH}
               />
             </div>
           </div>
           <div className="FooterHolder"> 
             <div className="FooterContent">
               <OF.IconButton
-                  disabled={!this.state.tagName}
+                  disabled={!isValid(this.state.tagName, 1, MAX_TAG_LENGTH)}
                   className="ButtonIcon ButtonPrimary FloatLeft"
                   onClick={this.onClickSave}
                   iconProps={{ iconName: 'Save' }}

@@ -523,26 +523,26 @@ class App extends React.Component<{}, ComponentState> {
 
   @OF.autobind 
   async onQuizDone(testResults: TestResult[]) {
-      try {
-        let updatedPeople = await Client.postTestResults(this.state.user!, testResults)
-        let allPeople: Person[] = [...this.state.allPeople]
-        updatedPeople.forEach(p => 
-          allPeople = replacePerson(allPeople, new Person(p))
-        )
-        this.setState({ allPeople })
- 
-        if (this.state.selectedPerson) {
-          let selectedpersonId = this.state.selectedPerson.personId
-          let changedPerson = updatedPeople.find(p => p.personId === selectedpersonId)
-          if (changedPerson) {
-            this.setState({selectedPerson: new Person(changedPerson)})
-          }
+    this.onSetPage(Page.VIEW, null)
+    try {
+      let updatedPeople = await Client.postTestResults(this.state.user!, testResults)
+      let allPeople: Person[] = [...this.state.allPeople]
+      updatedPeople.forEach(p => 
+        allPeople = replacePerson(allPeople, new Person(p))
+      )
+      this.setState({ allPeople })
+
+      if (this.state.selectedPerson) {
+        let selectedpersonId = this.state.selectedPerson.personId
+        let changedPerson = updatedPeople.find(p => p.personId === selectedpersonId)
+        if (changedPerson) {
+          this.setState({selectedPerson: new Person(changedPerson)})
         }
       }
-      catch {
-        this.setState({error: `Failed to save Test Results`})  
-      }
-      this.onSetPage(Page.VIEW, null)
+    }
+    catch {
+      this.setState({error: `Failed to save Test Results`})  
+    }
   }
 
   @OF.autobind
