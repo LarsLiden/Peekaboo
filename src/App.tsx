@@ -46,6 +46,8 @@ export enum Page {
 
 interface ComponentState {
   user: User | null
+  // If user included in db, this is user's Id
+  userPersonId: string | null
   users: User[]
   allPeople: Person[]
   allTags: Tag[]
@@ -71,6 +73,7 @@ class App extends React.Component<{}, ComponentState> {
 
   state: ComponentState = {
     user: null,
+    userPersonId: null,
     users: [],
     allPeople: [],
     allTags: [],
@@ -301,6 +304,10 @@ class App extends React.Component<{}, ComponentState> {
               allTags
             })
 
+            // Look for logged in user in list
+            let userPerson = allPeople.find(p => p.fullName() === this.state.user!.name)
+            let userPersonId = userPerson ? userPerson.personId : null
+
             // Create initial filter set
             this.updateFilterSet()
 
@@ -308,7 +315,8 @@ class App extends React.Component<{}, ComponentState> {
             let personId = this.state.filterSet.people[this.state.filterSet.selectedIndex].personId
             let selectedPerson = Convert.getPerson(this.state.allPeople, personId!) || null
             this.setState({
-              selectedPerson
+              selectedPerson,
+              userPersonId
             })
 
             await this.sendUserStats()
@@ -377,7 +385,7 @@ class App extends React.Component<{}, ComponentState> {
 
   @OF.autobind 
   async onQuiz() {
-      let quizSet = Convert.quizSet(this.state.allPeople, this.state.filter) 
+      let quizSet = Convert.quizSet(this.state.allPeople, this.state.filter, this.state.userPersonId) 
       this.setState({
         quizSet
       })
@@ -450,8 +458,6 @@ class App extends React.Component<{}, ComponentState> {
   @OF.autobind 
   async onArchivePerson(person: Person) {
     try {
-      await Client.archivePerson(this.state.user!, person)
-
       // Delete local
       let people = this.state.allPeople.filter(p => p.personId !== person.personId)
       // Recalculte filter set to exclude new person
@@ -460,8 +466,17 @@ class App extends React.Component<{}, ComponentState> {
         allPeople: people,
         filterSet
       })
-      this.onSetPage(Page.VIEW, null)
-      this.viewLibraryPerson()
+
+      if (this.state.page === Page.EDITQUIZ) {
+        this.onSetPage(Page.QUIZ, Page.VIEW)
+      }
+      else {
+        this.onSetPage(Page.VIEW, null)
+        this.viewLibraryPerson()
+      }
+
+      await Client.archivePerson(this.state.user!, person)
+
     }
     catch {
       this.setState({error: `Failed to archive ${person.fullName()}`})
@@ -525,7 +540,11 @@ class App extends React.Component<{}, ComponentState> {
   async onQuizDone(testResults: TestResult[]) {
     this.onSetPage(Page.VIEW, null)
     try {
-      let updatedPeople = await Client.postTestResults(this.state.user!, testResults)
+      // Remove any archived people
+      let validTestResults = testResults.filter(tr => this.state.allPeople.find(p => p.personId === tr.personId))
+      
+      // Send results to server
+      let updatedPeople = await Client.postTestResults(this.state.user!, validTestResults)
       let allPeople: Person[] = [...this.state.allPeople]
       updatedPeople.forEach(p => 
         allPeople = replacePerson(allPeople, new Person(p))

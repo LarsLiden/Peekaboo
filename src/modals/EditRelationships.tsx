@@ -19,7 +19,7 @@ export interface ReceivedProps {
 interface ComponentState {
   relationships: Relationship[]
   types: { key: string; text: any; }[]
-  searchTarget: Relationship | null
+  searchRelationship: Relationship | null
 }
 
 class EditRelationships extends React.Component<ReceivedProps, ComponentState> {
@@ -29,7 +29,7 @@ class EditRelationships extends React.Component<ReceivedProps, ComponentState> {
     types: Object.keys(RType).map(e => {
       return {key: RType[e], text: RType[e]}
     }),
-    searchTarget: null
+    searchRelationship: null
   }
 
   componentDidMount() {
@@ -44,37 +44,42 @@ class EditRelationships extends React.Component<ReceivedProps, ComponentState> {
   // --- Search ---
   @OF.autobind
   onCloseSearch(): void {
-    this.setState({searchTarget: null})
+    this.setState({searchRelationship: null})
   }
 
   @OF.autobind
   onSelectSearch(person:  Person): void {
 
-    let relationships = this.state.relationships.filter(r => r !== this.state.searchTarget)
-    let changedRelationship: Relationship = {...this.state.searchTarget!, personId: person.personId! }
-    relationships.push(changedRelationship)
+    if (this.state.searchRelationship) {
+      let newRelationship = {...this.state.searchRelationship, personId: person.personId!}
 
-    this.setState({
-      relationships,
-      searchTarget: null
-    })
+      let index = this.state.relationships.indexOf(this.state.searchRelationship)
+      let relationships = [...this.state.relationships]
+      relationships[index] = newRelationship
+      this.setState({relationships})
+
+      this.setState({
+        relationships,
+        searchRelationship: null
+      })
+    }
   }
 
   @OF.autobind 
   onTypeChange(option: OF.IDropdownOption, relationship: Relationship) {
-    let relationships = this.state.relationships.filter(r => r !== relationship)
     let type = RelationshipType.getRelationshipType(option.text)
-    let changedRelationship: Relationship = {...relationship, type: type} 
-    relationships.push(changedRelationship)
 
-    this.setState({
-      relationships
-    })
+    let newRelationship = {...relationship!, type}
+
+    let index = this.state.relationships.indexOf(relationship)
+    let relationships = [...this.state.relationships]
+    relationships[index] = newRelationship
+    this.setState({relationships})
   }
 
   @OF.autobind
   onClickSearch(relationship: Relationship): void {
-    this.setState({searchTarget: relationship})
+    this.setState({searchRelationship: relationship})
   }
   
   @OF.autobind
@@ -138,7 +143,7 @@ class EditRelationships extends React.Component<ReceivedProps, ComponentState> {
 
   public render() {
   
-    if (this.state.searchTarget) {
+    if (this.state.searchRelationship) {
       return (
       <Search
         people={this.props.allPeople}

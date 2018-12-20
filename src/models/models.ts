@@ -4,6 +4,7 @@
  */
 import { Performance } from './performance'
 import { Person } from './person'
+import { Relationship } from './relationship';
 
 // Separate stuff needed by server and client into two files LARS
 export enum PerfType {
@@ -38,6 +39,7 @@ export interface QuizPerson {
     fullName: string
     description: string
     tags: string
+    relationships: Relationship[]
     performance: Performance
 }
 

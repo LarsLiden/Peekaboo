@@ -197,6 +197,10 @@ class QuizPage extends React.Component<ReceivedProps, ComponentState> {
             <div className='QuizDescription'>
               {this.state.quizPerson.tags}
             </div>
+            {this.state.quizPerson.relationships.map(r =>
+              `${r.type.from} ${this.props.user.name}`
+              )
+            }
           </div>
         }
         <div className="FooterHolder">

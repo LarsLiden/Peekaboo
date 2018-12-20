@@ -45,8 +45,7 @@ class EditTags extends React.Component<ReceivedProps, ComponentState> {
   componentWillReceiveProps(newProps: ReceivedProps) {
     // Look for newly created tags
     let newTags = newProps.allTags.filter(t => 
-        this.state.editTags.find(et => et.name === t.name) === undefined
-    )
+        this.state.editTags.find(et => et.name === t.name) === undefined)
 
     // Assume any newly created tags should be added to person
     newTags.forEach(t => {
