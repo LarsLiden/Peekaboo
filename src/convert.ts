@@ -61,8 +61,8 @@ export function filteredPeople(people: Person[], filter: Filter): Person[] {
     } else if (filter.sortType === SortType.FAMILIARITY) {
         // Sort people by performance
         filteredPeople = filteredPeople.sort((a, b) => {
-            if (a.photoPerformance.familiarity < b.photoPerformance.familiarity) { return -1 }
-            else if (b.photoPerformance.familiarity < a.photoPerformance.familiarity) { return 1 }
+            if (a.photoPerformance.bestTime < b.photoPerformance.bestTime) { return -1 }
+            else if (b.photoPerformance.bestTime < a.photoPerformance.bestTime) { return 1 }
             else { return 0 }
             })
     }

@@ -461,13 +461,20 @@ class App extends React.Component<{}, ComponentState> {
       // Delete local
       let people = this.state.allPeople.filter(p => p.personId !== person.personId)
       // Recalculte filter set to exclude new person
+      let selectedIndex = Math.max(this.state.filterSet.selectedIndex - 1, 0)
       let filterSet = Convert.getFilterSet(people, this.state.filter, null)
+      filterSet.selectedIndex = selectedIndex
       await setStatePromise(this, {
         allPeople: people,
         filterSet
       })
 
-      if (this.state.page === Page.EDITQUIZ) {
+      if (this.state.page === Page.EDITQUIZ && this.state.quizSet) {
+        // Remove person from quiz set
+        let quizPeople = this.state.quizSet.quizPeople.filter(q => q.personId !== person.personId)
+        await setStatePromise(this, {
+          quizSet: {...this.state.quizSet, quizPeople}
+        })
         this.onSetPage(Page.QUIZ, Page.VIEW)
       }
       else {

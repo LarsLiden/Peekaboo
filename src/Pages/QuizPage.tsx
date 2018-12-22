@@ -41,6 +41,15 @@ class QuizPage extends React.Component<ReceivedProps, ComponentState> {
     testResults: []
   }
 
+  componentDidUpdate() {
+    // Check the quizPerson is still in the set (may have been archived)
+    if (this.props.quizSet && this.state.quizPerson) {
+      if (!this.props.quizSet.quizPeople.find(q => q.personId === this.state.quizPerson!.personId)) {
+        this.selectNextPerson()
+      }
+    }
+  }
+
   componentDidMount() {
     this.selectNextPerson()
   }
