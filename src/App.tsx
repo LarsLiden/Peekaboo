@@ -441,8 +441,12 @@ class App extends React.Component<{}, ComponentState> {
 
       // Delete local
       let people = this.state.allPeople.filter(p => p.personId !== person.personId)
+      
       // Recalculte filter set to exclude new person
+      let selectedIndex = Math.max(this.state.filterSet.selectedIndex - 1, 0)
       let filterSet = Convert.getFilterSet(people, this.state.filter, null)
+      filterSet.selectedIndex = selectedIndex
+
       await setStatePromise(this, {
         allPeople: people,
         filterSet
@@ -460,6 +464,7 @@ class App extends React.Component<{}, ComponentState> {
     try {
       // Delete local
       let people = this.state.allPeople.filter(p => p.personId !== person.personId)
+      
       // Recalculte filter set to exclude new person
       let selectedIndex = Math.max(this.state.filterSet.selectedIndex - 1, 0)
       let filterSet = Convert.getFilterSet(people, this.state.filter, null)

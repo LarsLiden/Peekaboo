@@ -232,6 +232,7 @@ class EditPage extends React.Component<ReceivedProps, ComponentState> {
   onConfirmDeletePhoto(): void {
     let photoName = this.props.person.photoFilenames[this.state.photoIndex]
     this.props.onDeletePhoto(this.props.person, photoName)
+    this.setState({photoIndex: Math.max(0, this.state.photoIndex - 1)})
     this.setState({isConfirmDeletePhotoOpen: false})
   }
 
@@ -350,7 +351,7 @@ class EditPage extends React.Component<ReceivedProps, ComponentState> {
     if (this.state.imageURL) {
       return (
         <CropPage
-          imageURL={this.state.imageURL}
+          originalImageURL={this.state.imageURL}
           onClose={this.onCloseCropper}
           onSave={(imageData) => this.onSaveCrop(imageData)}
         />
