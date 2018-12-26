@@ -63,7 +63,8 @@ export interface Filter {
 
 export enum SortType {
     FAMILIARITY = "FAMILIARITY",
-    NAME  = "NAME"
+    NAME  = "NAME",
+    CREATION = "CREATION"
 }
 
 export enum SortDirection {

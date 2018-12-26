@@ -29,7 +29,7 @@ export class Person {
     descriptionWithKeyValues: string = ""
     allKeyValues: string = ""
     description: string = ""
-    creationDate: string = ""
+    creationDate: number | string = ""
 
     public constructor(init?: Partial<Person>) {
         Object.assign(this, init)

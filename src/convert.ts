@@ -65,6 +65,13 @@ export function filteredPeople(people: Person[], filter: Filter): Person[] {
             else if (b.photoPerformance.avgTime < a.photoPerformance.avgTime) { return 1 }
             else { return 0 }
             })
+    } else if (filter.sortType === SortType.CREATION) {
+        // Sort people by performance
+        filteredPeople = filteredPeople.sort((a, b) => {
+            if (a.creationDate < b.creationDate) { return -1 }
+            else if (b.creationDate < a.creationDate) { return 1 }
+            else { return 0 }
+            })
     }
 
     if (filter.sortDirection === SortDirection.DOWN) {

@@ -58,6 +58,7 @@ export enum SubPage {
 interface ComponentState { 
   edited: boolean
   photoIndex: number
+  selectNew: number | undefined
   showCropPage: boolean
   imageURL: string | null
   crop: ReactCrop.Crop
@@ -72,6 +73,7 @@ class EditPage extends React.Component<ReceivedProps, ComponentState> {
   state: ComponentState = {
     edited: false,
     photoIndex: 0,
+    selectNew: undefined,
     showCropPage: false,
     imageURL: null,
     crop: {aspect: 1 / 1, x: 0, y: 0, width: 50, height: 50},
@@ -81,9 +83,23 @@ class EditPage extends React.Component<ReceivedProps, ComponentState> {
     isConfirmArchiveOpen: false
   }
 
+  componentDidUpdate(prevProps: ReceivedProps) {
+    if (this.state.selectNew && this.state.selectNew === this.props.person.photoFilenames.length) {
+      this.setState({
+        photoIndex: this.props.person.photoFilenames.length - 1,
+        selectNew: undefined
+      })
+    }
+  }
+
   // --- EDIT Strings ---
   @OF.autobind
   onSaveEditStrings(person: Person): void {
+    // Fill in missing data
+    if (!person.creationDate) {
+      const today = new Date()
+      person.creationDate = `${today.getMonth() + 1}/${today.getDate()}/${today.getFullYear()}`
+    }
     this.props.onSavePerson(person)
     this.props.onSetSubpage(null)
   }
@@ -230,10 +246,11 @@ class EditPage extends React.Component<ReceivedProps, ComponentState> {
 
   @OF.autobind
   onConfirmDeletePhoto(): void {
-    let photoName = this.props.person.photoFilenames[this.state.photoIndex]
-    this.props.onDeletePhoto(this.props.person, photoName)
+    const deleteIndex = this.state.photoIndex
     this.setState({photoIndex: Math.max(0, this.state.photoIndex - 1)})
     this.setState({isConfirmDeletePhotoOpen: false})
+    let photoName = this.props.person.photoFilenames[deleteIndex]
+    this.props.onDeletePhoto(this.props.person, photoName)
   }
 
   // --- DELETE PERSON ---
@@ -282,7 +299,7 @@ class EditPage extends React.Component<ReceivedProps, ComponentState> {
   @OF.autobind
   onPrevPhoto(): void {
     let photoIndex = this.state.photoIndex - 1
-    if (photoIndex <= 0) {
+    if (photoIndex < 0) {
       photoIndex = this.props.person.photoFilenames.length - 1
     }
     this.setState({photoIndex})
@@ -295,11 +312,11 @@ class EditPage extends React.Component<ReceivedProps, ComponentState> {
 
   @OF.autobind
   async onSaveCrop(imageData: string): Promise<void> {
-    await this.props.onSavePhoto(this.props.person, imageData)
     this.setState({
       imageURL: null,
-      photoIndex: this.props.person.photoFilenames.length - 1
+      selectNew: this.props.person.photoFilenames.length + 1
     })
+    await this.props.onSavePhoto(this.props.person, imageData)
   }
 
   @OF.autobind

@@ -27,8 +27,16 @@ class Search extends React.Component<ReceivedProps, ComponentState> {
 
   @OF.autobind
   onSearchChanged(text: string) {
+    if (text.length === 0) {
+      this.setState({
+        searchText: text,
+        results: []
+      })
+      return
+    }
     const stext = text.toUpperCase()
-    let startNameMatch = this.props.people.filter(p => 
+    let startNameMatch = this.props.people.filter(p =>
+      p.fullName().toUpperCase().startsWith(stext) ||
       p.firstName.toUpperCase().startsWith(stext) ||
       p.lastName.toUpperCase().startsWith(stext) ||
       p.nickName.toUpperCase().startsWith(stext) ||
@@ -73,7 +81,10 @@ class Search extends React.Component<ReceivedProps, ComponentState> {
     
     let nameRender: JSX.Element | null
     if (this.props.exclude && person.personId === this.props.exclude.personId) {
-      nameRender =(<span className="SearchDisabled">{person.fullName()}</span>)
+      nameRender = (<span className="SearchDisabled">{person.fullName()}</span>)
+    }
+    else if (this.containsSearch(person.fullName(), this.state.searchText)) {
+      nameRender = this.renderFound(this.state.searchText, "", person.fullName(), ``)
     }
     else if (this.containsSearch(person.firstName, this.state.searchText)) {
       nameRender = this.renderFound(this.state.searchText, "", person.firstName, ` ${person.lastName}`)

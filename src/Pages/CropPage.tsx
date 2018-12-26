@@ -4,7 +4,7 @@
  */
 import * as React from 'react';
 import * as OF from 'office-ui-fabric-react'
-import { PHOTO_HEIGHT, PHOTO_WIDTH } from '../Util'
+import { PHOTO_HEIGHT, PHOTO_WIDTH, setStatePromise } from '../Util'
 import ReactCrop from 'react-image-crop'
 import 'react-image-crop/dist/ReactCrop.css'
 
@@ -19,6 +19,7 @@ interface ComponentState {
   imageBlob: ArrayBuffer | null
   crop: ReactCrop.Crop
   cropped: boolean
+  rotating: boolean
   isCalloutVisible: boolean
 }
 
@@ -29,6 +30,7 @@ class CropPage extends React.Component<ReceivedProps, ComponentState> {
     imageBlob: null,
     crop: {aspect: PHOTO_WIDTH / PHOTO_HEIGHT, x: 0, y: 0},
     cropped: false,
+    rotating: false,
     isCalloutVisible: false
   }
 
@@ -42,8 +44,10 @@ class CropPage extends React.Component<ReceivedProps, ComponentState> {
     this.setState({imageURL: newProps.originalImageURL})
   }
 
-  onRotate(clockwise: boolean) {
+  async onRotate(clockwise: boolean) {
   
+    await setStatePromise(this, {rotating: true})
+    this.forceUpdate()
     let canvas = document.createElement('canvas')
 
     const image = new Image() 
@@ -67,7 +71,17 @@ class CropPage extends React.Component<ReceivedProps, ComponentState> {
         ctx!.drawImage(image, 0, 0, canvas.height, canvas.width)
     }
 
-    this.setState({imageURL: canvas.toDataURL()})
+    // Use time out so page has a change to render "rotating" message
+    window.setTimeout(() => {
+      const imageURL = canvas.toDataURL()
+
+      this.setState({
+        rotating: false,
+        crop: {aspect: PHOTO_WIDTH / PHOTO_HEIGHT, x: 0, y: 0},
+        imageURL
+      })
+    }, 0)
+
   }
 
   @OF.autobind
@@ -152,16 +166,23 @@ class CropPage extends React.Component<ReceivedProps, ComponentState> {
                       />
                     </div>
                   }
-                  <OF.IconButton
-                      className="ButtonIcon ButtonPrimary"
-                      onClick={() => this.onRotate(false)}
-                      iconProps={{ iconName: 'Undo' }}
-                  />
-                  <OF.IconButton
-                      className="ButtonIcon ButtonPrimary"
-                      onClick={() => this.onRotate(true)}
-                      iconProps={{ iconName: 'Redo' }}
-                  />
+                  {this.state.rotating ?
+                    <div className="CropCallout">Rotating...</div>
+                  :
+                    <div className="InlineBlock">
+                      <OF.IconButton
+                          className="ButtonIcon ButtonPrimary"
+                          onClick={async () => {await setStatePromise(this, {rotating: true})
+                          this.onRotate(false)}}
+                          iconProps={{ iconName: 'Undo' }}
+                      />
+                      <OF.IconButton
+                          className="ButtonIcon ButtonPrimary"
+                          onClick={() => this.onRotate(true)}
+                          iconProps={{ iconName: 'Redo' }}
+                      />
+                    </div>
+                  }
                   <OF.IconButton
                       className="ButtonIcon ButtonPrimary FloatRight"
                       onClick={this.props.onClose}

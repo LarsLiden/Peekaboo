@@ -71,3 +71,30 @@ export function generateGUID(): string {
     })
     return guid
 }
+
+/*
+ // update creation date from string to milliseconds
+    for (let person of allPeople) {
+        let rawDate = person.creationDate
+        if (!rawDate) {
+        let date = new Date()
+        person.creationDate = date.getTime()
+
+        let creationDate = new Date(person.creationDate).toLocaleDateString()
+        console.log(`${person.fullName()} : ${rawDate} => ${creationDate}`)
+        await Client.putPerson(this.state.user!, person)
+        }
+        else if (typeof rawDate === "string" && rawDate.indexOf("/") > 0) {
+        let dateStrings = rawDate.split("/")
+        let month = Number(dateStrings[0]) - 1;
+        let day = Number(dateStrings[1]) 
+        let year = Number(dateStrings[2])
+        let date = new Date(year, month, day)
+        person.creationDate = date.getTime()
+
+        let creationDate = new Date(person.creationDate).toLocaleDateString()
+        console.log(`${person.fullName()} : ${rawDate} => ${creationDate}`)
+        await Client.putPerson(this.state.user!, person)
+        }
+    }
+*/

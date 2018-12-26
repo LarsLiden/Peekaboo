@@ -260,7 +260,7 @@ class App extends React.Component<{}, ComponentState> {
       let loaded: Person[][] = []
       this.onSetPage(Page.LOAD, null)
 
-      const letters = "ABCEFGHIJKLMNOPQRSTUVWXYZ".split("")
+      const letters = "ABCDEFGHIJKLMNOPQRSTUVWXYZ".split("")
       for (let letter of letters) {
         Client.getPeopleStartingWith(this.state.user!, letter, async (people) => {
           if (!people) {
@@ -579,6 +579,8 @@ class App extends React.Component<{}, ComponentState> {
   @OF.autobind
   async onNewPerson(): Promise<void> {
     let person = new Person()
+    let today = new Date()
+    person.creationDate = `${today.getMonth() + 1}/${today.getDate()}/${today.getFullYear()}`
     this.setState({
       selectedPerson: person
     })

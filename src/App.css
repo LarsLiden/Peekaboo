@@ -183,13 +183,13 @@
 
 .ButtonListCount {
   width: 50px !important;
-  height: 30px !important;
+  height: 19PX;
   position: absolute !important;
-  bottom: 5px;
+  bottom: 17px;
   left: 0px;
   border-radius: 5px !important;
   background-color: #555555 !important;
-  font-size: 20px;
+  font-size: 12px;
 }
 
 .ButtonListCountSelected {

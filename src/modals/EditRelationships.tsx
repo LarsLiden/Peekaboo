@@ -22,13 +22,23 @@ interface ComponentState {
   searchRelationship: Relationship | null
 }
 
+function getTypes(): { key: string; text: any; }[] {
+  let types = Object.keys(RType).map(e => {
+    return {key: RType[e], text: RType[e]}
+  })
+  types = types.sort((a, b) => {
+    if (a.key < b.key) { return -1 }
+    else if (b.key < a.key) { return 1 }
+    else { return 0 }
+    })
+  return types
+  }
+
 class EditRelationships extends React.Component<ReceivedProps, ComponentState> {
 
   state: ComponentState = {
     relationships: [],
-    types: Object.keys(RType).map(e => {
-      return {key: RType[e], text: RType[e]}
-    }),
+    types: getTypes(),
     searchRelationship: null
   }
 
@@ -115,6 +125,7 @@ class EditRelationships extends React.Component<ReceivedProps, ComponentState> {
         <div className='EditRelationshipSection'>
           <div>
             <OF.Dropdown
+              key={relationship.relationshipId}
               className="EditDropdown"
               defaultSelectedKey={relationship.type.from}
               options={this.state.types}

@@ -129,7 +129,8 @@ class ViewPage extends React.Component<ReceivedProps, ComponentState> {
     let height = (PHOTO_HEIGHT / PHOTO_WIDTH) * width
     let scale = 100 - Math.round((1 - (this.props.person.photoPerformance.avgTime / MAX_TIME)) * 100)
     let inList = this.props.personList.find(p => p === this.props.person.personId)
-      
+    let creationDate = new Date(this.props.person.creationDate).toLocaleDateString()
+                  
     return (
         <Swipe
           onSwipeStart={this.onSwipeStart}
@@ -151,6 +152,11 @@ class ViewPage extends React.Component<ReceivedProps, ComponentState> {
                 <div className="DetailName">
                     {this.props.person.lastName}
                 </div>
+                {this.props.person.maidenName &&
+                  <div className="DetailName">
+                    {`(${this.props.person.maidenName})`}
+                  </div>
+                }
                 {this.props.user.isAdmin &&
                   <div
                       className={`ButtonListCount${inList ? ' ButtonListCountSelected' : ''}`}
@@ -160,6 +166,11 @@ class ViewPage extends React.Component<ReceivedProps, ComponentState> {
                     {this.props.personList.length.toString()}
                   </div>
                 }
+                <div
+                  className="CreationDate"
+                >
+                  {creationDate}
+                </div>
                 <div 
                   className="ViewScale" 
                   onClick={() => this.props.onSetPage(Page.PERFORMANCE, Page.VIEW)}
