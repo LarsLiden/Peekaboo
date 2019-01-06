@@ -5,6 +5,7 @@
 import * as React from 'react';
 import * as OF from 'office-ui-fabric-react'
 import '../fabric.css'
+import { Person } from "../models/person";
 import { QuizPerson, QuizSet, User } from '../models/models'
 import ScaledColor from '../modals/ScaledColor'
 import { getRandomInt, PHOTO_HEIGHT, PHOTO_WIDTH, baseBlob } from '../Util'
@@ -15,6 +16,7 @@ export interface ReceivedProps {
   user: User
   quizSet: QuizSet | null
   hidden: boolean
+  allPeople: Person[]
   onQuizDone: (testResults: TestResult[]) => Promise<void>
   onViewDetail: (quizperson: QuizPerson) => void
 }
@@ -197,8 +199,8 @@ class QuizPage extends React.Component<ReceivedProps, ComponentState> {
         />
         {this.state.showName && 
           <div className='QuizShow'>
-            <div className='QuizName'>
-              {this.state.quizPerson.fullName}
+            <div className='ExpandedName'>
+              {this.state.quizPerson.expandedName}
             </div>
             <div className='QuizDescription'>
               {this.state.quizPerson.description}
@@ -206,8 +208,17 @@ class QuizPage extends React.Component<ReceivedProps, ComponentState> {
             <div className='QuizDescription'>
               {this.state.quizPerson.tags}
             </div>
-            {this.state.quizPerson.relationships.map(r =>
-              `${r.type.from} ${this.props.user.name}`
+            {this.state.quizPerson.topRelationships.map(relationship => {
+                  const person = this.props.allPeople.find(p => p.personId === relationship.personId)
+                  const name = person ? person.fullName() : relationship.personId.split("_")[0]
+                  return (
+                    <div 
+                      key={`${relationship.type.from} ${name}`}
+                    >
+                      {`${relationship.type.from} ${name}`}
+                    </div>
+                  )
+                }
               )
             }
           </div>

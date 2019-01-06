@@ -810,6 +810,7 @@ class App extends React.Component<{}, ComponentState> {
           <QuizPage
             hidden={this.state.page !== Page.QUIZ}
             user={this.state.user!}
+            allPeople={this.state.allPeople}
             quizSet={this.state.quizSet}
             onQuizDone={this.onQuizDone}
             onViewDetail={this.viewQuizDetail}

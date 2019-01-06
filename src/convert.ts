@@ -3,22 +3,38 @@
  * Licensed under the MIT License.
  */
 import { Person } from "./models/person";
+import { Relationship } from "./models/relationship"
 import { PerfType, QuizPerson, Filter, FilterSet, Tag, QuizSet, SortDirection, SortType } from './models/models'
 import { getPhotoBlobName } from './Util'
 import { MAX_TIME, BIAS } from './models/const'
 
 export function toQuizPerson(person: Person, perfType: PerfType, userPersonId: string | null): QuizPerson {
-   // Include any direct relationships to user
-    let relationships = person.relationships.filter(r =>  r.personId === userPersonId)
+
     return {
         personId: person.personId!,
-        fullName: `${person.firstName} ${person.lastName}`,
+        expandedName: person.expandedName(),
         description: person.description,
         tags: person.tags.join(", "),
-        relationships,
+        topRelationships: topRelationships(person, userPersonId),
         photoBlobnames: person.photoFilenames.map(f => getPhotoBlobName(person, f)),
         performance: person.performance(perfType),
     }
+}
+
+// Return top relationships
+export function topRelationships(person: Person, userPersonId: string | null): Relationship[] {
+
+    // Next get by priority
+    let relationships = person.relationships.sort((a, b) => {
+        // Relationships to user are most important
+        const aVal = a.personId === userPersonId ? 0 : a.type.priority
+        const bVal = b.personId === userPersonId ? 0 : b.type.priority
+        if (aVal < bVal) { return -1 }
+        else if (bVal < aVal) { return 1 }
+        else { return 0 }
+        })
+
+    return relationships.slice(0, 4)
 }
 
 export function filteredPeople(people: Person[], filter: Filter): Person[] {      
@@ -229,7 +245,7 @@ export function quizSet(people: Person[], filter: Filter, userPersonId: string |
             person.performance.familiarity = calcFamiliarity(minAverageTime, maxAverageTime, person.performance.avgTime)
             frequencyTotal += person.performance.frequency
 
-            logstrings.push(`${person.performance.avgTime + (MAX_TIME * 10)} \t${person.performance.frequency} \t${person.performance.frequencyOffsetStart} \t${person.performance.frequencyOffsetEnd} \t${person.fullName}`)
+            logstrings.push(`${person.performance.avgTime + (MAX_TIME * 10)} \t${person.performance.frequency} \t${person.performance.frequencyOffsetStart} \t${person.performance.frequencyOffsetEnd} \t${person.expandedName}`)
         })
 
         logstrings.sort()

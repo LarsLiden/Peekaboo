@@ -4,6 +4,7 @@
  */
 import { Person } from './models/person'
 import { User } from './models/models'
+import stringDiff from './stringDiff'
 
 export const HEAD_IMAGE = "https://peekaboo.blob.core.windows.net/resources/HaveWeHead.png"
 export const SAD_IMAGE = "https://peekaboo.blob.core.windows.net/resources/SAD_FACE.png"
@@ -64,12 +65,37 @@ export function generatePersonId(firstName: string, lastName: string): string {
 
 export function generateGUID(): string {
     let d = new Date().getTime()
-    let guid = 'xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx'.replace(/[xy]/g, char => {
+    return 'xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx'.replace(/[xy]/g, char => {
       let r = ((d + Math.random() * 16) % 16) | 0
       d = Math.floor(d / 16)
       return (char === 'x' ? r : (r & 0x3) | 0x8).toString(16)
     })
-    return guid
+}
+
+// Returns list of similarly names people
+export function similarPeople(fullName: string, allPeople: Person[]) {
+    return allPeople.filter(p => {
+        let simScore = stringDiff(fullName, p.fullName());
+        if (simScore > 0.8) { 
+            return true
+        }
+
+        let maidenName = `${p.firstName} ${p.maidenName}`
+        simScore = stringDiff(fullName, maidenName);
+        if (simScore > 0.8) { 
+            return true
+        }
+
+        let nickName = `${p.nickName} ${p.maidenName}`
+        simScore = stringDiff(fullName, nickName);
+        if (simScore > 0.8) { 
+            return true
+        }
+
+        let altName = `${p.alternateName} ${p.maidenName}`
+        simScore = stringDiff(fullName, altName);
+        return (simScore > 0.8)
+    })
 }
 
 /*

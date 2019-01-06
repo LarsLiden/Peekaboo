@@ -4,15 +4,16 @@
  */
 import * as React from 'react';
 import * as OF from 'office-ui-fabric-react'
+import * as Util from '../Util'
 import '../fabric.css'
 import { Person } from '../models/person'
 import { Relationship, RelationshipType } from '../models/relationship'
 import { Filter, Tag, User, KeyValue, Event, SocialNet } from '../models/models'
 import CropPage from './CropPage'
-import { HEAD_IMAGE, baseBlob, getPhotoBlobName, PHOTO_HEIGHT, PHOTO_WIDTH } from '../Util'
 import DetailTags from '../Detail/DetailTags'
 import DetailText from '../Detail/DetailText'
 import ReactCrop from 'react-image-crop'
+import CheckConflict from '../modals/CheckConflict'
 import ConfirmModal from '../modals/Confirm'
 import EditBasicInfo from '../modals/EditBasicInfo'
 import EditTags from '../modals/EditTags'
@@ -52,17 +53,20 @@ export enum SubPage {
   RELATIONSHIPS = "RELATIONSHIPS",
   EVENTS = "EVENTS",
   KEYVALUES = "KEYVALUES",
-  SOCIALNETWORKS = "SOCIALNETWORKS"
+  SOCIALNETWORKS = "SOCIALNETWORKS",
+  CONFLICT = "CONFLICT"
 } 
 
 interface ComponentState { 
   edited: boolean
   photoIndex: number
-  selectNew: number | undefined
+  selectNewPhoto: number | undefined
   showCropPage: boolean
   imageURL: string | null
   crop: ReactCrop.Crop
   file: File | null
+  newPerson: Person | null
+  conflicts: Person[]
   isConfirmDeletePhotoOpen: boolean
   isConfirmDeleteOpen: boolean,
   isConfirmArchiveOpen: boolean
@@ -73,33 +77,52 @@ class EditPage extends React.Component<ReceivedProps, ComponentState> {
   state: ComponentState = {
     edited: false,
     photoIndex: 0,
-    selectNew: undefined,
+    selectNewPhoto: undefined,
     showCropPage: false,
     imageURL: null,
     crop: {aspect: 1 / 1, x: 0, y: 0, width: 50, height: 50},
     file: null,
+    newPerson: null,
+    conflicts: [],
     isConfirmDeletePhotoOpen: false,
     isConfirmDeleteOpen: false,
     isConfirmArchiveOpen: false
   }
 
   componentDidUpdate(prevProps: ReceivedProps) {
-    if (this.state.selectNew && this.state.selectNew === this.props.person.photoFilenames.length) {
+    if (this.state.selectNewPhoto && this.state.selectNewPhoto === this.props.person.photoFilenames.length) {
       this.setState({
         photoIndex: this.props.person.photoFilenames.length - 1,
-        selectNew: undefined
+        selectNewPhoto: undefined
       })
     }
   }
 
   // --- EDIT Strings ---
   @OF.autobind
-  onSaveEditStrings(person: Person): void {
+  async onSaveEditStrings(person: Person): Promise<void> {
+
     // Fill in missing data
     if (!person.creationDate) {
       const today = new Date()
       person.creationDate = `${today.getMonth() + 1}/${today.getDate()}/${today.getFullYear()}`
     }
+
+    // Was it a new person
+    if (!this.props.person.personId) {
+      person.personId = Util.generatePersonId(person.firstName, person.lastName)
+      let conflicts = Util.similarPeople(person.fullName(), this.props.allPeople)
+      if (conflicts.length !== 0) {
+        person.personId = Util.generatePersonId(person.firstName, person.lastName)
+        await Util.setStatePromise(this, {
+          newPerson: person,
+          conflicts
+        })
+        this.props.onSetSubpage(SubPage.CONFLICT)
+        return
+      }
+    }
+
     this.props.onSavePerson(person)
     this.props.onSetSubpage(null)
   }
@@ -233,6 +256,20 @@ class EditPage extends React.Component<ReceivedProps, ComponentState> {
     this.props.onSetSubpage(null)
   }
 
+  // --- Conflict ---
+
+  @OF.autobind
+  onNoConflict(): void {
+    this.props.onSavePerson(this.state.newPerson!)
+    this.props.onSetSubpage(null)
+  }
+
+  @OF.autobind
+  onConflict(person: Person): void {
+    this.props.onSelectPerson(person.personId!)
+    this.props.onSetSubpage(null)
+  }
+
   // --- DELETE PHOTO ---
   @OF.autobind
   onDeletePhoto(): void {
@@ -314,7 +351,7 @@ class EditPage extends React.Component<ReceivedProps, ComponentState> {
   async onSaveCrop(imageData: string): Promise<void> {
     this.setState({
       imageURL: null,
-      selectNew: this.props.person.photoFilenames.length + 1
+      selectNewPhoto: this.props.person.photoFilenames.length + 1
     })
     await this.props.onSavePhoto(this.props.person, imageData)
   }
@@ -345,11 +382,22 @@ class EditPage extends React.Component<ReceivedProps, ComponentState> {
   public render() {
 
     // If a brand new person
-    if (!this.props.person.firstName || !this.props.person.lastName) {
+    if (this.props.subpage === SubPage.CONFLICT) {
+      return (
+        <CheckConflict
+          user={this.props.user}
+          conflicts={this.state.conflicts}
+          onConflict={(person: Person) => this.onConflict(person)}
+          onNoConflict={this.onNoConflict}
+        />
+      )
+    }
+    else if (!this.props.person.firstName || !this.props.person.lastName) {
       return (
         <div>
           <EditBasicInfo
             person={this.props.person}
+            allPeople={this.props.allPeople}
             onCancel={this.onClickClose}
             onSave={this.onSaveEditStrings}
           />
@@ -357,13 +405,13 @@ class EditPage extends React.Component<ReceivedProps, ComponentState> {
       )
     }
 
-    let photoBlobName = HEAD_IMAGE
+    let photoBlobName = Util.HEAD_IMAGE
     if (this.props.person.photoFilenames.length > 0) {
-      photoBlobName = baseBlob(this.props.user) 
-        + getPhotoBlobName(this.props.person, this.props.person.photoFilenames[this.state.photoIndex])
+      photoBlobName = Util.baseBlob(this.props.user) 
+        + Util.getPhotoBlobName(this.props.person, this.props.person.photoFilenames[this.state.photoIndex])
     }
     let width = 160
-    let height = (PHOTO_HEIGHT / PHOTO_WIDTH) * width
+    let height = (Util.PHOTO_HEIGHT / Util.PHOTO_WIDTH) * width
 
     if (this.state.imageURL) {
       return (
@@ -378,6 +426,7 @@ class EditPage extends React.Component<ReceivedProps, ComponentState> {
       return (
         <EditBasicInfo
           person={this.props.person}
+          allPeople={this.props.allPeople}
           onCancel={() => this.props.onSetSubpage(null)}
           onSave={this.onSaveEditStrings}
         />

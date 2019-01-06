@@ -20,7 +20,7 @@ class ViewPerformance extends React.Component<ReceivedProps, {}> {
   public render() {
     let avgTime = Math.round(this.props.performance.avgTime / 100) 
     let bestTime = Math.round(this.props.performance.bestTime / 100) 
-    let worstTime = Math.round(this.props.performance.worstTime || MAX_TIME / 100) 
+    let worstTime = Math.round((this.props.performance.worstTime || MAX_TIME) / 100) 
     let date = new Date(this.props.performance.lastTested).toLocaleDateString()
     return (
       <div className="ModalPage">

@@ -36,10 +36,10 @@ export interface QuizSet {
 export interface QuizPerson {
     personId: string
     photoBlobnames: string[]
-    fullName: string
+    expandedName: string
     description: string
     tags: string
-    relationships: Relationship[]
+    topRelationships: Relationship[]
     performance: Performance
 }
 

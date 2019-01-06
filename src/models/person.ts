@@ -49,6 +49,10 @@ export class Person {
         return `${this.firstName} ${this.lastName}`
     }
 
+    public expandedName() {
+        return `${this.firstName} ${this.nickName ? `"${this.nickName}"` : ""} ${this.lastName} ${this.maidenName ? `(${this.maidenName})` : ""}`
+    }
+    
     public get getKey(): string {
         return this.personId![0].toUpperCase()
     } 

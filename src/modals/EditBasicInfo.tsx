@@ -6,12 +6,12 @@ import * as React from 'react';
 import * as OF from 'office-ui-fabric-react'
 import '../fabric.css'
 import { Person } from '../models/person'
-import { generatePersonId } from '../Util'
 import DetailEditText from '../Detail/DetailEditText'
 import "../Pages/ViewPage.css"
 
 export interface ReceivedProps {
   person: Person
+  allPeople: Person[]
   onSave: (person: Person) => void
   onCancel: () => void
 }
@@ -81,7 +81,7 @@ class EditBasicInfo extends React.Component<ReceivedProps, ComponentState> {
   onDescriptionNameChanged(text: string) {
     this.setState({description: text})
   }
-  
+
   @OF.autobind
   onClickSave(): void {
 
@@ -93,9 +93,6 @@ class EditBasicInfo extends React.Component<ReceivedProps, ComponentState> {
     newPerson.alternateName = this.state.alternateName
     newPerson.description = this.state.description
 
-    if (!this.props.person.personId) {
-      newPerson.personId = generatePersonId(this.state.firstName, this.state.lastName)
-    }
     this.props.onSave(newPerson)
   }
 

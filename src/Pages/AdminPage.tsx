@@ -69,10 +69,10 @@ class AdminPage extends React.Component<ReceivedProps, ComponentState> {
   @OF.autobind
   async onConfirmExportToUser(): Promise<void> {
     if (this.state.isConfirmExportToUser) {
-      await this.props.onExportToUser(this.state.isConfirmExportToUser)
       this.setState({
         isConfirmExportToUser: null
       })
+      await this.props.onExportToUser(this.state.isConfirmExportToUser)
     }
   }
 
