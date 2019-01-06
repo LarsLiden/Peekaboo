@@ -5,6 +5,7 @@
 import * as React from 'react';
 import * as OF from 'office-ui-fabric-react'
 import { Person } from '../models/person'
+import { setStatePromise } from '../Util'
 
 export interface ReceivedProps {
   people: Person[]
@@ -15,6 +16,7 @@ export interface ReceivedProps {
 
 interface ComponentState {
   searchText: string
+  byNameOnly: boolean
   results: Person[]
 }
 
@@ -22,6 +24,7 @@ class Search extends React.Component<ReceivedProps, ComponentState> {
 
   state: ComponentState = {
     searchText: "",
+    byNameOnly: true,
     results: []
   }
 
@@ -35,13 +38,21 @@ class Search extends React.Component<ReceivedProps, ComponentState> {
       return
     }
     const stext = text.toUpperCase()
-    let startNameMatch = this.props.people.filter(p =>
+    let nameMatch = this.props.people.filter(p =>
       p.fullName().toUpperCase().startsWith(stext) ||
       p.firstName.toUpperCase().startsWith(stext) ||
       p.lastName.toUpperCase().startsWith(stext) ||
       p.nickName.toUpperCase().startsWith(stext) ||
       p.maidenName.toUpperCase().startsWith(stext) ||
       p.alternateName.toUpperCase().startsWith(stext))
+
+    if (!this.state.byNameOnly) {
+      let allMatch = this.props.people.filter(p =>
+        JSON.stringify(p).toUpperCase().includes(stext))
+      let combinedMatch = [...nameMatch, ...allMatch]
+      nameMatch = [...new Set(combinedMatch)]
+    }
+
 /*
     let midNameMatch = this.props.people.filter(p => 
       p.firstName.indexOf(text) >= 0 ||
@@ -52,7 +63,7 @@ class Search extends React.Component<ReceivedProps, ComponentState> {
 */
     this.setState({
       searchText: text,
-      results: startNameMatch
+      results: nameMatch
     })
   }
   
@@ -74,6 +85,12 @@ class Search extends React.Component<ReceivedProps, ComponentState> {
           <span>{post}</span>
         </div>
       )
+  }
+
+  @OF.autobind
+  async onToggleSearch(ev: React.MouseEvent<HTMLElement>, checked: boolean) {
+    await setStatePromise(this, {byNameOnly: checked})
+    this.onSearchChanged(this.state.searchText)
   }
 
   @OF.autobind
@@ -102,7 +119,11 @@ class Search extends React.Component<ReceivedProps, ComponentState> {
       nameRender = this.renderFound(this.state.searchText, `${person.firstName} "`, person.alternateName, `" ${person.lastName}`)
     }
     else {
-      nameRender = null
+      nameRender = (
+        <div>
+          <span>{person.fullName()}</span>
+        </div>
+      )
     }
 
     return (
@@ -127,7 +148,7 @@ class Search extends React.Component<ReceivedProps, ComponentState> {
         <div className="HeaderHolder HeaderHolderMedium">
           <div className="HeaderContent">
             <OF.Label className="SearchLabel">
-              Search:
+              {this.state.byNameOnly ? "Search by Name:" : "Search All Fields:"}
             </OF.Label>
             <OF.TextField
               className="SearchInput"
@@ -152,6 +173,12 @@ class Search extends React.Component<ReceivedProps, ComponentState> {
                 className="ButtonIcon ButtonPrimary FloatLeft"
                 onClick={this.props.onCancel}
                 iconProps={{ iconName: 'ChromeBack' }}
+            />
+            <OF.Toggle
+              className="FloatRight"
+              defaultChecked={true}
+              label="Name Only"
+              onChange={this.onToggleSearch}
             />
           </div>
         </div>

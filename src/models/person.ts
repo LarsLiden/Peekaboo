@@ -26,8 +26,8 @@ export class Person {
     alternateName: string = ""
     fullAternateName: string = ""
     personId: string | null = null
-    descriptionWithKeyValues: string = ""
-    allKeyValues: string = ""
+ //   descriptionWithKeyValues: string = ""  LARS get rid of
+ //   allKeyValues: string = ""
     description: string = ""
     creationDate: number | string = ""
 
@@ -52,7 +52,7 @@ export class Person {
     public expandedName() {
         return `${this.firstName} ${this.nickName ? `"${this.nickName}"` : ""} ${this.lastName} ${this.maidenName ? `(${this.maidenName})` : ""}`
     }
-    
+
     public get getKey(): string {
         return this.personId![0].toUpperCase()
     } 
