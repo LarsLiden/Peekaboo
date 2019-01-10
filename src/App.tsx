@@ -96,6 +96,7 @@ class App extends React.Component<{}, ComponentState> {
     filter: {
       required: [], 
       blocked: [], 
+      searchTerm: null,
       perfType: PerfType.PHOTO, 
       sortType: SortType.NAME, 
       sortDirection: SortDirection.UP},
@@ -169,16 +170,32 @@ class App extends React.Component<{}, ComponentState> {
   }
 
   @OF.autobind 
-  async onClickFilter() {
-    if (this.state.filteredTags.length === 0) {
+  async onClickTagFilter() {
+  //  if (this.state.filteredTags.length === 0) { LARS
       let filteredPeople = Convert.filteredPeople(this.state.allPeople, this.state.filter)
-      let tags = Convert.filteredTags(filteredPeople, this.state.allPeople, this.state.filter)
+  //    let tags = Convert.filteredTags(filteredPeople, this.state.allPeople, this.state.filter)
       this.setState({
-        filteredTags: tags,
+   //     filteredTags: tags,
         filteredPeopleCount: filteredPeople.length
       })
-    }
+  //  }
     this.onSetPage(Page.FILTER, Page.VIEW)
+  }
+
+  @OF.autobind 
+  async onClickSearchFilter(searchTerm: string) {
+
+    await setStatePromise(this, {
+      filter: {...this.state.filter, searchTerm }
+    })
+    this.updateFilterSet()
+
+    let personId = this.state.filterSet.people[this.state.filterSet.selectedIndex].personId
+    let selectedPerson = Convert.getPerson(this.state.allPeople, personId!) || null
+    await setStatePromise(this, {
+      selectedPerson
+    })
+    await this.onSetPage(Page.VIEW, null)
   }
 
   @OF.autobind 
@@ -742,7 +759,7 @@ class App extends React.Component<{}, ComponentState> {
             onSetPage={this.onSetPage}
             onClickQuiz={this.onQuiz}
             onContinueQuiz={() => this.onSetPage(Page.QUIZ, Page.VIEW)}
-            onClickFilter={this.onClickFilter}
+            onClickTagFilter={this.onClickTagFilter}
             onClickSort={() => this.onSetPage(Page.SORT, Page.VIEW)}
             onClickAdmin={this.onClickAdmin}
             onEdit={this.onEdit}
@@ -821,6 +838,7 @@ class App extends React.Component<{}, ComponentState> {
             people={this.state.allPeople}
             onCancel={() => this.onSetPage(Page.VIEW, null)}
             onSelect={(person: Person) => this.onSelectPerson(person.personId!)}
+            onClickSearchFilter={this.onClickSearchFilter}
           />
         }
         {this.state.page === Page.PERFORMANCE && this.state.selectedPerson && 

@@ -12,6 +12,7 @@ export interface ReceivedProps {
   exclude?: Person
   onSelect: (person: Person) => void
   onCancel: () => void
+  onClickSearchFilter: ((searchTerm: string) => void) | null
 }
 
 interface ComponentState {
@@ -38,19 +39,20 @@ class Search extends React.Component<ReceivedProps, ComponentState> {
       return
     }
     const stext = text.toUpperCase()
-    let nameMatch = this.props.people.filter(p =>
-      p.fullName().toUpperCase().startsWith(stext) ||
-      p.firstName.toUpperCase().startsWith(stext) ||
-      p.lastName.toUpperCase().startsWith(stext) ||
-      p.nickName.toUpperCase().startsWith(stext) ||
-      p.maidenName.toUpperCase().startsWith(stext) ||
-      p.alternateName.toUpperCase().startsWith(stext))
 
-    if (!this.state.byNameOnly) {
-      let allMatch = this.props.people.filter(p =>
-        JSON.stringify(p).toUpperCase().includes(stext))
-      let combinedMatch = [...nameMatch, ...allMatch]
-      nameMatch = [...new Set(combinedMatch)]
+    let matched: Person[] = []
+    if (this.state.byNameOnly) {
+      matched = this.props.people.filter(p =>
+        p.fullName().toUpperCase().startsWith(stext) ||
+        p.firstName.toUpperCase().startsWith(stext) ||
+        p.lastName.toUpperCase().startsWith(stext) ||
+        p.nickName.toUpperCase().startsWith(stext) ||
+        p.maidenName.toUpperCase().startsWith(stext) ||
+        p.alternateName.toUpperCase().startsWith(stext))
+    }
+    else {
+      matched = this.props.people.filter(p =>
+        p.searchData(this.props.people).includes(stext))
     }
 
 /*
@@ -63,7 +65,7 @@ class Search extends React.Component<ReceivedProps, ComponentState> {
 */
     this.setState({
       searchText: text,
-      results: nameMatch
+      results: matched
     })
   }
   
@@ -180,7 +182,14 @@ class Search extends React.Component<ReceivedProps, ComponentState> {
               label="Name Only"
               onChange={this.onToggleSearch}
             />
-          </div>
+            {this.props.onClickSearchFilter &&
+              <OF.IconButton
+                className="ButtonIcon ButtonPrimary FloatLeft"
+                onClick={() => this.props.onClickSearchFilter!(this.state.searchText.toUpperCase())}
+                iconProps={{ iconName: 'Filter' }}
+              />
+            }
+            </div>
         </div>
       </div>
     );

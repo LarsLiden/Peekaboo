@@ -34,7 +34,7 @@ export interface ReceivedProps {
   onClickQuiz: () => void
   onContinueQuiz: () => void
   onEdit: () => void
-  onClickFilter: () => void
+  onClickTagFilter: () => void
   onClickSort: () => void
   onClickAdmin: () => void
   onNewPerson: () => void
@@ -245,17 +245,17 @@ class ViewPage extends React.Component<ReceivedProps, ComponentState> {
               </div>
               <div className="FooterHolder"> 
                 <div className="FooterContent">
-                  {(this.props.filter.required.length > 0 || this.props.filter.blocked.length > 0) 
+                  {(this.props.filter.required.length > 0 || this.props.filter.blocked.length > 0 || this.props.filter.searchTerm !== null) 
                     ?
                     <OF.IconButton
                       className="ButtonIcon ButtonPrimary FloatLeft ButtonOutlined"
-                      onClick={() => this.props.onClickFilter()}
+                      onClick={() => this.props.onClickTagFilter()}
                       iconProps={{ iconName: 'FilterSolid' }}
                     />
                     :
                     <OF.IconButton
                       className="ButtonIcon ButtonPrimary FloatLeft"
-                      onClick={() => this.props.onClickFilter()}
+                      onClick={() => this.props.onClickTagFilter()}
                       iconProps={{ iconName: 'Filter' }}
                     />
                   }

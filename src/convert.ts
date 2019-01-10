@@ -40,7 +40,7 @@ export function topRelationships(person: Person, userPersonId: string | null): R
 export function filteredPeople(people: Person[], filter: Filter): Person[] {      
     let filteredPeople: Person[] = []
 
-    if (filter.blocked.length === 0 && filter.required.length === 0) {
+    if (filter.blocked.length === 0 && filter.required.length === 0 && filter.searchTerm === null) {
         filteredPeople = people.filter(p => {
             // Reject if doesn't have appropriate test data
             return (p.hasTestData(filter.perfType))
@@ -63,6 +63,11 @@ export function filteredPeople(people: Person[], filter: Filter): Person[] {
                         pass = false
                     }
                 })
+            if (filter.searchTerm) {
+                if (p.searchData(people).indexOf(filter.searchTerm) < 0) {
+                    pass = false
+                }
+            }
             return pass
         })
     }

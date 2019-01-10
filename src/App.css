@@ -99,6 +99,10 @@
   background-color: #555555 !important;
 }
 
+.ms-Button-icon {
+  padding: 15px !important;
+}
+
 .ms-TextField-errorMessage {
   color: #ff9999 !important;
   margin-left: 11px !important;

@@ -56,6 +56,7 @@ class FilterPage extends React.Component<ReceivedProps, ComponentState> {
       filter: {...this.state.filter,
         required: [],
         blocked: [],
+        searchTerm: null,
         perfType: PerfType.PHOTO
       }
     }, () => this.updateTags())

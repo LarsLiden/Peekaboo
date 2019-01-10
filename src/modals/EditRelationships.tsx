@@ -161,6 +161,7 @@ class EditRelationships extends React.Component<ReceivedProps, ComponentState> {
         exclude={this.props.person}
         onCancel={this.onCloseSearch}
         onSelect={this.onSelectSearch}
+        onClickSearchFilter={null}
       />
       )
     }

@@ -57,6 +57,7 @@ export interface Filter {
     perfType: PerfType
     required: string[]
     blocked: string[]
+    searchTerm: string | null
     sortType: SortType
     sortDirection: SortDirection
 }

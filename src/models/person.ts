@@ -26,11 +26,10 @@ export class Person {
     alternateName: string = ""
     fullAternateName: string = ""
     personId: string | null = null
- //   descriptionWithKeyValues: string = ""  LARS get rid of
- //   allKeyValues: string = ""
     description: string = ""
     creationDate: number | string = ""
-
+    searchCache: string | null
+    
     public constructor(init?: Partial<Person>) {
         Object.assign(this, init)
 
@@ -71,6 +70,24 @@ export class Person {
         throw new Error("invalid perfType")
     }
 
+    public searchNames(): string {
+        return `${this.firstName} ${this.lastName} ${this.nickName} ${this.maidenName} ${this.alternateName}`
+    }
+
+    public searchData(allPeople: Person[]): string {
+        if (!this.searchCache) {
+            const keyValues = this.keyValues.map(k => k.value).join(' ')
+            const relationships = this.relationships.map(r => {
+                const person = allPeople.find(p => p.personId === r.personId)
+                return (person ? person.searchNames() : r.personId.split("_")[0])
+            }).join(' ')
+            const events = this.events.map(e => e.description).join(' ')
+            const tags = this.tags.join(' ')
+            this.searchCache = `${this.searchNames()} ${this.description} ${keyValues} ${relationships} ${events} ${tags}`.toUpperCase()
+        }
+
+        return this.searchCache
+    }
     // Does person have data to take test type?
     public hasTestData(perfType: PerfType): boolean {
         // TODO: separate function for actual testing

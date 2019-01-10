@@ -58,6 +58,7 @@ export default class Client {
     }
 
     public static async putPerson(user: User, person: Person): Promise<void> {
+        delete person.searchCache
         await axios.put(`${this.baseUrl}/person`, {person}, this.getConfig(user))
     }
 
@@ -66,6 +67,7 @@ export default class Client {
     }
 
     public static async archivePerson(user: User, person: Person): Promise<void> {
+        delete person.searchCache
         await axios.post(
             `${this.baseUrl}/person/${person.personId}/archive`, null, this.getConfig(user)
         )
