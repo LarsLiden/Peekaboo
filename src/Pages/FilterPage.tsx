@@ -13,6 +13,7 @@ export interface ReceivedProps {
   allTags: Tag[]
   filter: Filter
   onClose: (filter: Filter) => void
+  onDeleteTag: (tag: Tag) => void
 }
 
 interface ComponentState {
@@ -26,7 +27,7 @@ class FilterPage extends React.Component<ReceivedProps, ComponentState> {
   state: ComponentState = {
     filteredTags: [],
     filteredPeople: [],
-    filter: {...this.props.filter}
+    filter: {...this.props.filter},
   }
 
   componentDidMount() {
@@ -37,8 +38,8 @@ class FilterPage extends React.Component<ReceivedProps, ComponentState> {
   }
 
   updateTags() {
-    let filteredPeople = Convert.filteredPeople(this.props.allPeople, this.state.filter)
-    let filteredTags = Convert.filteredTags(filteredPeople, this.props.allPeople, this.state.filter)
+    let filteredPeople = Convert.filterPeople(this.props.allPeople, this.props.allTags, this.state.filter)
+    let filteredTags = Convert.filterTags(filteredPeople, this.props.allPeople, this.props.allTags, this.state.filter)
       this.setState({
         filteredTags,
         filteredPeople
@@ -54,8 +55,8 @@ class FilterPage extends React.Component<ReceivedProps, ComponentState> {
   onClickClear() {
     this.setState({
       filter: {...this.state.filter,
-        required: [],
-        blocked: [],
+        requiredTagIds: [],
+        blockedTagIds: [],
         searchTerm: null,
         perfType: PerfType.PHOTO
       }
@@ -65,24 +66,24 @@ class FilterPage extends React.Component<ReceivedProps, ComponentState> {
   @OF.autobind
   onCheckboxRequireChange(isChecked: boolean = false, tag: Tag) {
     if (isChecked) {
-      if (this.state.filter.required.indexOf(tag.name) <= 0) {
-        let blocked = this.state.filter.blocked.filter(t => t !== tag.name)
-        let required = [...this.state.filter.required, tag.name] 
+      if (this.state.filter.requiredTagIds.indexOf(tag.tagId!) <= 0) {
+        let blockedTagIds = this.state.filter.blockedTagIds.filter(tid => tid !== tag.tagId)
+        let requiredTagIds = [...this.state.filter.requiredTagIds, tag.tagId!] 
         this.setState({
           filter: {...this.state.filter,
-            required,
-            blocked,
+            requiredTagIds,
+            blockedTagIds,
             perfType: PerfType.PHOTO
           }
         }, () => this.updateTags())
       }
     }
     else {
-      let required = this.state.filter.required.filter(t => t !== tag.name)
+      let requiredTagIds = this.state.filter.requiredTagIds.filter(tid => tid !== tag.tagId)
       this.setState({
         filter: {
           ...this.state.filter,
-          required
+          requiredTagIds
         }
       }, () => this.updateTags())
     }
@@ -91,33 +92,47 @@ class FilterPage extends React.Component<ReceivedProps, ComponentState> {
   @OF.autobind
   onCheckboxBlockChange(isChecked: boolean = false, tag: Tag) {
     if (isChecked) { 
-      if (this.state.filter.blocked.indexOf(tag.name) <= 0) {
-        let blocked = [...this.state.filter.blocked, tag.name] 
-        let required = this.state.filter.required.filter(t => t !== tag.name)
+      if (this.state.filter.blockedTagIds.indexOf(tag.tagId!) <= 0) {
+        let blockedTagIds = [...this.state.filter.blockedTagIds, tag.tagId!] 
+        let requiredTagIds = this.state.filter.requiredTagIds.filter(tid => tid !== tag.tagId)
         this.setState({
           filter: {
             ...this.state.filter,
-            required,
-            blocked
+            requiredTagIds,
+            blockedTagIds
           }
         }, () => this.updateTags())
       }
     }
     else {
-      let blocked = this.state.filter.blocked.filter(t => t !== tag.name)
+      let blockedTagIds = this.state.filter.blockedTagIds.filter(tid => tid !== tag.tagId)
       this.setState({
         filter: {
           ...this.state.filter,
-          blocked
+          blockedTagIds
         }
       }, () => this.updateTags())
     }
   }
 
   @OF.autobind
+  async onDeleteTag(tag: Tag) {
+    await this.props.onDeleteTag(tag)
+    this.updateTags()
+  }
+
+  @OF.autobind
   onRenderCell(item: Tag, index: number, isScrolling: boolean): JSX.Element {
-    let isRequired = this.state.filter.required.indexOf(item.name) > -1
-    let isBlocked = this.state.filter.blocked.indexOf(item.name) > -1
+    let isRequired = this.state.filter.requiredTagIds.indexOf(item.tagId!) > -1
+    let isBlocked = this.state.filter.blockedTagIds.indexOf(item.tagId!) > -1
+
+    let includeClass = (item.count === 0)
+      ? `FilterCheckbox FilterCheckboxDisabled`
+      : `FilterCheckbox FilterCheckboxInclude${isRequired ? ' FilterCheckboxIncludeSelected' : ''}`
+    let blockClass = (item.count === 0)
+      ? `FilterCheckbox FilterCheckboxDisabled`
+      : `FilterCheckbox FilterCheckboxBlock${isBlocked ? ' FilterCheckboxBlockSelected' : ''}`
+
     return (
       <div className="SectionBorder">
         <div 
@@ -126,8 +141,9 @@ class FilterPage extends React.Component<ReceivedProps, ComponentState> {
           {item.name}
         </div>
         <div className="FilterNumber">{isBlocked ? "" : item.count}</div>
-        <OF.Checkbox 
-          className={`FilterCheckbox FilterCheckboxInclude${isRequired ? ' FilterCheckboxIncludeSelected' : ''}`}
+        <OF.Checkbox
+          disabled={item.count === 0} 
+          className={includeClass}
           onChange={(ev, isChecked) => this.onCheckboxRequireChange(isChecked, item)}
           checked={isRequired}
         />
@@ -135,12 +151,26 @@ class FilterPage extends React.Component<ReceivedProps, ComponentState> {
           className="FilterSpacer"
         />
         <OF.Checkbox 
-          className={`FilterCheckbox FilterCheckboxBlock${isBlocked ? ' FilterCheckboxBlockSelected' : ''}`}
+          disabled={item.count === 0} 
+          className={blockClass}
           onChange={(ev, isChecked) => this.onCheckboxBlockChange(isChecked, item)} 
           checked={isBlocked}
-        /> 
+        />
+        {item.count === 0 ?
+            <OF.IconButton
+              className="ButtonIcon ButtonSmallDark"
+              onClick={() => this.onDeleteTag(item)}
+              iconProps={{ iconName: 'Delete' }}
+            />
+          :
+            <OF.IconButton
+              className="ButtonIcon ButtonSmallDark"
+              onClick={() => {}}  // LARS TODO
+              iconProps={{ iconName: 'Settings' }}
+            />
+        }
       </div>
-    );
+    )
   }
 
   public render() {

@@ -5,10 +5,12 @@
 import * as React from 'react';
 import * as OF from 'office-ui-fabric-react'
 import { Person } from '../models/person'
+import { Tag } from '../models/models'
 import { setStatePromise } from '../Util'
 
 export interface ReceivedProps {
-  people: Person[]
+  allPeople: Person[]
+  allTags: Tag[]
   exclude?: Person
   onSelect: (person: Person) => void
   onCancel: () => void
@@ -42,7 +44,7 @@ class Search extends React.Component<ReceivedProps, ComponentState> {
 
     let matched: Person[] = []
     if (this.state.byNameOnly) {
-      matched = this.props.people.filter(p =>
+      matched = this.props.allPeople.filter(p =>
         p.fullName().toUpperCase().startsWith(stext) ||
         p.firstName.toUpperCase().startsWith(stext) ||
         p.lastName.toUpperCase().startsWith(stext) ||
@@ -51,8 +53,8 @@ class Search extends React.Component<ReceivedProps, ComponentState> {
         p.alternateName.toUpperCase().startsWith(stext))
     }
     else {
-      matched = this.props.people.filter(p =>
-        p.searchData(this.props.people).includes(stext))
+      matched = this.props.allPeople.filter(p =>
+        p.searchData(this.props.allPeople, this.props.allTags).includes(stext))
     }
 
 /*

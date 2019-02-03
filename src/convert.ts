@@ -8,13 +8,13 @@ import { PerfType, QuizPerson, Filter, FilterSet, Tag, QuizSet, SortDirection, S
 import { getPhotoBlobName } from './Util'
 import { MAX_TIME, BIAS } from './models/const'
 
-export function toQuizPerson(person: Person, perfType: PerfType, userPersonId: string | null): QuizPerson {
+export function toQuizPerson(person: Person, perfType: PerfType, userPersonId: string | null, allTags: Tag[]): QuizPerson {
 
     return {
         personId: person.personId!,
         expandedName: person.expandedName(),
         description: person.description,
-        tags: person.tags.join(", "),
+        tags: person.tagIds.map(id => allTags.find(t => t.tagId === id)).join(", "),
         topRelationships: topRelationships(person, userPersonId),
         photoBlobnames: person.photoFilenames.map(f => getPhotoBlobName(person, f)),
         performance: person.performance(perfType),
@@ -37,11 +37,13 @@ export function topRelationships(person: Person, userPersonId: string | null): R
     return relationships.slice(0, 4)
 }
 
-export function filteredPeople(people: Person[], filter: Filter): Person[] {      
+export function filterPeople(people: Person[], allTags: Tag[], filter: Filter): Person[] {      
     let filteredPeople: Person[] = []
 
-    if (filter.blocked.length === 0 && filter.required.length === 0 && filter.searchTerm === null) {
+    if (filter.blockedTagIds.length === 0 && filter.requiredTagIds.length === 0 && filter.searchTerm === null) {
         filteredPeople = people.filter(p => {
+            // TODO: ONLY call this when getting people for TEST
+            // Until that's fixed always return true
             // Reject if doesn't have appropriate test data
             return (p.hasTestData(filter.perfType))
         })
@@ -53,18 +55,18 @@ export function filteredPeople(people: Person[], filter: Filter): Person[] {
                 return false
             }
             let pass = true
-            filter.required.forEach(f => {
-                    if (!p.tags.find(t => t === f)) {
+            filter.requiredTagIds.forEach(f => {
+                    if (!p.tagIds.find(t => t === f)) {
                         pass = false
                     }
                 })
-            filter.blocked.forEach(f => { 
-                    if (p.tags.find(t => t === f)) {
+            filter.blockedTagIds.forEach(f => { 
+                    if (p.tagIds.find(t => t === f)) {
                         pass = false
                     }
                 })
             if (filter.searchTerm) {
-                if (p.searchData(people).indexOf(filter.searchTerm) < 0) {
+                if (p.searchData(people, allTags).indexOf(filter.searchTerm) < 0) {
                     pass = false
                 }
             }
@@ -106,10 +108,9 @@ export function getPerson(people: Person[], personId: string) {
     return people.find(p => p.personId === personId)
 } 
 
-export function getFilterSet(people: Person[], filter: Filter, selectedPerson: Person | null): FilterSet
-{
+export function getFilterSet(people: Person[], allTags: Tag[], filter: Filter, selectedPerson: Person | null): FilterSet {
     // Filter people by tags
-    let filtered = filteredPeople(people, filter)
+    let filtered = filterPeople(people, allTags, filter)
     let selectedIndex = selectedPerson ? filtered.findIndex(p => p.personId === selectedPerson.personId) : 0
     // If selected person isn't in filter, select first person in filter
     if (selectedIndex < 0) {
@@ -118,19 +119,25 @@ export function getFilterSet(people: Person[], filter: Filter, selectedPerson: P
     return { people: filtered, selectedIndex }
 }
 
-export function extractBlockedTags(people: Person[], blockedTags: string[]) : Tag[] {
+export function extractBlockedTags(people: Person[], allTags: Tag[], blockedTags: string[]): Tag[] {
 
     let tags: Tag[] = []
     people.map(p => {
-        p.tags.map(t => {
-            const isBlocked = blockedTags.find(b => b === t)
+        p.tagIds.map(tagId => {
+            const isBlocked = blockedTags.find(bid => bid === tagId)
             if (isBlocked) {
-                const tag = tags.find(tag => tag.name === t)
+                const tag = tags.find(t => t.tagId === tagId)
                 if (tag) {
-                    tag.count++
+                    tag.count = tag.count + 1
                 }
                 else {
-                    tags.push({name: t, count: 1})
+                    const newTag = allTags.find(t => t.tagId === tagId)
+                    if (newTag) {
+                        tags.push({...newTag, count: 1})  
+                    }
+                    else {
+                        console.log(`ERROR: Can't find tag ${tagId}`)
+                    }
                 } 
             }
         }) 
@@ -138,17 +145,49 @@ export function extractBlockedTags(people: Person[], blockedTags: string[]) : Ta
     return tags
 }
 
-export function extractTags(people: Person[]) : Tag[] {
+export function extractAllTags(people: Person[], allTags: Tag[]): Tag[] {
 
-    let tags: Tag[] = []
+    let tags: Tag[] = allTags.map(t => { return {...t, count: 0 }})
     people.map(p => {
-        p.tags.map(t => {
-            const tag = tags.find(tag => tag.name === t)
+        p.tagIds.map(tagId => {
+            const tag = tags.find(t => t.tagId === tagId)
             if (tag) {
-                tag.count++
+                tag.count = tag.count + 1
             }
             else {
-                tags.push({name: t, count: 1})
+                const newTag = allTags.find(t => t.tagId === tagId)
+                if (newTag) {
+                    tags.push({...newTag, count: 1})
+                }
+                else {
+                    console.log(`ERROR: Can't find tag ${tagId}`)
+                }
+            } 
+        }) 
+    })
+    return tags
+}
+
+export function extractTags(people: Person[], allTags: Tag[], usedOnly: boolean): Tag[] {
+
+    let tags: Tag[] = usedOnly 
+        ? []
+        : allTags.map(t => { return {...t, count: 0 }})
+
+    people.map(p => {
+        p.tagIds.map(tagId => {
+            const tag = tags.find(t => t.tagId === tagId)
+            if (tag) {
+                tag.count = tag.count + 1
+            }
+            else {
+                const newTag = allTags.find(t => t.tagId === tagId)
+                if (newTag) {
+                    tags.push({...newTag, count: 1})
+                }
+                else {
+                    console.log(`ERROR: Can't find tag ${tagId}`)
+                }
             } 
         }) 
     })
@@ -156,8 +195,10 @@ export function extractTags(people: Person[]) : Tag[] {
 }
 
 // Return list of tags in filterd people and blocked tags
-export function filteredTags(filteredPeople: Person[], allPeople: Person[], filter: Filter): Tag[] {
-    let tags = [...extractTags(filteredPeople), ...extractBlockedTags(allPeople, filter.blocked)]
+export function filterTags(filteredPeople: Person[], allPeople: Person[], allTags: Tag[], filter: Filter): Tag[] {
+    let tags = (filteredPeople.length === allPeople.length)
+        ? [...extractTags(filteredPeople, allTags, false)]
+        : [...extractTags(filteredPeople, allTags, true), ...extractBlockedTags(allPeople, allTags, filter.blockedTagIds)]
     tags = tags.sort((a, b) => {
         if (a.name.toLowerCase() < b.name.toLowerCase()) { return -1 }
         else if (b.name.toLowerCase() < a.name.toLowerCase()) { return 1 }
@@ -166,12 +207,11 @@ export function filteredTags(filteredPeople: Person[], allPeople: Person[], filt
     return tags
 }
 
-export function quizSet(people: Person[], filter: Filter, userPersonId: string | null): QuizSet
-    {
+export function quizSet(people: Person[], allTags: Tag[], filter: Filter, userPersonId: string | null): QuizSet {
         // Filter people by tags
-        let quizPeople = filteredPeople(people, filter)
+        let quizPeople = filterPeople(people, allTags, filter)
             .filter(p => p.photoFilenames.length > 0)
-            .map(p => {return toQuizPerson(p, filter.perfType, userPersonId)})
+            .map(p => {return toQuizPerson(p, filter.perfType, userPersonId, allTags)})
 
         if (quizPeople.length === 0) {
             return {quizPeople: [], frequencyTotal: 0}
@@ -263,8 +303,7 @@ export function quizSet(people: Person[], filter: Filter, userPersonId: string |
     }
 
     /// Set relative familiarity value, with respect to all people in this category
-    export function calcFamiliarity(minAverageTime: number, maxAverageTime: number, myAverageTime: number): number
-    {
+    export function calcFamiliarity(minAverageTime: number, maxAverageTime: number, myAverageTime: number): number {
         // If haven't done any testing
         if (maxAverageTime === minAverageTime) {
             return 0.5

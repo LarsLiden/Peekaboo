@@ -4,11 +4,12 @@
  */
 import { Performance } from "./performance";
 import { Relationship } from "./relationship"
-import { PerfType, Event, KeyValue, SocialNet } from './models'
+import { PerfType, Event, KeyValue, SocialNet, Tag } from './models'
 
 export class Person {
     photoFilenames: string[] = []
-    tags: string[] = []   
+    temptags: string[] = []    // LARS REMOVE
+    tagIds: string[] = []
     keyValues: KeyValue[] = []
     photoPerformance: Performance = new Performance()
     namePerformance: Performance = new Performance()
@@ -74,7 +75,7 @@ export class Person {
         return `${this.firstName} ${this.lastName} ${this.nickName} ${this.maidenName} ${this.alternateName}`
     }
 
-    public searchData(allPeople: Person[]): string {
+    public searchData(allPeople: Person[], allTags: Tag[]): string {
         if (!this.searchCache) {
             const keyValues = this.keyValues.map(k => k.value).join(' ')
             const relationships = this.relationships.map(r => {
@@ -82,7 +83,7 @@ export class Person {
                 return (person ? person.searchNames() : r.personId.split("_")[0])
             }).join(' ')
             const events = this.events.map(e => e.description).join(' ')
-            const tags = this.tags.join(' ')
+            const tags = this.tagIds.map(id => allTags.find(t => t.tagId === id)).join(' ')
             this.searchCache = `${this.searchNames()} ${this.description} ${keyValues} ${relationships} ${events} ${tags}`.toUpperCase()
         }
 

@@ -185,6 +185,17 @@
   width: 40px !important;
 }
 
+.ButtonSmallDark {
+  display: inline-block !important;
+  background-color: #003763 !important;
+  height: 30px !important;
+  width: 30px !important;
+  margin-top: 3px;
+  margin-bottom: 0px;
+  margin-left: 10px;
+  margin-right: 0px;
+}
+
 .ButtonListCount {
   width: 50px !important;
   height: 19PX;
@@ -493,7 +504,7 @@
 }
 
 .FilterList {
-  width: 300px;
+  width: 350px;
   overflow-x: hidden;
   margin-left: auto;
   margin-right: auto;
@@ -530,9 +541,13 @@
   background-color: #cc0000 !important;
 }
 
+.FilterCheckboxDisabled {
+  background-color: #555555 !important;
+}
+
 .FilterName {
   display: inline-block;
-  width: 150px;
+  width: 180px;
   text-align: left;
   margin-left: 5px;
   color: white;

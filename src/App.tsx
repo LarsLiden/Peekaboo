@@ -94,8 +94,8 @@ class App extends React.Component<{}, ComponentState> {
     selectedPerson: null,
     personList: [],
     filter: {
-      required: [], 
-      blocked: [], 
+      requiredTagIds: [], 
+      blockedTagIds: [], 
       searchTerm: null,
       perfType: PerfType.PHOTO, 
       sortType: SortType.NAME, 
@@ -172,7 +172,7 @@ class App extends React.Component<{}, ComponentState> {
   @OF.autobind 
   async onClickTagFilter() {
   //  if (this.state.filteredTags.length === 0) { LARS
-      let filteredPeople = Convert.filteredPeople(this.state.allPeople, this.state.filter)
+      let filteredPeople = Convert.filterPeople(this.state.allPeople, this.state.allTags, this.state.filter)
   //    let tags = Convert.filteredTags(filteredPeople, this.state.allPeople, this.state.filter)
       this.setState({
    //     filteredTags: tags,
@@ -216,7 +216,7 @@ class App extends React.Component<{}, ComponentState> {
       // Remove
       if (this.state.personList.find(p => p === selectedPersonId)) {
         this.setState({
-          personList: this.state.personList.filter(p => p != selectedPersonId)
+          personList: this.state.personList.filter(p => p !== selectedPersonId)
         })
       }
       // Or add
@@ -315,7 +315,7 @@ class App extends React.Component<{}, ComponentState> {
               else { return 0 }
             })
 
-            let allTags = this.calculateAllTags(allPeople)
+            let allTags = await Client.getTags(this.state.user!)
             await setStatePromise(this, {
               allPeople,
               allTags
@@ -355,30 +355,30 @@ class App extends React.Component<{}, ComponentState> {
   }
 
   @OF.autobind 
-  onAddTag(tagName: string) {
-    let newTag = {
-      name: tagName,
-      count: 0
-    }
-    let allTags = [...this.state.allTags, newTag]
-    allTags = this.sortTags(allTags)
-    this.setState({ allTags })
+  async onDeleteTag(tag: Tag) {
 
+    await Client.deleteTag(this.state.user!, tag)
+
+    let allTags = this.state.allTags.filter(t => t.tagId !== tag.tagId)
+    await setStatePromise(this, { allTags })
   }
 
-  calculateAllTags(people: Person[]) {
-    let allTags = Convert.extractTags(people)
-    allTags = this.sortTags(allTags)
-    return allTags
+  @OF.autobind 
+  async onSaveTag(tag: Tag) {
+
+    await Client.putTag(this.state.user!, tag)
+
+    let allTags = this.state.allTags.filter(t => t.tagId !== tag.tagId)
+    allTags.push(tag)
+    this.setState({ allTags })
   }
 
   sortTags(allTags: Tag[]) {
-    allTags = allTags.sort((a, b) => {
+    return allTags.sort((a, b) => {
         if (a.name.toLowerCase() < b.name.toLowerCase()) { return -1 }
         else if (b.name.toLowerCase() < a.name.toLowerCase()) { return 1 }
         else { return 0 }
     })
-    return allTags
   }
 
   // Send stats back to server
@@ -402,7 +402,7 @@ class App extends React.Component<{}, ComponentState> {
 
   @OF.autobind 
   async onQuiz() {
-      let quizSet = Convert.quizSet(this.state.allPeople, this.state.filter, this.state.userPersonId) 
+      let quizSet = Convert.quizSet(this.state.allPeople, this.state.allTags, this.state.filter, this.state.userPersonId) 
       this.setState({
         quizSet
       })
@@ -461,7 +461,7 @@ class App extends React.Component<{}, ComponentState> {
       
       // Recalculte filter set to exclude new person
       let selectedIndex = Math.max(this.state.filterSet.selectedIndex - 1, 0)
-      let filterSet = Convert.getFilterSet(people, this.state.filter, null)
+      let filterSet = Convert.getFilterSet(people, this.state.allTags, this.state.filter, null)
       filterSet.selectedIndex = selectedIndex
 
       await setStatePromise(this, {
@@ -484,7 +484,7 @@ class App extends React.Component<{}, ComponentState> {
       
       // Recalculte filter set to exclude new person
       let selectedIndex = Math.max(this.state.filterSet.selectedIndex - 1, 0)
-      let filterSet = Convert.getFilterSet(people, this.state.filter, null)
+      let filterSet = Convert.getFilterSet(people, this.state.allTags, this.state.filter, null)
       filterSet.selectedIndex = selectedIndex
       await setStatePromise(this, {
         allPeople: people,
@@ -709,7 +709,7 @@ class App extends React.Component<{}, ComponentState> {
 
   updateFilterSet() {
     // TODO: if selected person not inclued, clear filter
-    let filterSet = Convert.getFilterSet(this.state.allPeople, this.state.filter, this.state.selectedPerson)
+    let filterSet = Convert.getFilterSet(this.state.allPeople, this.state.allTags, this.state.filter, this.state.selectedPerson)
     
     // TODO: also might trigger if overconstrained filter
     if (filterSet.people.length === 0) {
@@ -755,6 +755,7 @@ class App extends React.Component<{}, ComponentState> {
             user={this.state.user!}
             filter={this.state.filter}
             allPeople={this.state.allPeople}
+            allTags={this.state.allTags}
             personList={this.state.personList}
             onSetPage={this.onSetPage}
             onClickQuiz={this.onQuiz}
@@ -768,6 +769,7 @@ class App extends React.Component<{}, ComponentState> {
             onNextPerson={this.onNextPerson}
             onPrevPerson={this.onPrevPerson}
             onSelectPerson={this.onSelectPerson}
+            onImport={this.onClickImport}  // *TEMP
           />
         }
         {this.state.page === Page.NEWUSER && 
@@ -791,7 +793,7 @@ class App extends React.Component<{}, ComponentState> {
             onArchivePerson={this.onArchivePerson}
             onDeletePhoto={this.onDeletePhoto}
             onSelectPerson={this.onSelectPerson}
-            onAddTag={this.onAddTag}
+            onSaveTag={this.onSaveTag}
           />
         }
         {this.state.page === Page.FILTER &&
@@ -799,6 +801,7 @@ class App extends React.Component<{}, ComponentState> {
             allPeople={this.state.allPeople}
             allTags={this.state.allTags}
             onClose={this.onCloseFliterPage}
+            onDeleteTag={this.onDeleteTag}
             filter={this.state.filter}
           />
         }
@@ -835,7 +838,8 @@ class App extends React.Component<{}, ComponentState> {
         }
         {this.state.page === Page.SEARCH &&
           <Search
-            people={this.state.allPeople}
+            allPeople={this.state.allPeople}
+            allTags={this.state.allTags}
             onCancel={() => this.onSetPage(Page.VIEW, null)}
             onSelect={(person: Person) => this.onSelectPerson(person.personId!)}
             onClickSearchFilter={this.onClickSearchFilter}

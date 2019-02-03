@@ -3,12 +3,13 @@
  * Licensed under the MIT License.
  */
 import * as React from 'react';
-import { Filter } from '../models/models'
+import { Filter, Tag } from '../models/models'
 import '../fabric.css'
 import './Detail.css'
 
 export interface ReceivedProps {
-  tags: string[]
+  tagIds: string[]
+  allTags: Tag[]
   filter: Filter
   isLong?: boolean
   inEdit?: boolean
@@ -17,7 +18,7 @@ export interface ReceivedProps {
 class DetailTags extends React.Component<ReceivedProps, {}> {
 
   public render() {
-      if (!this.props.inEdit && this.props.tags.length === 0) {
+      if (!this.props.inEdit && this.props.tagIds.length === 0) {
         return null
       }
       return (
@@ -26,14 +27,16 @@ class DetailTags extends React.Component<ReceivedProps, {}> {
             Tags
           </div>          
           <div className="DetailBody">
-              {this.props.tags.map(tag => {
-                const delimeter = tag !== this.props.tags[this.props.tags.length - 1] ? ",  " : ""
-                const isSelected = this.props.filter.required.find(r => r === tag)
+              {this.props.tagIds.map(tagId => {
+                const tag = this.props.allTags.find(t => t.tagId === tagId)
+                const delimeter = tagId !== this.props.tagIds[this.props.tagIds.length - 1] ? ",  " : ""
+                const isSelected = this.props.filter.requiredTagIds.find(r => r === tagId)
+                const name = tag ? tag.name : "- Not Found -"
                 if (isSelected) { 
-                    return (<span className="TagSelected" key={tag} >{`${tag}${delimeter}`}</span>)
+                    return (<span className="TagSelected" key={tagId} >{`${name}${delimeter}`}</span>)
                 }
                 else {
-                    return (<span className="TagUnselected" key={tag} >{`${tag}${delimeter}`}</span>)
+                    return (<span className="TagUnselected" key={tagId} >{`${name}${delimeter}`}</span>)
                 }
               })
             }

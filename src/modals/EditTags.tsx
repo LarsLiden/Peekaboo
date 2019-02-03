@@ -5,90 +5,96 @@
 import * as React from 'react';
 import * as OF from 'office-ui-fabric-react'
 import { Tag } from '../models/models'
-import AddTag from './AddTag'
+import AddEditTag from './AddEditTag'
 
 export interface ReceivedProps {
   allTags: Tag[]
-  personTags: string[]
-  onAddTag: (tagName: string) => void
-  onSave: (tagNames: string[]) => void
+  tagIds: string[]
+  onSaveTag: (tag: Tag) => void
+  onDeleteTag: (tag: Tag) => void
+  onSavePersonTags: (tagNames: string[]) => void
   onCancel: () => void
 }
 
 interface ComponentState {
   editTags: Tag[]
-  isAddTagModalOpen: boolean
+  isEditTagModalOpen: boolean
+  editingTag: Tag | null
 }
 
 class EditTags extends React.Component<ReceivedProps, ComponentState> {
 
   state: ComponentState = {
     editTags: [],
-    isAddTagModalOpen: false
+    isEditTagModalOpen: false,
+    editingTag: null
   }
 
   componentDidMount() {
-    if (this.state.editTags.length === 0) {
-      let editTags = this.props.allTags.map(tag => {
-        return {
-          name: tag.name,
-          count: this.props.personTags.find(s => s === tag.name) ? 1 : 0
-        }
-      })
-
-      this.setState({
-        editTags
-      })   
-    }
+    this.setEditTags(this.props.allTags, this.props.tagIds)
   }
 
   componentWillReceiveProps(newProps: ReceivedProps) {
     // Look for newly created tags
     let newTags = newProps.allTags.filter(t => 
-        this.state.editTags.find(et => et.name === t.name) === undefined)
+        this.state.editTags.find(et => et.tagId === t.tagId) === undefined)
 
     // Assume any newly created tags should be added to person
     newTags.forEach(t => {
       t.count = 1
     })
 
+    this.setEditTags(newProps.allTags, newProps.tagIds)
+  }
+
+  setEditTags(allTags: Tag[], tagIds: string[]) {
+    let editTags = allTags.map(tag => {
+      return {
+        ...tag,
+        count: tagIds.find(s => s === tag.tagId) ? 1 : 0
+      }
+    })
+
     this.setState({
-      editTags: [...newTags, ...this.state.editTags]
+      editTags
+    })   
+  }
+
+  @OF.autobind
+  onClickEditTag(tag: Tag | null) {
+    this.setState({
+      isEditTagModalOpen: true,
+      editingTag: tag
     })
   }
 
   @OF.autobind
-  onClickAddTag() {
+  onSubmitEditTag(tag: Tag) {
     this.setState({
-      isAddTagModalOpen: true
+      isEditTagModalOpen: false,
+      editingTag: null
     })
+    this.props.onSaveTag(tag)
   }
 
   @OF.autobind
-  onCreateNewTag(tag: string) {
+  onCancelEditTag() {
     this.setState({
-      isAddTagModalOpen: false
-    })
-    this.props.onAddTag(tag)
-  }
-
-  @OF.autobind
-  onCancelNewTag() {
-    this.setState({
-      isAddTagModalOpen: false
+      isEditTagModalOpen: false,
+      editingTag: null
     })
   }
 
   @OF.autobind
   onClickSave() {
-    let tagNames = this.state.editTags.filter(t => t.count === 1).map(t => t.name)
-    this.props.onSave(tagNames)
+    let tagNames = this.state.editTags.filter(t => t.count === 1).map(t => t.tagId!)
+    this.props.onSavePersonTags(tagNames)
   }
 
   @OF.autobind
   onCheckboxChange(isChecked: boolean = false, tag: Tag) {
     let editTags = [...this.state.editTags]
-    let curTag = editTags.find(t => t.name === tag.name)
+    let curTag = editTags.find(t => t.tagId === tag.tagId)
     if (isChecked) {
       curTag!.count = 1
       this.setState({editTags})
@@ -97,6 +103,11 @@ class EditTags extends React.Component<ReceivedProps, ComponentState> {
       curTag!.count = 0
       this.setState({editTags})
     }
+  }
+
+  @OF.autobind
+  async onDeleteTag(tag: Tag) {
+    await this.props.onDeleteTag(tag)
   }
 
   @OF.autobind
@@ -111,6 +122,11 @@ class EditTags extends React.Component<ReceivedProps, ComponentState> {
           onChange={(ev, isChecked) => this.onCheckboxChange(isChecked, tag)}
           checked={tag.count > 0}
         />
+        <OF.IconButton
+          className="ButtonIcon ButtonSmallDark"
+          onClick={() => this.onClickEditTag(tag)}  
+          iconProps={{ iconName: 'Settings' }}
+        />
       </div>
     );
   }
@@ -118,11 +134,13 @@ class EditTags extends React.Component<ReceivedProps, ComponentState> {
   public render() {
     return (
       <div>
-        {this.state.isAddTagModalOpen 
+        {this.state.isEditTagModalOpen 
           ? 
-            <AddTag
-              onCreate={this.onCreateNewTag}
-              onCancel={this.onCancelNewTag}
+            <AddEditTag
+              tag={this.state.editingTag}
+              allTags={this.props.allTags}
+              onSubmit={this.onSubmitEditTag}
+              onCancel={this.onCancelEditTag}
             />
           :
           <div className="ModalPage">
@@ -130,7 +148,7 @@ class EditTags extends React.Component<ReceivedProps, ComponentState> {
               <div className="HeaderContent">
                 <OF.IconButton
                     className="ButtonIcon ButtonPrimary ButtonTopLeft"
-                    onClick={this.onClickAddTag}
+                    onClick={() => this.onClickEditTag(null)}
                     iconProps={{ iconName: 'CircleAddition' }}
                 />
                 Tags

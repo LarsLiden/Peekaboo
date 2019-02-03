@@ -44,7 +44,7 @@ export interface ReceivedProps {
   onArchivePerson: (person: Person) => void
   onClose: (person?: Person) => void
   onSelectPerson: (personId: string) => void
-  onAddTag: (tagName: string) => void
+  onSaveTag: (tag: Tag) => void
 }
 
 export enum SubPage {
@@ -129,10 +129,10 @@ class EditPage extends React.Component<ReceivedProps, ComponentState> {
 
   // --- EDIT TAGS ---
   @OF.autobind
-  onSaveEditTags(tags: string[]): void {
+  onSavePersonTags(tags: string[]): void {
 
     let newPerson = new Person({...this.props.person})
-    newPerson.tags = tags
+    newPerson.tagIds = tags
     this.props.onSavePerson(newPerson)
 
     this.props.onSetSubpage(null)
@@ -436,10 +436,11 @@ class EditPage extends React.Component<ReceivedProps, ComponentState> {
       return (
         <EditTags
           allTags={this.props.allTags}
-          personTags={this.props.person.tags}
+          tagIds={this.props.person.tagIds}
           onCancel={() => this.props.onSetSubpage(null)}
-          onSave={this.onSaveEditTags}
-          onAddTag={this.props.onAddTag}
+          onSavePersonTags={this.onSavePersonTags}
+          onSaveTag={this.props.onSaveTag}
+          onDeleteTag={() => {}}
         />
       )
     }
@@ -447,6 +448,7 @@ class EditPage extends React.Component<ReceivedProps, ComponentState> {
       return (
         <EditRelationships
           allPeople={this.props.allPeople}
+          allTags={this.props.allTags}
           person={this.props.person}
           onCancel={() => this.props.onSetSubpage(null)}
           onSave={this.onSaveEditRelationships}
@@ -606,7 +608,8 @@ class EditPage extends React.Component<ReceivedProps, ComponentState> {
             <div className="EditPageSection">
               <DetailTags 
                 inEdit={true}
-                tags={this.props.person.tags}
+                tagIds={this.props.person.tagIds}
+                allTags={this.props.allTags}
                 filter={this.props.filter}
               />
               <OF.IconButton

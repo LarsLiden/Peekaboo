@@ -6,7 +6,7 @@ import * as React from 'react';
 import * as OF from 'office-ui-fabric-react'
 import '../fabric.css'
 import { Person } from '../models/person'
-import { Filter, FilterSet, User } from '../models/models'
+import { Filter, FilterSet, User, Tag } from '../models/models'
 import { HEAD_IMAGE, baseBlob, getPhotoBlobName, PHOTO_HEIGHT, PHOTO_WIDTH } from '../Util'
 import ScaledColor from '../modals/ScaledColor'
 import DetailText from '../Detail/DetailText'
@@ -28,6 +28,7 @@ export interface ReceivedProps {
   person: Person
   user: User
   allPeople: Person[]
+  allTags: Tag[]
   filter: Filter
   personList: string[]
   onSetPage: (page: Page, backpage: Page | null) => void
@@ -42,6 +43,8 @@ export interface ReceivedProps {
   onPrevPerson: () => void
   onAddToPersonList: () => void
   onSelectPerson: (personId: string) => void
+
+  onImport: () => {} // *TEMP
 }
 
 interface ComponentState { 
@@ -210,7 +213,8 @@ class ViewPage extends React.Component<ReceivedProps, ComponentState> {
               <DetailText title="Alt Name" text={this.props.person.alternateName} isLong={true}/>          
               <DetailText title="Description" text={this.props.person.description} isLong={true}/>
               <DetailTags 
-                tags={this.props.person.tags}
+                tagIds={this.props.person.tagIds}
+                allTags={this.props.allTags}
                 filter={this.props.filter}
               />
               <DetailRelationships
@@ -245,7 +249,7 @@ class ViewPage extends React.Component<ReceivedProps, ComponentState> {
               </div>
               <div className="FooterHolder"> 
                 <div className="FooterContent">
-                  {(this.props.filter.required.length > 0 || this.props.filter.blocked.length > 0 || this.props.filter.searchTerm !== null) 
+                  {(this.props.filter.requiredTagIds.length > 0 || this.props.filter.blockedTagIds.length > 0 || this.props.filter.searchTerm !== null) 
                     ?
                     <OF.IconButton
                       className="ButtonIcon ButtonPrimary FloatLeft ButtonOutlined"
@@ -282,6 +286,13 @@ class ViewPage extends React.Component<ReceivedProps, ComponentState> {
                         iconProps={{ iconName: 'Settings' }}
                     />
                   }
+
+<OF.IconButton
+  className="ButtonIcon ButtonPrimary FloatRight"
+  onClick={this.props.onImport}
+  iconProps={{ iconName: 'IncreaseIndentLegacy' }}
+/> 
+
                   <OF.Button
                       className="ButtonIcon ButtonPrimary FloatRight"
                       onClick={() => this.props.onClickQuiz()}

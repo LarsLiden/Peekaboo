@@ -49,14 +49,16 @@ export interface FilterSet {
 }
 
 export interface Tag {
+    tagId?: string // LARS
     name: string
+    parentId: string | null
     count: number
 }
 
 export interface Filter {
     perfType: PerfType
-    required: string[]
-    blocked: string[]
+    requiredTagIds: string[]
+    blockedTagIds: string[]
     searchTerm: string | null
     sortType: SortType
     sortDirection: SortDirection

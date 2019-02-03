@@ -6,11 +6,13 @@ import * as React from 'react';
 import * as OF from 'office-ui-fabric-react'
 import { generateGUID } from '../Util'
 import { Person } from '../models/person'
+import { Tag } from '../models/models'
 import Search from '../modals/Search'
 import { Relationship, RType, RelationshipType } from '../models/relationship'
 
 export interface ReceivedProps {
   allPeople: Person[]
+  allTags: Tag[]
   person: Person
   onSave: (relationships: Relationship[]) => void
   onCancel: () => void
@@ -157,7 +159,8 @@ class EditRelationships extends React.Component<ReceivedProps, ComponentState> {
     if (this.state.searchRelationship) {
       return (
       <Search
-        people={this.props.allPeople}
+        allPeople={this.props.allPeople}
+        allTags={this.props.allTags}
         exclude={this.props.person}
         onCancel={this.onCloseSearch}
         onSelect={this.onSelectSearch}

@@ -3,14 +3,14 @@
  * Licensed under the MIT License.
  */
 import axios from 'axios'
-import { User } from '../models/models'
+import { User, Tag } from '../models/models'
 import { TestResult } from '../models/performance'
 import { Person } from '../models/person'
 
 export default class Client {
 
-    public static baseUrl = "https://peekabooserver.azurewebsites.net/api"
-    //public static baseUrl = "http://localhost:8080/api"
+    //public static baseUrl = "https://peekabooserver.azurewebsites.net/api"
+    public static baseUrl = "http://localhost:8080/api"
 
     public static async Login(user: User): Promise<User | null> {
 
@@ -57,6 +57,25 @@ export default class Client {
         }
     }
 
+    //=======================
+    // Tags
+    //=======================
+    public static async getTags(user: User): Promise<Tag[]> {
+        const response = await axios.get(`${this.baseUrl}/tags`, this.getConfig(user))
+        return response.data as Tag[]
+    }
+
+    public static async putTag(user: User, tag: Tag): Promise<void> {
+        await axios.put(`${this.baseUrl}/tag/${tag.tagId}`, {tag}, this.getConfig(user))
+    }
+
+    public static async deleteTag(user: User, tag: Tag): Promise<void> {
+        await axios.delete(`${this.baseUrl}/tag/${tag.tagId}`, this.getConfig(user))
+    }
+
+    //=======================
+    // People
+    //=======================
     public static async putPerson(user: User, person: Person): Promise<void> {
         delete person.searchCache
         await axios.put(`${this.baseUrl}/person`, {person}, this.getConfig(user))
@@ -73,6 +92,9 @@ export default class Client {
         )
     }
 
+    //=======================
+    // Photos
+    //=======================
     public static async putPhoto(user: User, person: Person, photoData: string): Promise<string> {
         let response = await axios.put(
             `${this.baseUrl}/person/${person.personId}/photo`,
