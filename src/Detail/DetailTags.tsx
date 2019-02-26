@@ -4,6 +4,7 @@
  */
 import * as React from 'react';
 import { Filter, Tag } from '../models/models'
+import { expandTagIds } from '../convert'
 import '../fabric.css'
 import './Detail.css'
 
@@ -21,6 +22,11 @@ class DetailTags extends React.Component<ReceivedProps, {}> {
       if (!this.props.inEdit && this.props.tagIds.length === 0) {
         return null
       }
+
+      // Get unique parent tags Ids
+      let parentIds = [... new Set(expandTagIds(this.props.tagIds, this.props.allTags))]
+        .filter(eid => this.props.tagIds.indexOf(eid) === -1)
+
       return (
         <div className={`DetailText ${this.props.inEdit ? 'DetailEdit'  : ''}`}>
           <div className={`DetailTitle`}>
@@ -29,7 +35,7 @@ class DetailTags extends React.Component<ReceivedProps, {}> {
           <div className="DetailBody">
               {this.props.tagIds.map(tagId => {
                 const tag = this.props.allTags.find(t => t.tagId === tagId)
-                const delimeter = tagId !== this.props.tagIds[this.props.tagIds.length - 1] ? ",  " : ""
+                const delimeter = parentIds.length > 0 || (tagId !== this.props.tagIds[this.props.tagIds.length - 1]) ? ",  " : ""
                 const isSelected = this.props.filter.requiredTagIds.find(r => r === tagId)
                 const name = tag ? tag.name : "- Not Found -"
                 if (isSelected) { 
@@ -39,6 +45,21 @@ class DetailTags extends React.Component<ReceivedProps, {}> {
                     return (<span className="TagUnselected" key={tagId} >{`${name}${delimeter}`}</span>)
                 }
               })
+            } 
+            {
+              // Add expanded tags
+              parentIds.map(tagId => {
+                  const tag = this.props.allTags.find(t => t.tagId === tagId)
+                  const delimeter = tagId !== parentIds[parentIds.length - 1] ? ",  " : ""
+                  const isSelected = this.props.filter.requiredTagIds.find(r => r === tagId)
+                  const name = tag ? tag.name : "- Not Found -"
+                  if (isSelected) { 
+                      return (<span className="TagParentSelected" key={tagId} >{`${name}${delimeter}`}</span>)
+                  }
+                  else {
+                      return (<span className="TagParent" key={tagId} >{`${name}${delimeter}`}</span>)
+                  }
+                })
             }
           </div>         
         </div>

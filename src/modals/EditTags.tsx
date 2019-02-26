@@ -5,6 +5,7 @@
 import * as React from 'react';
 import * as OF from 'office-ui-fabric-react'
 import { Tag } from '../models/models'
+import { sortTags } from '../convert'
 import AddEditTag from './AddEditTag'
 
 export interface ReceivedProps {
@@ -54,6 +55,8 @@ class EditTags extends React.Component<ReceivedProps, ComponentState> {
         count: tagIds.find(s => s === tag.tagId) ? 1 : 0
       }
     })
+
+    editTags = sortTags(editTags)
 
     this.setState({
       editTags
@@ -110,12 +113,33 @@ class EditTags extends React.Component<ReceivedProps, ComponentState> {
     await this.props.onDeleteTag(tag)
   }
 
+  spacer(spacer: string): JSX.Element {
+    return (<span className="TagSpacer">{`${spacer}`}</span>)
+  }
+
+  namePrefix(tag: Tag): JSX.Element[] {
+    if (!tag.parentId) {
+      return []
+    }
+    else {
+      let parent = this.props.allTags.find(t => t.tagId === tag.parentId)
+      if (!parent) {
+        return []
+      }
+      let namePrefix = this.namePrefix(parent)
+      if (namePrefix.length > 0) {
+        return [this.spacer(` `), ...this.namePrefix(parent)]
+      }
+      return [this.spacer("└")]
+    }
+  }
   @OF.autobind
   onRenderCell(tag: Tag, index: number, isScrolling: boolean): JSX.Element {
     return (
       <div>
         <div className="FilterName">
-          {tag.name}
+          {this.namePrefix(tag)}
+          {` ${tag.name}`}
         </div>
         <OF.Checkbox 
           className={`FilterCheckbox FilterCheckboxInclude${tag.count > 0 ? ' FilterCheckboxIncludeSelected' : ''}`}

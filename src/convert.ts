@@ -37,6 +37,24 @@ export function topRelationships(person: Person, userPersonId: string | null): R
     return relationships.slice(0, 4)
 }
 
+export function expandTagIds(tagIds: string[], allTags: Tag[]): string[] {
+    let expandedIds: string[] = []
+    let todoIds = [...tagIds]
+    while (todoIds.length > 0) {
+        let tagId = todoIds.pop()
+        expandedIds.push(tagId!)
+        let tag = allTags.find(t => t.tagId === tagId)
+        if (!tag) {
+            console.log("Missing Tag")
+        }
+        else {
+            if (tag.parentId) {
+                todoIds.push(tag.parentId)
+            }
+        }
+    }
+    return expandedIds
+}
 export function filterPeople(people: Person[], allTags: Tag[], filter: Filter): Person[] {      
     let filteredPeople: Person[] = []
 
@@ -50,18 +68,21 @@ export function filterPeople(people: Person[], allTags: Tag[], filter: Filter): 
     }
     else {
         filteredPeople = people.filter(p => {
+
             // Reject if doesn't have appropriate test data
             if (!p.hasTestData(filter.perfType)) {
                 return false
             }
             let pass = true
+
+            let expandIds = expandTagIds(p.tagIds, allTags)
             filter.requiredTagIds.forEach(f => {
-                    if (!p.tagIds.find(t => t === f)) {
+                    if (!expandIds.find(t => t === f)) {
                         pass = false
                     }
                 })
             filter.blockedTagIds.forEach(f => { 
-                    if (p.tagIds.find(t => t === f)) {
+                    if (expandIds.find(t => t === f)) {
                         pass = false
                     }
                 })
@@ -123,7 +144,8 @@ export function extractBlockedTags(people: Person[], allTags: Tag[], blockedTags
 
     let tags: Tag[] = []
     people.map(p => {
-        p.tagIds.map(tagId => {
+        let expandedIds = expandTagIds(p.tagIds, allTags)
+        expandedIds.map(tagId => {
             const isBlocked = blockedTags.find(bid => bid === tagId)
             if (isBlocked) {
                 const tag = tags.find(t => t.tagId === tagId)
@@ -145,6 +167,7 @@ export function extractBlockedTags(people: Person[], allTags: Tag[], blockedTags
     return tags
 }
 
+/* NOT USED
 export function extractAllTags(people: Person[], allTags: Tag[]): Tag[] {
 
     let tags: Tag[] = allTags.map(t => { return {...t, count: 0 }})
@@ -167,6 +190,7 @@ export function extractAllTags(people: Person[], allTags: Tag[]): Tag[] {
     })
     return tags
 }
+*/
 
 export function extractTags(people: Person[], allTags: Tag[], usedOnly: boolean): Tag[] {
 
@@ -175,7 +199,8 @@ export function extractTags(people: Person[], allTags: Tag[], usedOnly: boolean)
         : allTags.map(t => { return {...t, count: 0 }})
 
     people.map(p => {
-        p.tagIds.map(tagId => {
+        let expandedIds = expandTagIds(p.tagIds, allTags)
+        expandedIds.map(tagId => {
             const tag = tags.find(t => t.tagId === tagId)
             if (tag) {
                 tag.count = tag.count + 1
@@ -192,6 +217,36 @@ export function extractTags(people: Person[], allTags: Tag[], usedOnly: boolean)
         }) 
     })
     return tags
+}
+
+export function sortTags(tags: Tag[]) {
+    // First sort
+    let parentTags = tags.filter(t => !t.parentId)
+    parentTags = parentTags.sort((a, b) => {
+        if (a.name.toLowerCase() < b.name.toLowerCase()) { return -1 }
+        else if (b.name.toLowerCase() < a.name.toLowerCase()) { return 1 }
+        else { return 0 }
+    })
+    let remainingTags = tags.filter(t => t.parentId)
+    let depth = 0 // Max depth to prevent endless loop in case of bad data
+    while (remainingTags.length) {
+        depth = depth + 1
+        let notFound: Tag[] = []
+        remainingTags.forEach(child => {
+            let index = parentTags.findIndex(t => t.tagId === child.parentId)
+            if (index === -1) {
+                notFound.push(child)
+            } 
+            else {
+                parentTags.splice(index + 1, 0, child)
+            }
+        })
+        remainingTags = [...notFound]
+        if (depth === 10) {
+            throw Error("Invalid Tag depth")
+        }
+    }
+    return parentTags
 }
 
 // Return list of tags in filterd people and blocked tags
