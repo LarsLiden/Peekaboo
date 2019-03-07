@@ -14,6 +14,7 @@ export interface ReceivedProps {
   filter: Filter
   onClose: (filter: Filter) => void
   onDeleteTag: (tag: Tag) => void
+  onEditTags: () => void
 }
 
 interface ComponentState {
@@ -156,29 +157,21 @@ class FilterPage extends React.Component<ReceivedProps, ComponentState> {
           onChange={(ev, isChecked) => this.onCheckboxBlockChange(isChecked, item)} 
           checked={isBlocked}
         />
-        {item.count === 0 ?
-            <OF.IconButton
-              className="ButtonIcon ButtonSmallDark"
-              onClick={() => this.onDeleteTag(item)}
-              iconProps={{ iconName: 'Delete' }}
-            />
-          :
-            <OF.IconButton
-              className="ButtonIcon ButtonSmallDark"
-              onClick={() => {}}  // LARS TODO
-              iconProps={{ iconName: 'Settings' }}
-            />
-        }
       </div>
     )
   }
 
   public render() {
     return (
-      <div className="FilterPage">
+      <div className="ModalPage">
         <div className="HeaderHolder">
           <div className="HeaderContent">
             {this.state.filteredPeople.length} People Selected
+            <OF.IconButton
+              className="ButtonIcon ButtonDarkPrimary ButtonTopRight"
+              onClick={this.props.onEditTags}
+              iconProps={{ iconName: 'Edit' }}
+            />
           </div>
         </div>
         <OF.List

@@ -45,6 +45,7 @@ export interface ReceivedProps {
   onClose: (person?: Person) => void
   onSelectPerson: (personId: string) => void
   onSaveTag: (tag: Tag) => void
+  onEditTags: () => void
 }
 
 export enum SubPage {
@@ -440,7 +441,7 @@ class EditPage extends React.Component<ReceivedProps, ComponentState> {
           onCancel={() => this.props.onSetSubpage(null)}
           onSavePersonTags={this.onSavePersonTags}
           onSaveTag={this.props.onSaveTag}
-          onDeleteTag={() => {}}
+          onEditTags={this.props.onEditTags}
         />
       )
     }

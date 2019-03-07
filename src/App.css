@@ -177,6 +177,12 @@
   left: 0px;
 }
 
+.ButtonTopRight {
+  position: absolute !important;
+  top: 0px;
+  right: 0px;
+}
+
 .ButtonTopFlush{
   margin-top: 0px;
 }
@@ -190,6 +196,11 @@
   background-color: #003763 !important;
   height: 40px !important;
   width: 40px !important;
+}
+
+.ButtonDarkPrimary {
+  display: inline-block !important;
+  background-color: #003763 !important;
 }
 
 .ButtonSmallDark {
@@ -542,6 +553,10 @@
 
 .FilterCheckboxIncludeSelected {
   background-color: #00aa00 !important;
+}
+
+.FilterCheckboxIncludeParent {
+  background-color: #007700 !important;
 }
 
 .FilterCheckboxBlockSelected {

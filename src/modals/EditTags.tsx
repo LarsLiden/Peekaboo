@@ -5,20 +5,20 @@
 import * as React from 'react';
 import * as OF from 'office-ui-fabric-react'
 import { Tag } from '../models/models'
-import { sortTags } from '../convert'
 import AddEditTag from './AddEditTag'
+import { expandTagIds } from 'src/convert';
 
 export interface ReceivedProps {
   allTags: Tag[]
   tagIds: string[]
   onSaveTag: (tag: Tag) => void
-  onDeleteTag: (tag: Tag) => void
   onSavePersonTags: (tagNames: string[]) => void
+  onEditTags: () => void
   onCancel: () => void
 }
 
 interface ComponentState {
-  editTags: Tag[]
+  personTags: Tag[]
   isEditTagModalOpen: boolean
   editingTag: Tag | null
 }
@@ -26,40 +26,47 @@ interface ComponentState {
 class EditTags extends React.Component<ReceivedProps, ComponentState> {
 
   state: ComponentState = {
-    editTags: [],
+    personTags: [],
     isEditTagModalOpen: false,
     editingTag: null
   }
 
   componentDidMount() {
-    this.setEditTags(this.props.allTags, this.props.tagIds)
+    this.setPersonTags(this.props.allTags, this.props.tagIds)
   }
 
   componentWillReceiveProps(newProps: ReceivedProps) {
     // Look for newly created tags
     let newTags = newProps.allTags.filter(t => 
-        this.state.editTags.find(et => et.tagId === t.tagId) === undefined)
+        this.state.personTags.find(et => et.tagId === t.tagId) === undefined)
 
     // Assume any newly created tags should be added to person
     newTags.forEach(t => {
       t.count = 1
     })
 
-    this.setEditTags(newProps.allTags, newProps.tagIds)
+    this.setPersonTags(newProps.allTags, newProps.tagIds)
   }
 
-  setEditTags(allTags: Tag[], tagIds: string[]) {
+  setPersonTags(allTags: Tag[], tagIds: string[]) {
+
+    let expandedIds = expandTagIds(tagIds, allTags)
     let editTags = allTags.map(tag => {
       return {
         ...tag,
-        count: tagIds.find(s => s === tag.tagId) ? 1 : 0
+        // Encode direct add as 1, expanded as 2, not included a 0
+        count: expandedIds.find(s => s === tag.tagId) ? tagIds.find(s => s === tag.tagId) ? 1 : 2 : 0
       }
     })
 
-    editTags = sortTags(editTags)
+    editTags = editTags.sort((a, b) => {
+      if (a.name.toLowerCase() < b.name.toLowerCase()) { return -1 }
+      else if (b.name.toLowerCase() < a.name.toLowerCase()) { return 1 }
+      else { return 0 }
+    })
 
     this.setState({
-      editTags
+      personTags: editTags
     })   
   }
 
@@ -90,66 +97,50 @@ class EditTags extends React.Component<ReceivedProps, ComponentState> {
 
   @OF.autobind
   onClickSave() {
-    let tagNames = this.state.editTags.filter(t => t.count === 1).map(t => t.tagId!)
+    let tagNames = this.state.personTags.filter(t => t.count === 1).map(t => t.tagId!)
     this.props.onSavePersonTags(tagNames)
   }
 
   @OF.autobind
   onCheckboxChange(isChecked: boolean = false, tag: Tag) {
-    let editTags = [...this.state.editTags]
-    let curTag = editTags.find(t => t.tagId === tag.tagId)
-    if (isChecked) {
-      curTag!.count = 1
-      this.setState({editTags})
+    // Can't change status of auto inluded parent tags
+    if (tag.count === 2) {
+      return 
+    }
+    let selectedTagIds = this.state.personTags.filter(t => t.count === 1).map(t => t.tagId!)
+    let index = selectedTagIds.findIndex(tid => tid === tag.tagId)
+    if (index === -1) {
+      selectedTagIds.push(tag.tagId!)
     }
     else {
-      curTag!.count = 0
-      this.setState({editTags})
+      selectedTagIds.splice(index, 1)
     }
-  }
 
-  @OF.autobind
-  async onDeleteTag(tag: Tag) {
-    await this.props.onDeleteTag(tag)
+    this.setPersonTags(this.props.allTags, selectedTagIds)
   }
 
   spacer(spacer: string): JSX.Element {
     return (<span className="TagSpacer">{`${spacer}`}</span>)
   }
 
-  namePrefix(tag: Tag): JSX.Element[] {
-    if (!tag.parentId) {
-      return []
-    }
-    else {
-      let parent = this.props.allTags.find(t => t.tagId === tag.parentId)
-      if (!parent) {
-        return []
-      }
-      let namePrefix = this.namePrefix(parent)
-      if (namePrefix.length > 0) {
-        return [this.spacer(` `), ...this.namePrefix(parent)]
-      }
-      return [this.spacer("└")]
-    }
-  }
   @OF.autobind
   onRenderCell(tag: Tag, index: number, isScrolling: boolean): JSX.Element {
+    let className = `FilterCheckbox FilterCheckboxInclude`
+    if (tag.count === 1) {
+      className = `${className} FilterCheckboxIncludeSelected`
+    }
+    else if (tag.count === 2) {
+      className = `${className} FilterCheckboxIncludeParent`
+    }
     return (
       <div>
         <div className="FilterName">
-          {this.namePrefix(tag)}
-          {` ${tag.name}`}
+          {tag.name}
         </div>
         <OF.Checkbox 
-          className={`FilterCheckbox FilterCheckboxInclude${tag.count > 0 ? ' FilterCheckboxIncludeSelected' : ''}`}
+          className={className}
           onChange={(ev, isChecked) => this.onCheckboxChange(isChecked, tag)}
           checked={tag.count > 0}
-        />
-        <OF.IconButton
-          className="ButtonIcon ButtonSmallDark"
-          onClick={() => this.onClickEditTag(tag)}  
-          iconProps={{ iconName: 'Settings' }}
         />
       </div>
     );
@@ -176,12 +167,17 @@ class EditTags extends React.Component<ReceivedProps, ComponentState> {
                     iconProps={{ iconName: 'CircleAddition' }}
                 />
                 Tags
+                <OF.IconButton
+                  className="ButtonIcon ButtonDarkPrimary ButtonTopRight"
+                  onClick={this.props.onEditTags}
+                  iconProps={{ iconName: 'Edit' }}
+                />
               </div>
             </div>
             <div className="ModalBodyHolder">
               <div className="ModalBodyContent">
                 <OF.List
-                  items={this.state.editTags}
+                  items={this.state.personTags}
                   onRenderCell={this.onRenderCell}
                 />
               </div>

@@ -23,6 +23,7 @@ import LoginPage from './Pages/LoginPage'
 import ViewPage from './Pages/ViewPage'
 import EditPage from './Pages/EditPage'
 import InstallPage from './Pages/InstallPage'
+import TagEditorPage from './Pages/TagEditorPage'
 import Search from './modals/Search'
 import ViewPerformance from './modals/ViewPerformance'
 import BeforeInstallPromptEvent from './models/beforeInstallPromptEvent'
@@ -39,6 +40,7 @@ export enum Page {
   VIEWQUIZ = "VIEWQUIZ",
   EDIT = "EDIT",
   EDITQUIZ = "EDITQUIZ",
+  EDITTAGS = "EDITTAGS",
   PERFORMANCE = "PERFORMANCE",
   SEARCH = "SEARCH",
   INSTALL = "INSTALL"
@@ -180,6 +182,11 @@ class App extends React.Component<{}, ComponentState> {
       })
   //  }
     this.onSetPage(Page.FILTER, Page.VIEW)
+  }
+
+  @OF.autobind 
+  async onEditTags() {
+    this.onSetPage(Page.EDITTAGS, Page.VIEW)
   }
 
   @OF.autobind 
@@ -665,6 +672,11 @@ class App extends React.Component<{}, ComponentState> {
   }
 
   @OF.autobind
+  async onCloseEditTagsPage() {
+    await this.onSetPage(Page.VIEW, null)
+  }
+
+  @OF.autobind
   showInstallPrompt() {
     if (!this.state.installEvent) {
       return
@@ -794,6 +806,7 @@ class App extends React.Component<{}, ComponentState> {
             onDeletePhoto={this.onDeletePhoto}
             onSelectPerson={this.onSelectPerson}
             onSaveTag={this.onSaveTag}
+            onEditTags={this.onEditTags}
           />
         }
         {this.state.page === Page.FILTER &&
@@ -802,7 +815,16 @@ class App extends React.Component<{}, ComponentState> {
             allTags={this.state.allTags}
             onClose={this.onCloseFliterPage}
             onDeleteTag={this.onDeleteTag}
+            onEditTags={this.onEditTags}
             filter={this.state.filter}
+          />
+        }
+        {this.state.page === Page.EDITTAGS &&
+          <TagEditorPage
+            allTags={this.state.allTags}
+            onClose={this.onCloseEditTagsPage}
+            onSaveTag={this.onSaveTag}
+            onDeleteTag={this.onDeleteTag}
           />
         }
         {this.state.page === Page.SORT &&
