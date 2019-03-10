@@ -209,6 +209,12 @@ class App extends React.Component<{}, ComponentState> {
   async onClickAdmin() {
     if (this.state.user) {
       let users = await Client.getUsers(this.state.user) 
+      users = users.sort((a, b) => {
+        if (a.isAdmin) { return -1 }
+        if (a.name < b.name) { return -1 }
+        else if (b.name < a.name) { return 1 }
+        else { return 0 }
+      })
       this.setState({
         users
       })
@@ -807,6 +813,7 @@ class App extends React.Component<{}, ComponentState> {
             onSelectPerson={this.onSelectPerson}
             onSaveTag={this.onSaveTag}
             onEditTags={this.onEditTags}
+            onDeleteTag={this.onDeleteTag}
           />
         }
         {this.state.page === Page.FILTER &&

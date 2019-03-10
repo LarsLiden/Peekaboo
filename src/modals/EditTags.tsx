@@ -6,13 +6,14 @@ import * as React from 'react';
 import * as OF from 'office-ui-fabric-react'
 import { Tag } from '../models/models'
 import AddEditTag from './AddEditTag'
-import { expandTagIds } from 'src/convert';
+import { expandTagIds } from '../convert'
 
 export interface ReceivedProps {
   allTags: Tag[]
   tagIds: string[]
   onSaveTag: (tag: Tag) => void
   onSavePersonTags: (tagNames: string[]) => void
+  onDeleteTag: (tag: Tag) => void
   onEditTags: () => void
   onCancel: () => void
 }
@@ -88,6 +89,18 @@ class EditTags extends React.Component<ReceivedProps, ComponentState> {
   }
 
   @OF.autobind
+  onDeleteEditTag() {
+    if (this.state.editingTag) {
+      this.props.onDeleteTag(this.state.editingTag)
+    }
+
+    this.setState({
+      isEditTagModalOpen: false,
+      editingTag: null
+    })
+  }
+
+  @OF.autobind
   onCancelEditTag() {
     this.setState({
       isEditTagModalOpen: false,
@@ -156,6 +169,7 @@ class EditTags extends React.Component<ReceivedProps, ComponentState> {
               allTags={this.props.allTags}
               onSubmit={this.onSubmitEditTag}
               onCancel={this.onCancelEditTag}
+              onDelete={this.onDeleteEditTag}
             />
           :
           <div className="ModalPage">

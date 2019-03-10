@@ -61,6 +61,18 @@ class TagEditorPage extends React.Component<ReceivedProps, ComponentState> {
   }
 
   @OF.autobind
+  onDeleteEditTag() {
+    if (this.state.editingTag) {
+      this.props.onDeleteTag(this.state.editingTag)
+    }
+
+    this.setState({
+      isEditTagModalOpen: false,
+      editingTag: null
+    })
+  }
+
+  @OF.autobind
   onCancelEditTag() {
     this.setState({
       isEditTagModalOpen: false,
@@ -127,21 +139,6 @@ class TagEditorPage extends React.Component<ReceivedProps, ComponentState> {
     );
   }
 
-  /*
-         {item.count === 0 ?
-            <OF.IconButton
-              className="ButtonIcon ButtonSmallDark"
-              onClick={() => this.onDeleteTag(item)}
-              iconProps={{ iconName: 'Delete' }}
-            />
-          :
-            <OF.IconButton
-              className="ButtonIcon ButtonSmallDark"
-              onClick={() => {}}  // LARS TODO
-              iconProps={{ iconName: 'Settings' }}
-            />
-        }
-        */
   public render() {
     return (
       <div>
@@ -152,6 +149,7 @@ class TagEditorPage extends React.Component<ReceivedProps, ComponentState> {
               allTags={this.props.allTags}
               onSubmit={this.onSubmitEditTag}
               onCancel={this.onCancelEditTag}
+              onDelete={this.onDeleteEditTag}
             />
           :
           <div className="ModalPage">

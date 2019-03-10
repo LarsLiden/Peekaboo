@@ -116,7 +116,7 @@ class AdminPage extends React.Component<ReceivedProps, ComponentState> {
     let last = new Date(user.lastUsedDatTime).toLocaleDateString()
     return (
       <div className="SectionBorder">
-        <div className='AdminUserSection'>
+        <div className='InlineBlock'>
           <div className={`AdminUserText${user.isAdmin || user.googleId === "sample" ? ' SearchBold' : ''}`}>
             {user.name}
           </div>

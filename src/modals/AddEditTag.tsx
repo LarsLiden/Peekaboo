@@ -15,6 +15,7 @@ export interface ReceivedProps {
   allTags: Tag[]
   onSubmit: (tag: Tag) => void
   onCancel: () => void
+  onDelete:( ) => void
 }
 
 interface ComponentState { 
@@ -89,34 +90,51 @@ class AddEditTag extends React.Component<ReceivedProps, ComponentState> {
     this.props.onCancel()
   }
 
+  @OF.autobind
+  onClickDelete(): void {
+    this.props.onDelete()
+  }
+
   public render() {
     return (
       <div className="ModalPage">
           <div className="HeaderHolder">
             <div className="HeaderContent">
-              Create Tag
+              Edit Tag
             </div>
           </div>
           <div className="ModalBodyHolder">
             <div className="ModalBodyContent">
-              <DetailEditText
-                label="New Tag"
-                onChanged={text => this.onTagNameChanged(text)}
-                value={this.state.tagName}
-                onEnter={this.onClickSave}
-                autoFocus={true}
-                maxLength={MAX_TAG_LENGTH}
-              />
-              <div className="DetailTitle DetailTitlePlain AlignLeft">
+              <div>
+              <div className="TagEdit">
+                <DetailEditText
+                  label="Tag Name"
+                  onChanged={text => this.onTagNameChanged(text)}
+                  value={this.state.tagName}
+                  onEnter={this.onClickSave}
+                  autoFocus={true}
+                  maxLength={MAX_TAG_LENGTH}
+                />
+                <div className="DetailTitle DetailTitlePlain">
                 Parent Tag
+                </div>
+                {this.state.parents && (this.state.parents.length > 0) &&
+                  <OF.Dropdown
+                    defaultSelectedKey={this.state.parentId || NONE_KEY}
+                    options={this.state.parents}
+                    onChanged={this.onParentChange}
+                  />
+                }
               </div>
-              {this.state.parents && (this.state.parents.length > 0) &&
-                <OF.Dropdown
-                  defaultSelectedKey={this.state.parentId || NONE_KEY}
-                  options={this.state.parents}
-                  onChanged={this.onParentChange}
+              {this.props.tag &&
+                <OF.IconButton
+                    className="ButtonIcon ButtonDark FloatRight"
+                    onClick={this.onClickDelete}
+                    iconProps={{ iconName: 'Trash' }}
                 />
               }
+              </div>
+              
             </div>
           </div>
           <div className="FooterHolder"> 

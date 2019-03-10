@@ -45,6 +45,7 @@ export interface ReceivedProps {
   onClose: (person?: Person) => void
   onSelectPerson: (personId: string) => void
   onSaveTag: (tag: Tag) => void
+  onDeleteTag: (tag: Tag) => void
   onEditTags: () => void
 }
 
@@ -308,22 +309,22 @@ class EditPage extends React.Component<ReceivedProps, ComponentState> {
     this.props.onDeletePerson(this.props.person)
   }
 
-   // --- ARCHIVE PERSON ---
-   @OF.autobind
-   onCancelArchive(): void {
-     this.setState({isConfirmArchiveOpen: false})
-   }
- 
-   @OF.autobind
-   onClickArchive(): void {
-     this.setState({isConfirmArchiveOpen: true})
-   }
- 
-   @OF.autobind
-   onConfirmArchive(): void {
-     this.setState({isConfirmArchiveOpen: false})
-     this.props.onArchivePerson(this.props.person)
-   }
+  // --- ARCHIVE PERSON ---
+  @OF.autobind
+  onCancelArchive(): void {
+    this.setState({isConfirmArchiveOpen: false})
+  }
+
+  @OF.autobind
+  onClickArchive(): void {
+    this.setState({isConfirmArchiveOpen: true})
+  }
+
+  @OF.autobind
+  onConfirmArchive(): void {
+    this.setState({isConfirmArchiveOpen: false})
+    this.props.onArchivePerson(this.props.person)
+  }
 
   @OF.autobind
   onNextPhoto(): void {
@@ -441,6 +442,7 @@ class EditPage extends React.Component<ReceivedProps, ComponentState> {
           onCancel={() => this.props.onSetSubpage(null)}
           onSavePersonTags={this.onSavePersonTags}
           onSaveTag={this.props.onSaveTag}
+          onDeleteTag={this.props.onDeleteTag}
           onEditTags={this.props.onEditTags}
         />
       )
