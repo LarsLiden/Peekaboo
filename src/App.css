@@ -564,6 +564,15 @@
   width: 180px;
   text-align: left;
   margin-left: 5px;
+  line-height: 30px;
+  color: white;
+}
+
+.TagCount {
+  display: inline-block;
+  width: 20px;
+  text-align: right;
+  margin-left: 5px;
   color: white;
 }
 

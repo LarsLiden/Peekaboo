@@ -8,6 +8,7 @@ import { Tag } from '../models/models'
 import '../fabric.css'
 import { isValid, MAX_TAG_LENGTH, generateGUID } from '../Util'
 import DetailEditText from '../Detail/DetailEditText'
+import { expandTagIds } from '../convert'
 import "../Pages/ViewPage.css"
 
 export interface ReceivedProps {
@@ -21,7 +22,6 @@ export interface ReceivedProps {
 interface ComponentState { 
   tagName: string
   parentId: string | null
-  defaultKey: { key: string; text: any; }  | undefined
   parents: { key: string; text: any; }[]
 }
 
@@ -32,12 +32,28 @@ class AddEditTag extends React.Component<ReceivedProps, ComponentState> {
   state: ComponentState = {
     tagName: "",
     parentId: null,
-    defaultKey: undefined,
     parents: []
   }
 
   parents(): { key: string; text: any; }[] {
-    let types = this.props.allTags.map(t => {
+    let allowedTags: Tag[]
+
+    if (!this.props.tag) {
+      allowedTags = this.props.allTags
+    }
+    else {
+      // Prevent loops by not allowing children as parents
+      allowedTags = this.props.allTags.filter(t => {
+        if (t === this.props.tag) {
+          return false
+        }
+        const parentIds = expandTagIds([t.tagId!], this.props.allTags).filter(et => et !== t.tagId)
+        return (parentIds.find(eid => eid === this.props.tag!.tagId!) === undefined)
+        }
+      )
+    }
+      
+    let types = allowedTags.map(t => {
       return {key: t.tagId!, text: t.name}
     })
     types = types.sort((a, b) => {
@@ -49,16 +65,17 @@ class AddEditTag extends React.Component<ReceivedProps, ComponentState> {
     return types
   }
 
-  componentDidMount() {
+  componentDidMount() { 
+    let parents = this.parents()
     if (this.props.tag) {
-      let parents = this.parents()
-      let defaultKey = parents.find(p => (this.props.tag !== null && p.key === this.props.tag.parentId))
       this.setState({
         tagName: this.props.tag.name,
         parentId: this.props.tag.parentId || NONE_KEY,
-        defaultKey,
         parents
       })   
+    }
+    else {
+      this.setState({parents})
     }
   }
 
@@ -101,40 +118,43 @@ class AddEditTag extends React.Component<ReceivedProps, ComponentState> {
           <div className="HeaderHolder">
             <div className="HeaderContent">
               Edit Tag
-            </div>
-          </div>
-          <div className="ModalBodyHolder">
-            <div className="ModalBodyContent">
-              <div>
-              <div className="TagEdit">
-                <DetailEditText
-                  label="Tag Name"
-                  onChanged={text => this.onTagNameChanged(text)}
-                  value={this.state.tagName}
-                  onEnter={this.onClickSave}
-                  autoFocus={true}
-                  maxLength={MAX_TAG_LENGTH}
-                />
-                <div className="DetailTitle DetailTitlePlain">
-                Parent Tag
-                </div>
-                {this.state.parents && (this.state.parents.length > 0) &&
-                  <OF.Dropdown
-                    defaultSelectedKey={this.state.parentId || NONE_KEY}
-                    options={this.state.parents}
-                    onChanged={this.onParentChange}
-                  />
-                }
-              </div>
-              {this.props.tag &&
+              {this.props.tag && this.props.tag.count === 0 &&
                 <OF.IconButton
-                    className="ButtonIcon ButtonDark FloatRight"
+                    className="ButtonIcon ButtonDarkPrimary ButtonTopRight"
                     onClick={this.onClickDelete}
                     iconProps={{ iconName: 'Trash' }}
                 />
               }
               </div>
-              
+          </div>
+          <div className="ModalBodyHolder">
+            <div className="ModalBodyContent">
+              <div>
+                <div className="TagEdit">
+                  <DetailEditText
+                    label="Tag Name"
+                    onChanged={text => this.onTagNameChanged(text)}
+                    value={this.state.tagName}
+                    onEnter={this.onClickSave}
+                    autoFocus={true}
+                    maxLength={MAX_TAG_LENGTH}
+                  />
+                  <div className="DetailTitle DetailTitlePlain">
+                  Parent Tag
+                  </div>
+                  {this.state.parents && (this.state.parents.length > 0) &&
+                    <OF.Dropdown
+                      defaultSelectedKey={this.state.parentId || NONE_KEY}
+                      options={this.state.parents}
+                      onChanged={this.onParentChange}
+                    />
+                  }
+                  <div className="DetailTitle DetailTitlePlain">
+                    {`Used By ${this.props.tag ? this.props.tag.count : 0} People`}
+                  </div>
+                  
+                </div>
+              </div>
             </div>
           </div>
           <div className="FooterHolder"> 

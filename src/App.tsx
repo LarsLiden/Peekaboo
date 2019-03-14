@@ -829,6 +829,7 @@ class App extends React.Component<{}, ComponentState> {
         {this.state.page === Page.EDITTAGS &&
           <TagEditorPage
             allTags={this.state.allTags}
+            allPeople={this.state.allPeople}
             onClose={this.onCloseEditTagsPage}
             onSaveTag={this.onSaveTag}
             onDeleteTag={this.onDeleteTag}

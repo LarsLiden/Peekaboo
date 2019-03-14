@@ -5,11 +5,13 @@
 import * as React from 'react';
 import * as OF from 'office-ui-fabric-react'
 import { Tag } from '../models/models'
-import { sortTags } from '../convert'
+import { Person } from '../models/person'
+import { sortTags, expandTagIds } from '../convert'
 import AddEditTag from '../modals/AddEditTag'
 
 export interface ReceivedProps {
   allTags: Tag[]
+  allPeople: Person[]
   onSaveTag: (tag: Tag) => void
   onDeleteTag: (tag: Tag) => void
   onClose: () => void
@@ -30,14 +32,38 @@ class TagEditorPage extends React.Component<ReceivedProps, ComponentState> {
   }
 
   componentDidMount() {
-    this.setEditTags(this.props.allTags)
+    this.setEditTags(this.props.allTags, this.props.allPeople)
   }
 
   componentWillReceiveProps(newProps: ReceivedProps) {
-    this.setEditTags(newProps.allTags)
+    this.setEditTags(newProps.allTags, newProps.allPeople)
   }
 
-  setEditTags(allTags: Tag[]) {
+  setEditTags(allTags: Tag[], allPeople: Person[]) {
+    // Recalculate tag count
+    allTags.forEach(tag => tag.count = 0)
+    const tagCount: { [s: string]: number } = {}
+    allPeople.forEach(p => {
+      let expandedIds = expandTagIds(p.tagIds, allTags)
+      expandedIds.forEach(tid => {
+        if (tagCount[tid]) {
+          tagCount[tid] = tagCount[tid] + 1
+        }
+        else {
+          tagCount[tid] = 1
+        }
+      })
+    })
+    Object.keys(tagCount).forEach(k => {
+      const tag = allTags.find(t => t.tagId === k)
+      if (tag) {
+        tag.count = tagCount[k]
+      }
+      else {
+        throw new Error("Missing TAG!")
+      }
+    })
+
     this.setState({
       sortedTags: sortTags(allTags)
     })   
@@ -123,14 +149,17 @@ class TagEditorPage extends React.Component<ReceivedProps, ComponentState> {
   onRenderCell(tag: Tag, index: number, isScrolling: boolean): JSX.Element {
     return (
       <div
-        key={tag.name}
+        key={`${tag.name}_DIV`}
       >
         <div className="FilterName">
           {this.namePrefix(tag)}
           {` ${tag.name}`}
         </div>
+        <div className="TagCount">
+          {` ${tag.count}`}
+        </div>
         <OF.IconButton
-          key={tag.name}
+          key={`${tag.name}_BUTTON`}
           className="ButtonIcon ButtonSmallDark"
           onClick={() => this.onClickEditTag(tag)}  
           iconProps={{ iconName: 'Settings' }}
@@ -155,6 +184,11 @@ class TagEditorPage extends React.Component<ReceivedProps, ComponentState> {
           <div className="ModalPage">
             <div className="HeaderHolder">
               <div className="HeaderContent">
+                <OF.IconButton
+                    className="ButtonIcon ButtonPrimary ButtonTopLeft"
+                    onClick={() => this.onClickEditTag(null)}
+                    iconProps={{ iconName: 'CircleAddition' }}
+                />
                 Tags
               </div>
             </div>
