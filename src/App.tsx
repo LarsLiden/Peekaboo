@@ -787,7 +787,6 @@ class App extends React.Component<{}, ComponentState> {
             onNextPerson={this.onNextPerson}
             onPrevPerson={this.onPrevPerson}
             onSelectPerson={this.onSelectPerson}
-            onImport={this.onClickImport}  // *TEMP
           />
         }
         {this.state.page === Page.NEWUSER && 

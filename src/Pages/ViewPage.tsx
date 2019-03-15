@@ -43,8 +43,6 @@ export interface ReceivedProps {
   onPrevPerson: () => void
   onAddToPersonList: () => void
   onSelectPerson: (personId: string) => void
-
-  onImport: () => {} // *TEMP
 }
 
 interface ComponentState { 
@@ -286,13 +284,6 @@ class ViewPage extends React.Component<ReceivedProps, ComponentState> {
                         iconProps={{ iconName: 'Settings' }}
                     />
                   }
-
-<OF.IconButton
-  className="ButtonIcon ButtonPrimary FloatRight"
-  onClick={this.props.onImport}
-  iconProps={{ iconName: 'IncreaseIndentLegacy' }}
-/> 
-
                   <OF.Button
                       className="ButtonIcon ButtonPrimary FloatRight"
                       onClick={() => this.props.onClickQuiz()}

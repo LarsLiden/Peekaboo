@@ -381,6 +381,12 @@ class EditPage extends React.Component<ReceivedProps, ComponentState> {
     this.setState({ crop });  
   }
 
+  @OF.autobind
+  onSearch() {
+    const link = `https://www.linkedin.com/search/results/people/?keywords=${this.props.person.firstName}%20${this.props.person.lastName}`
+    window.open(link, "_blank")
+  }
+
   public render() {
 
     // If a brand new person
@@ -534,6 +540,12 @@ class EditPage extends React.Component<ReceivedProps, ComponentState> {
                 </div>
               </FilePicker>
               <div className='EditButtonSpacer'/>
+              <OF.IconButton
+                className="ButtonIcon ButtonDark"
+                onClick={this.onSearch}
+                iconProps={{ iconName: 'Search' }}
+              />
+
               <OF.IconButton
                 className="ButtonIcon ButtonDark"
                 onClick={this.onDeletePhoto}

@@ -152,7 +152,6 @@ class AddEditTag extends React.Component<ReceivedProps, ComponentState> {
                   <div className="DetailTitle DetailTitlePlain">
                     {`Used By ${this.props.tag ? this.props.tag.count : 0} People`}
                   </div>
-                  
                 </div>
               </div>
             </div>
