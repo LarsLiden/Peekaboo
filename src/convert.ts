@@ -10,11 +10,16 @@ import { MAX_TIME, BIAS } from './models/const'
 
 export function toQuizPerson(person: Person, perfType: PerfType, userPersonId: string | null, allTags: Tag[]): QuizPerson {
 
+    const tags = person.tagIds.map(id => {
+            let tag = allTags.find(t => t.tagId === id)
+            return tag ? tag.name : "MISSING_TAG"
+        }).join(", ")
+
     return {
         personId: person.personId!,
         expandedName: person.expandedName(),
         description: person.description,
-        tags: person.tagIds.map(id => allTags.find(t => t.tagId === id)).join(", "),
+        tags,
         topRelationships: topRelationships(person, userPersonId),
         photoBlobnames: person.photoFilenames.map(f => getPhotoBlobName(person, f)),
         performance: person.performance(perfType),
