@@ -6,7 +6,7 @@ import * as React from 'react';
 import * as OF from 'office-ui-fabric-react'
 import DetailEditText from '../Detail/DetailEditText'
 import { Person } from '../models/person'
-import { SocialNet, SocialNetType } from '../models/models'
+import { SocialNet, SocialNetType, SocialNetIcon, SocialNetSearchIcon, SocialNetSearch } from '../models/models'
 import { generateGUID } from '../Util';
 
 export interface ReceivedProps {
@@ -29,25 +29,43 @@ class EditSocialNetworks extends React.Component<ReceivedProps, ComponentState> 
     }),
   }
 
-  componentDidMount() {
-    if (this.state.socialNets.length === 0) {
+  componentDidUpdate(prevProps: ReceivedProps) {
+    if (prevProps.person !== this.props.person || this.state.socialNets.length === 0) {
+
+      let socialNets: SocialNet[] = []
+      Object.keys(SocialNetType).forEach(key => {
+        let snt = SocialNetType[key]
+        let exists = this.props.person.socialNets.find(sn => sn.netType === snt)
+        if (exists) {
+          socialNets.push({...exists})
+        }
+        else {
+          socialNets.push({
+            socialNetId: generateGUID(),
+            URL: "",
+            profileID: "",
+            netType: snt
+          })
+        }
+      })
       // Make a local copy 
       this.setState({
-        socialNets: [...this.props.person.socialNets]
+        socialNets
       })   
     }
   }
 
   @OF.autobind
-  onClickDelete(socialNet: SocialNet) {
+  onClickDelete(socialNetType: SocialNetType) {
     this.setState({
-      socialNets: this.state.socialNets.filter(k => k.socialNetId !== socialNet.socialNetId)
+      socialNets: this.state.socialNets.filter(k => k.netType !== socialNetType)
     }) 
   }
 
   @OF.autobind
   onClickSave() {
-    this.props.onSave(this.state.socialNets)
+    const socialNets = this.state.socialNets.filter(sn => sn.URL !== "")
+    this.props.onSave(socialNets)
   }
 
   @OF.autobind
@@ -64,8 +82,8 @@ class EditSocialNetworks extends React.Component<ReceivedProps, ComponentState> 
   }
 
   @OF.autobind
-  onURLChanged(url: string, socialNet: SocialNet) {
-    let changed = this.state.socialNets.find(r => r.socialNetId === socialNet.socialNetId)
+  onURLChanged(url: string, socialNetType: SocialNetType) {
+    let changed = this.state.socialNets.find(r => r.netType === socialNetType)
     changed!.URL = url
   }
 
@@ -76,29 +94,39 @@ class EditSocialNetworks extends React.Component<ReceivedProps, ComponentState> 
   }
 
   @OF.autobind
-  onRenderCell(socialNet: SocialNet, index: number, isScrolling: boolean): JSX.Element {
+  onOpenLink(e: any, socialNetType: SocialNetType) {
+    e.preventDefault()
+    const url = `${SocialNetSearch[socialNetType]}${this.props.person.firstName}%20${this.props.person.lastName}`
+    window.open(url, "_blank", socialNetType)
+  }
+
+  @OF.autobind
+  onRenderCell(socialNetType: SocialNetType): JSX.Element {
+    let socialNet = this.state.socialNets.find(r => r.netType === socialNetType)
+    let url = socialNet ? socialNet.URL : null
     return (
       <div className="SectionBorder">
         <div>
           <div className='EditDropdownSection'>
-            <OF.Dropdown
-              className="EditDropdown"
-              defaultSelectedKey={socialNet.netType}
-              options={this.state.types}
-              onChanged={(obj) => this.onTypeChange(obj, socialNet)}
+            <OF.Image
+                key={socialNetType}
+                className="SocialNetButton"
+                onClick={(e) => this.onOpenLink(e, socialNetType)}
+                src={url ? SocialNetIcon[socialNetType] : SocialNetSearchIcon[socialNetType]}
+                width={40}
+                height={40}
             />
             <OF.IconButton
               className="ButtonIcon ButtonDark FloatRight"
-              onClick={() => this.onClickDelete(socialNet)}
+              onClick={() => this.onClickDelete(socialNetType)}
               iconProps={{ iconName: 'Delete' }}
             />
           </div>
           <div>
             <DetailEditText
               label="URL"
-              onChanged={key => this.onURLChanged(key, socialNet)}
-              value={socialNet.URL}
-              autoFocus={socialNet.URL === ""}
+              onChanged={key => this.onURLChanged(key, socialNetType)}
+              value={url || ""}
             />
           </div>
         </div>
@@ -122,10 +150,11 @@ class EditSocialNetworks extends React.Component<ReceivedProps, ComponentState> 
         </div>
         <div className="ModalBodyHolder">
           <div className="ModalBodyContent">
-            <OF.List
-              items={this.state.socialNets}
-              onRenderCell={this.onRenderCell}
-            />
+            {Object.keys(SocialNetType).map(key =>{ 
+              return (
+                this.onRenderCell(SocialNetType[key])
+              )}
+            )}
           </div>
         </div>
         <div className="FooterHolder"> 

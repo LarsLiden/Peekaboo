@@ -90,7 +90,30 @@ export interface KeyValue {
 
 export enum SocialNetType {
     LINKEDIN = "LINKEDIN",
-    FACEBOOK = "FACEBOOK"
+    FACEBOOK = "FACEBOOK",
+    GOOGLE = "GOOGLE",
+    MICROSOFT = "MICROSOFT"
+}
+
+export enum SocialNetIcon {
+    LINKEDIN = "https://peekaboo.blob.core.windows.net/resources/LI.png",
+    FACEBOOK = "https://peekaboo.blob.core.windows.net/resources/FB.png",
+    GOOGLE = "https://peekaboo.blob.core.windows.net/resources/GG.png",
+    MICROSOFT = "https://peekaboo.blob.core.windows.net/resources/MS.png"
+}
+
+export enum SocialNetSearchIcon {
+    LINKEDIN = "https://peekaboo.blob.core.windows.net/resources/LI-S.png",
+    FACEBOOK = "https://peekaboo.blob.core.windows.net/resources/FB-S.png",
+    GOOGLE = "https://peekaboo.blob.core.windows.net/resources/GG-S.png",
+    MICROSOFT = "https://peekaboo.blob.core.windows.net/resources/MS-S.png"
+}
+
+export enum SocialNetSearch {
+    LINKEDIN = "https://www.linkedin.com/search/results/people/?keywords=",
+    FACEBOOK = "https://www.facebook.com/search/top/?q=",
+    GOOGLE = "https://contacts.google.com/search/",
+    MICROSOFT = "http://who/Find.aspx?q=" //frank&jumpToExact=false
 }
 
 export interface SocialNet {

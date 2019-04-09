@@ -3,59 +3,87 @@
  * Licensed under the MIT License.
  */
 import * as React from 'react';
-import { SocialNet } from '../models/models'
 import * as OF from 'office-ui-fabric-react'
+import { SocialNet, SocialNetIcon, SocialNetSearchIcon, SocialNetType, SocialNetSearch } from '../models/models'
+import { generateGUID } from '../Util';
+import { Person } from '../models/person'
 import "./DetailEvents.css"
 import '../fabric.css'
 
 export interface ReceivedProps {
-  socialNets: SocialNet[]
+  person: Person
   inEdit?: boolean
 }
 
-const columns: OF.IColumn[] = [
-  {
-    key: 'netType',
-    name: 'netType',
-    fieldName: 'netType',
-    minWidth: 50,
-    maxWidth: 50,
-    //onColumnClick: this._onColumnClick,
-    onRender: (item: SocialNet) => {
-      return <div className="TableCell">
-        <OF.Link 
-          href={item.URL}
-          target="_blank"
-        >
-          {item.netType.toString()}
-        </OF.Link>
-      </div>
+interface ComponentState {
+  socialNets: SocialNet[]
+}
+
+class DetailSocialNetworks extends React.Component<ReceivedProps, ComponentState> {
+
+  state: ComponentState = {
+    socialNets: []
+  }
+
+  @OF.autobind
+  onOpenLink(e: any, link: string, netType: SocialNetType) {
+    e.preventDefault()
+    if (!link) {
+      const searchUrl = `${SocialNetSearch[netType]}${this.props.person.firstName}%20${this.props.person.lastName}`
+      window.open(searchUrl, "_blank", "new")  
+    }
+    else {
+      window.open(link, "_blank", "new")
     }
   }
-]
 
-class DetailSocialNetworks extends React.Component<ReceivedProps, {}> {
+  componentDidUpdate(prevProps: ReceivedProps) {
+    if (this.props.person !== prevProps.person || this.state.socialNets.length === 0) {
+      let socialNets: SocialNet[] = []
+      Object.keys(SocialNetType).forEach(key => {
+        let snt = SocialNetType[key]
+        let exists = this.props.person.socialNets.find(sn => sn.netType === snt)
+        if (exists) {
+          socialNets.push({...exists})
+        }
+        else {
+          socialNets.push({
+            socialNetId: generateGUID(),
+            URL: "",
+            profileID: "",
+            netType: snt
+          })
+        }
+      })
+      // Make a local copy 
+      this.setState({
+        socialNets
+      })   
+    }
+  }
 
   public render() {
-    if (!this.props.inEdit && this.props.socialNets.length === 0) {
+    if (this.state.socialNets.length === 0) {
       return null
     }
-      return (
-        <div className={`DetailText ${this.props.inEdit ? 'DetailEdit'  : ''}`}>
-          <div className={`DetailTitle`}>
-            SOCIAL NETWORK
-          </div>
-          <div className="DetailBody DetailLongBody">
-            <OF.DetailsList
-                isHeaderVisible={false}
-                compact={true}
-                selectionMode={OF.SelectionMode.none}
-                className="DetailEventList"
-                columns={columns}
-                items={this.props.socialNets}
-            />
-          </div>
+    return (
+      <div className={`DetailText ${this.props.inEdit ? 'DetailEdit'  : ''}`}>
+        <div className="DetailBody DetailLongBody">
+          {this.state.socialNets.map(sn => {
+            return (
+              <OF.Image
+                key={sn.netType}
+                className="QuizImageHolder"
+                onClick={(e) => this.onOpenLink(e, sn.URL, sn.netType)}
+                src={sn.URL ? SocialNetIcon[sn.netType] : SocialNetSearchIcon[sn.netType]}
+                width={40}
+                height={40}
+              />
+            )
+            })
+          }
         </div>
+      </div>
     )
   }
 }

@@ -381,12 +381,6 @@ class EditPage extends React.Component<ReceivedProps, ComponentState> {
     this.setState({ crop });  
   }
 
-  @OF.autobind
-  onSearch() {
-    const link = `https://www.linkedin.com/search/results/people/?keywords=${this.props.person.firstName}%20${this.props.person.lastName}`
-    window.open(link, "_blank")
-  }
-
   public render() {
 
     // If a brand new person
@@ -542,12 +536,6 @@ class EditPage extends React.Component<ReceivedProps, ComponentState> {
               <div className='EditButtonSpacer'/>
               <OF.IconButton
                 className="ButtonIcon ButtonDark"
-                onClick={this.onSearch}
-                iconProps={{ iconName: 'Search' }}
-              />
-
-              <OF.IconButton
-                className="ButtonIcon ButtonDark"
                 onClick={this.onDeletePhoto}
                 iconProps={{ iconName: 'Delete' }}
               />
@@ -572,6 +560,17 @@ class EditPage extends React.Component<ReceivedProps, ComponentState> {
 
         <div className="ModalBodyHolder">
           <div className="ModalBodyContent ModalBodyHeaderHolderTall">
+            <div className="EditPageSection">
+              <DetailSocialNetworks
+                inEdit={true}
+                person={this.props.person}
+              />
+              <OF.IconButton
+                  className="ButtonIcon ButtonDark EditPageButton"
+                  onClick={() => this.props.onSetSubpage(SubPage.SOCIALNETWORKS)}
+                  iconProps={{ iconName: 'Edit' }}
+              />
+            </div>
             <div className="EditPageSection">
               <DetailText title="First Name" text={this.props.person.firstName} showEmpty={true} isLong={true}/>                
               <OF.IconButton
@@ -665,17 +664,6 @@ class EditPage extends React.Component<ReceivedProps, ComponentState> {
               <OF.IconButton
                   className="ButtonIcon ButtonDark EditPageButton"
                   onClick={() => this.props.onSetSubpage(SubPage.KEYVALUES)}
-                  iconProps={{ iconName: 'Edit' }}
-              />
-            </div>
-            <div className="EditPageSection">
-              <DetailSocialNetworks
-                inEdit={true}
-                socialNets={this.props.person.socialNets}
-              />
-              <OF.IconButton
-                  className="ButtonIcon ButtonDark EditPageButton"
-                  onClick={() => this.props.onSetSubpage(SubPage.SOCIALNETWORKS)}
                   iconProps={{ iconName: 'Edit' }}
               />
             </div>

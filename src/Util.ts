@@ -9,8 +9,8 @@ import stringDiff from './stringDiff'
 export const HEAD_IMAGE = "https://peekaboo.blob.core.windows.net/resources/HaveWeHead.png"
 export const SAD_IMAGE = "https://peekaboo.blob.core.windows.net/resources/SAD_FACE.png"
 export const QUIZ_BUTTON_IMAGE = "https://peekaboo.blob.core.windows.net/resources/quizicon.png"
-export const PHOTO_HEIGHT = 250
 export const PHOTO_WIDTH = 230 
+export const PHOTO_HEIGHT = 250
 
 export const MAX_TAG_LENGTH = 20
 export const MAX_KEY_LENGTH = 20

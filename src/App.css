@@ -459,6 +459,11 @@
   margin-right: auto;
 }
 
+.SocialNetButton {
+  float: left;
+  margin: 5px;
+}
+
 .ConfirmSubtitle {
   color: var(--color-themePrimary) !important;
   font-size: 20px;

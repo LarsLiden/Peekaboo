@@ -13,16 +13,9 @@ export default class Client {
     //public static baseUrl = "http://localhost:8080/api"
 
     public static async Login(user: User): Promise<User | null> {
-
-        try {
-            const response = await axios.post(`${this.baseUrl}/login`,
-            {user})
-            return response.data as User
-        }
-        catch (error) {
-            console.log(error.response)
-            return null
-        }
+        const response = await axios.post(`${this.baseUrl}/login`,
+        {user})
+        return response.data as User
     }
 
     public static async getUsers(user: User): Promise<User[]> {

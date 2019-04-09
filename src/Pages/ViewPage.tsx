@@ -208,6 +208,9 @@ class ViewPage extends React.Component<ReceivedProps, ComponentState> {
           </div>
           <div className="ModalBodyHolder">
             <div className="ModalBodyContent ModalBodyHeaderHolderTall ModalBodyHeaderHolderTallBottom">
+              <DetailSocialNetworks
+                person={this.props.person}
+              />
               <DetailText title="Alt Name" text={this.props.person.alternateName} isLong={true}/>          
               <DetailText title="Description" text={this.props.person.description} isLong={true}/>
               <DetailTags 
@@ -225,9 +228,6 @@ class ViewPage extends React.Component<ReceivedProps, ComponentState> {
               />
               <DetailKeyValues
                 keyValues={this.props.person.keyValues}
-              />
-              <DetailSocialNetworks
-                socialNets={this.props.person.socialNets}
               />
             </div>
           </div>

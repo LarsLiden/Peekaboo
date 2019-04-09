@@ -10,7 +10,7 @@ import { HEAD_IMAGE } from '../Util'
 import { User } from '../models/models'
 import GoogleLogin from 'react-google-login';
 
-const VERSION = "0.23"
+const VERSION = "0.24"
 
 export interface ReceivedProps {
   onLoginComplete: (user: User) => void
@@ -36,18 +36,29 @@ class LoginPage extends React.Component<ReceivedProps, ComponentState> {
   private async loginSuccess(googleUser: any) {
 
     this.setState({loginDisable: true})
-    let profile = googleUser.getBasicProfile();
-    let user: User = {
-      googleId: profile.getId(),
-      name: profile.getName(),
-      email: profile.getEmail()
-    }
-    let foundUser = await Client.Login(user)
+    try {
+      let profile = googleUser.getBasicProfile();
+      let user: User = {
+        googleId: profile.getId(),
+        name: profile.getName(),
+        email: profile.getEmail()
+      }
     
-    if (foundUser) {
-      this.props.onLoginComplete(foundUser)
+      try {
+        let foundUser = await Client.Login(user)
+        
+        if (foundUser) {
+          this.props.onLoginComplete(foundUser)
+        }
+      }
+      catch (error) {
+        this.setState({
+          waitingCalloutText: error.response.statusText,
+          loginDisable: false
+        })
+      }
     }
-    else {
+    catch (error) {
       this.setState({
         waitingCalloutText: "Login Failure",
         loginDisable: false
