@@ -709,6 +709,12 @@
   font-size: x-large;
 }
 
+.PhoneticName {
+  margin-top: -18px;
+  margin-bottom: 18px;
+  font-style: italic;
+}
+
 .QuizDescription {
   width: 100%;
   margin-bottom: 5px;

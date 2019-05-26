@@ -17,9 +17,11 @@ import DetailEvents from '../Detail/DetailEvents'
 import DetailKeyValues from '../Detail/DetailKeyValues'
 import DetailSocialNetworks from '../Detail/DetailSocialNetworks'
 import Swipe from 'react-easy-swipe'
+import ResizeText from '../modals/ResizeText'
 import { Page } from '../App'
 import "./ViewPage.css"
 import { MAX_TIME } from '../models/const';
+import { SubPage } from './EditPage';
 
 const SWIPE_THRESHOLD = 50
 
@@ -31,7 +33,7 @@ export interface ReceivedProps {
   allTags: Tag[]
   filter: Filter
   personList: string[]
-  onSetPage: (page: Page, backpage: Page | null) => void
+  onSetPage: (page: Page, backpage: Page | null, subPage: SubPage | null) => void
   onClickQuiz: () => void
   onContinueQuiz: () => void
   onEdit: () => void
@@ -145,13 +147,20 @@ class ViewPage extends React.Component<ReceivedProps, ComponentState> {
                 <div className="DetailName">
                   {this.props.person.firstName}
                 </div>
+                <div className="DetailName DetailPhonetic">
+                  {this.props.person.firstPhonetic}
+                </div>
                 {this.props.person.nickName &&
-                  <div className="DetailName">
-                    {`"${this.props.person.nickName}"`}
-                  </div>
+                  <ResizeText
+                    text={`"${this.props.person.nickName}"`}
+                    maxWidth={130}
+                  />
                 }
                 <div className="DetailName">
                     {this.props.person.lastName}
+                </div>
+                <div className="DetailName DetailPhonetic">
+                  {this.props.person.lastPhonetic}
                 </div>
                 {this.props.person.maidenName &&
                   <div className="DetailName">
@@ -174,7 +183,7 @@ class ViewPage extends React.Component<ReceivedProps, ComponentState> {
                 </div>
                 <div 
                   className="ViewScale" 
-                  onClick={() => this.props.onSetPage(Page.PERFORMANCE, Page.VIEW)}
+                  onClick={() => this.props.onSetPage(Page.PERFORMANCE, Page.VIEW, null)}
                   role="button"
                 >
                   <ScaledColor
@@ -210,6 +219,7 @@ class ViewPage extends React.Component<ReceivedProps, ComponentState> {
             <div className="ModalBodyContent ModalBodyHeaderHolderTall ModalBodyHeaderHolderTallBottom">
               <DetailSocialNetworks
                 person={this.props.person}
+                onSetPage={this.props.onSetPage}
               />
               <DetailText title="Alt Name" text={this.props.person.alternateName} isLong={true}/>          
               <DetailText title="Description" text={this.props.person.description} isLong={true}/>
@@ -269,7 +279,7 @@ class ViewPage extends React.Component<ReceivedProps, ComponentState> {
                   />
                   <OF.IconButton
                       className="ButtonIcon ButtonPrimary FloatLeft"
-                      onClick={() => this.props.onSetPage(Page.SEARCH, Page.VIEW)}
+                      onClick={() => this.props.onSetPage(Page.SEARCH, Page.VIEW, null)}
                       iconProps={{ iconName: 'Search' }}
                   />
                   <OF.IconButton

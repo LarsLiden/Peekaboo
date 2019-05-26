@@ -37,6 +37,7 @@ export interface QuizPerson {
     personId: string
     photoBlobnames: string[]
     expandedName: string
+    phoneticName: string
     description: string
     tags: string
     topRelationships: Relationship[]

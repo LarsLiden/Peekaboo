@@ -75,7 +75,7 @@ class LoginPage extends React.Component<ReceivedProps, ComponentState> {
   
     return (
       <div className="ModalPage">
-     <div 
+      <div 
         className="ModalBodyHolder TopMarginZero"
         style={{
         backgroundImage: `url(${HEAD_IMAGE})`,

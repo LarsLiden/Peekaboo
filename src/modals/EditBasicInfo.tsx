@@ -18,7 +18,9 @@ export interface ReceivedProps {
 
 interface ComponentState { 
   firstName: string
+  firstPhonetic: string
   lastName: string
+  lastPhonetic: string
   nickName: string
   maidenName: string
   alternateName: string
@@ -29,7 +31,9 @@ class EditBasicInfo extends React.Component<ReceivedProps, ComponentState> {
 
   state: ComponentState = {
     firstName: "",
+    firstPhonetic: "",
     lastName: "",
+    lastPhonetic: "",
     nickName: "",
     maidenName: "",
     alternateName: "",
@@ -43,7 +47,9 @@ class EditBasicInfo extends React.Component<ReceivedProps, ComponentState> {
   updateAppState(person: Person) {
     this.setState({
         firstName: person.firstName,
+        firstPhonetic: person.firstPhonetic,
         lastName: person.lastName,
+        lastPhonetic: person.lastPhonetic,
         nickName: person.nickName,
         maidenName: person.maidenName,
         alternateName: person.alternateName,
@@ -53,13 +59,22 @@ class EditBasicInfo extends React.Component<ReceivedProps, ComponentState> {
 
   @OF.autobind
   onFirstNameChanged(text: string) {
-    //TODO - delete
     this.setState({firstName: text})
+  }
+
+  @OF.autobind
+  onFirstPhoneticChanged(text: string) {
+    this.setState({firstPhonetic: text})
   }
 
   @OF.autobind
   onLastNameChanged(text: string) {
       this.setState({lastName: text})
+  }
+
+  @OF.autobind
+  onLastPhoneticChanged(text: string) {
+    this.setState({lastPhonetic: text})
   }
 
   @OF.autobind
@@ -87,7 +102,9 @@ class EditBasicInfo extends React.Component<ReceivedProps, ComponentState> {
 
     let newPerson = new Person({...this.props.person})
     newPerson.firstName = this.state.firstName
+    newPerson.firstPhonetic = this.state.firstPhonetic
     newPerson.lastName = this.state.lastName
+    newPerson.lastPhonetic = this.state.lastPhonetic
     newPerson.nickName = this.state.nickName
     newPerson.maidenName = this.state.maidenName
     newPerson.alternateName = this.state.alternateName
@@ -118,10 +135,20 @@ class EditBasicInfo extends React.Component<ReceivedProps, ComponentState> {
                 autoFocus={true}
               />
               <DetailEditText
+                label="First Phonetic"
+                onChanged={text => this.onFirstPhoneticChanged(text)}
+                value={this.state.firstPhonetic}
+              />  
+              <DetailEditText
                 label="Last Name"
                 onChanged={text => this.onLastNameChanged(text)}
                 value={this.state.lastName}
               />
+              <DetailEditText
+                label="Last Phonetic"
+                onChanged={text => this.onLastPhoneticChanged(text)}
+                value={this.state.lastPhonetic}
+              /> 
               <DetailEditText
                 label="Nickname"
                 onChanged={text => this.onNickNameChanged(text)}

@@ -6,7 +6,7 @@ import * as React from 'react';
 import * as OF from 'office-ui-fabric-react'
 import DetailEditText from '../Detail/DetailEditText'
 import { Person } from '../models/person'
-import { SocialNet, SocialNetType, SocialNetIcon, SocialNetSearchIcon, SocialNetSearch } from '../models/models'
+import { SocialNet, SocialNetType, SocialNetSearchIcon, SocialNetSearch } from '../models/models'
 import { generateGUID } from '../Util';
 
 export interface ReceivedProps {
@@ -112,7 +112,7 @@ class EditSocialNetworks extends React.Component<ReceivedProps, ComponentState> 
                 key={socialNetType}
                 className="SocialNetButton"
                 onClick={(e) => this.onOpenLink(e, socialNetType)}
-                src={url ? SocialNetIcon[socialNetType] : SocialNetSearchIcon[socialNetType]}
+                src={SocialNetSearchIcon[socialNetType]}
                 width={40}
                 height={40}
             />

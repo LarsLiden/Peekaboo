@@ -7,7 +7,7 @@ import './App.css';
 import './fabric.css'
 import Client from './service/client'
 import * as OF from 'office-ui-fabric-react'
-import { setStatePromise, replacePerson, SAD_IMAGE } from './Util'
+import { setStatePromise, replacePerson, getRandomInt, SAD_IMAGE } from './Util'
 import { QuizSet, QuizPerson, FilterSet, Tag, Filter, PerfType, User, SortType, SortDirection } from './models/models'
 import { Person } from './models/person'
 import { TestResult } from './models/performance'
@@ -21,7 +21,7 @@ import SortPage from './Pages/SortPage'
 import AdminPage from './Pages/AdminPage'
 import LoginPage from './Pages/LoginPage'
 import ViewPage from './Pages/ViewPage'
-import EditPage from './Pages/EditPage'
+import EditPage, { SubPage } from './Pages/EditPage'
 import InstallPage from './Pages/InstallPage'
 import TagEditorPage from './Pages/TagEditorPage'
 import Search from './modals/Search'
@@ -107,21 +107,26 @@ class App extends React.Component<{}, ComponentState> {
   }
 
   @OF.autobind
-  async onSetPage(page: Page, backpage: Page | null) {
+  async onSetPage(page: Page, backpage: Page | null, subPage: SubPage | null) {
     await setStatePromise(this, {
       page,
       backpage,
-      pageHashChanged: true,
+      subPage: subPage || this.state.subpage,
+      pageHashChanged: true
     })
-    location.hash = `${this.state.page}`
+    if (subPage) {
+      location.hash = `${this.state.page}_${subPage}`
+    }
+    else {
+      location.hash = `${this.state.page}`
+    }
   }
   
   @OF.autobind
   async onSetSubpage(subpage: string | null) {
     await setStatePromise(this, {
       subpage,
-      pageHashChanged: true,
-      isFull: true
+      pageHashChanged: true
     })
     if (subpage) {
       location.hash = `${this.state.page}_${subpage}`
@@ -181,12 +186,12 @@ class App extends React.Component<{}, ComponentState> {
         filteredPeopleCount: filteredPeople.length
       })
   //  }
-    this.onSetPage(Page.FILTER, Page.VIEW)
+    this.onSetPage(Page.FILTER, Page.VIEW, null)
   }
 
   @OF.autobind 
   async onEditTags() {
-    this.onSetPage(Page.EDITTAGS, Page.VIEW)
+    this.onSetPage(Page.EDITTAGS, Page.VIEW, null)
   }
 
   @OF.autobind 
@@ -202,7 +207,7 @@ class App extends React.Component<{}, ComponentState> {
     await setStatePromise(this, {
       selectedPerson
     })
-    await this.onSetPage(Page.VIEW, null)
+    await this.onSetPage(Page.VIEW, null, null)
   }
 
   @OF.autobind 
@@ -218,7 +223,7 @@ class App extends React.Component<{}, ComponentState> {
       this.setState({
         users
       })
-      this.onSetPage(Page.ADMIN, Page.VIEW)
+      this.onSetPage(Page.ADMIN, Page.VIEW, null)
     }
   }
 
@@ -246,10 +251,10 @@ class App extends React.Component<{}, ComponentState> {
   @OF.autobind 
   async onEdit() {
     if (this.state.page === Page.VIEWQUIZ) {
-      this.onSetPage(Page.EDITQUIZ, Page.VIEWQUIZ)
+      this.onSetPage(Page.EDITQUIZ, Page.VIEWQUIZ, null)
     }
     else {
-      this.onSetPage(Page.EDIT, Page.VIEW)
+      this.onSetPage(Page.EDIT, Page.VIEW, null)
     }
   }
 
@@ -265,7 +270,7 @@ class App extends React.Component<{}, ComponentState> {
     this.setState({
       selectedPerson
     })
-    this.onSetPage(Page.VIEW, null)
+    this.onSetPage(Page.VIEW, null, null)
   }
 
   @OF.autobind 
@@ -274,7 +279,7 @@ class App extends React.Component<{}, ComponentState> {
       this.setState({
         selectedPerson
       })
-      this.onSetPage(Page.VIEWQUIZ, Page.QUIZ)
+      this.onSetPage(Page.VIEWQUIZ, Page.QUIZ, null)
   }
 
   @OF.autobind async onLoginComplete(user: User) {
@@ -288,7 +293,7 @@ class App extends React.Component<{}, ComponentState> {
   @OF.autobind 
   async loadPeople() {
       let loaded: Person[][] = []
-      this.onSetPage(Page.LOAD, null)
+      this.onSetPage(Page.LOAD, null, null)
 
       const letters = "ABCDEFGHIJKLMNOPQRSTUVWXYZ".split("")
       for (let letter of letters) {
@@ -297,7 +302,7 @@ class App extends React.Component<{}, ComponentState> {
             this.setState({
               error: `Failed find your peeps`,
             })
-            this.onSetPage(Page.LOGIN, null)
+            this.onSetPage(Page.LOGIN, null, null)
             return
           }
           console.log(`GOT ${letter}`)
@@ -317,7 +322,7 @@ class App extends React.Component<{}, ComponentState> {
             // Something went wrong, go back to login
             // TODO: show error message first
             if (allPeople.length === 0) {
-              this.onSetPage(Page.LOGIN, null)
+              this.onSetPage(Page.LOGIN, null, null)
               return
             }
 
@@ -338,25 +343,26 @@ class App extends React.Component<{}, ComponentState> {
             let userPerson = allPeople.find(p => p.fullName() === this.state.user!.name)
             let userPersonId = userPerson ? userPerson.personId : null
 
-            // Create initial filter set
-            this.updateFilterSet()
+            // Select random person on load
+            const selectedIndex = getRandomInt(0, this.state.allPeople.length - 1)
+            const selectedPerson = this.state.allPeople[selectedIndex]
 
-            // Select initila person
-            let personId = this.state.filterSet.people[this.state.filterSet.selectedIndex].personId
-            let selectedPerson = Convert.getPerson(this.state.allPeople, personId!) || null
             this.setState({
               selectedPerson,
               userPersonId
             })
+            
+            // Create initial filter set
+            this.updateFilterSet()
 
             await this.sendUserStats()
 
             if (this.state.user!.isNew) {
-              this.onSetPage(Page.NEWUSER, null)
+              this.onSetPage(Page.NEWUSER, null, null)
             } 
             // Prompt for install PWA
             else if (this.state.installEvent) {
-              this.onSetPage(Page.INSTALL, Page.VIEW)
+              this.onSetPage(Page.INSTALL, Page.VIEW, null)
             }
             // Open library 
             else {
@@ -419,7 +425,7 @@ class App extends React.Component<{}, ComponentState> {
       this.setState({
         quizSet
       })
-      this.onSetPage(Page.QUIZ, Page.VIEW)  // TODO save?
+      this.onSetPage(Page.QUIZ, Page.VIEW, null)  // TODO save?
   }
 
   @OF.autobind
@@ -430,7 +436,7 @@ class App extends React.Component<{}, ComponentState> {
   @OF.autobind 
   async onCloseEditPage() {
     if (this.state.page === Page.EDITQUIZ) {
-      this.onSetPage(Page.VIEWQUIZ, Page.QUIZ)  
+      this.onSetPage(Page.VIEWQUIZ, Page.QUIZ, null)  
     }
     else {
       this.viewLibraryPerson()
@@ -481,7 +487,7 @@ class App extends React.Component<{}, ComponentState> {
         allPeople: people,
         filterSet
       })
-      this.onSetPage(Page.VIEW, null)
+      this.onSetPage(Page.VIEW, null, null)
       this.viewLibraryPerson()
     }
     catch {
@@ -510,10 +516,10 @@ class App extends React.Component<{}, ComponentState> {
         await setStatePromise(this, {
           quizSet: {...this.state.quizSet, quizPeople}
         })
-        this.onSetPage(Page.QUIZ, Page.VIEW)
+        this.onSetPage(Page.QUIZ, Page.VIEW, null)
       }
       else {
-        this.onSetPage(Page.VIEW, null)
+        this.onSetPage(Page.VIEW, null, null)
         this.viewLibraryPerson()
       }
 
@@ -580,7 +586,7 @@ class App extends React.Component<{}, ComponentState> {
 
   @OF.autobind 
   async onQuizDone(testResults: TestResult[]) {
-    this.onSetPage(Page.VIEW, null)
+    this.onSetPage(Page.VIEW, null, null)
     try {
       // Remove any archived people
       let validTestResults = testResults.filter(tr => this.state.allPeople.find(p => p.personId === tr.personId))
@@ -614,7 +620,7 @@ class App extends React.Component<{}, ComponentState> {
     this.setState({
       selectedPerson: person
     })
-    this.onSetPage(Page.EDIT, Page.VIEW)
+    this.onSetPage(Page.EDIT, Page.VIEW, null)
   }
 
   @OF.autobind
@@ -674,12 +680,12 @@ class App extends React.Component<{}, ComponentState> {
     await setStatePromise(this, {
       selectedPerson
     })
-    await this.onSetPage(Page.VIEW, null)
+    await this.onSetPage(Page.VIEW, null, null)
   }
 
   @OF.autobind
   async onCloseEditTagsPage() {
-    await this.onSetPage(Page.VIEW, null)
+    await this.onSetPage(Page.VIEW, null, null)
   }
 
   @OF.autobind
@@ -701,16 +707,16 @@ class App extends React.Component<{}, ComponentState> {
         this.setState({
           installEvent: null
         })
-        this.onSetPage(Page.VIEW, null)
+        this.onSetPage(Page.VIEW, null, null)
       });
   }
   
   handleNoUsers() {
     if (this.state.user!.isAdmin) {
-      this.onSetPage(Page.ADMIN, Page.VIEW)
+      this.onSetPage(Page.ADMIN, Page.VIEW, null)
     }
     else {
-      this.onSetPage(Page.NEWUSER, null)
+      this.onSetPage(Page.NEWUSER, null, null)
     }
   }
 
@@ -749,9 +755,9 @@ class App extends React.Component<{}, ComponentState> {
       <div className={baseClass}>
 
         {this.state.page === Page.LOGIN &&
-         <LoginPage
-          onLoginComplete={this.onLoginComplete}
-         />
+          <LoginPage
+            onLoginComplete={this.onLoginComplete}
+          />
         }
         {this.state.page === Page.LOAD &&
           <LoadPage
@@ -761,7 +767,7 @@ class App extends React.Component<{}, ComponentState> {
         }
         {this.state.page === Page.INSTALL &&
           <InstallPage
-            onCancel={() => this.onSetPage(Page.VIEW, null)}
+            onCancel={() => this.onSetPage(Page.VIEW, null, null)}
             onConfirm={this.showInstallPrompt}
           />
         }
@@ -777,9 +783,9 @@ class App extends React.Component<{}, ComponentState> {
             personList={this.state.personList}
             onSetPage={this.onSetPage}
             onClickQuiz={this.onQuiz}
-            onContinueQuiz={() => this.onSetPage(Page.QUIZ, Page.VIEW)}
+            onContinueQuiz={() => this.onSetPage(Page.QUIZ, Page.VIEW, null)}
             onClickTagFilter={this.onClickTagFilter}
-            onClickSort={() => this.onSetPage(Page.SORT, Page.VIEW)}
+            onClickSort={() => this.onSetPage(Page.SORT, Page.VIEW, null)}
             onClickAdmin={this.onClickAdmin}
             onEdit={this.onEdit}
             onAddToPersonList={this.addToPersonList}
@@ -851,7 +857,7 @@ class App extends React.Component<{}, ComponentState> {
             onDeleteUser={this.onDeleteUser}
             onExportToUser={this.onExportToUser}
             onImport={this.onClickImport}
-            onClose={() => this.onSetPage(Page.VIEW, null)}
+            onClose={() => this.onSetPage(Page.VIEW, null, null)}
             onLogin={this.onLoginComplete}
           />
         }
@@ -869,7 +875,7 @@ class App extends React.Component<{}, ComponentState> {
           <Search
             allPeople={this.state.allPeople}
             allTags={this.state.allTags}
-            onCancel={() => this.onSetPage(Page.VIEW, null)}
+            onCancel={() => this.onSetPage(Page.VIEW, null, null)}
             onSelect={(person: Person) => this.onSelectPerson(person.personId!)}
             onClickSearchFilter={this.onClickSearchFilter}
           />
@@ -877,7 +883,7 @@ class App extends React.Component<{}, ComponentState> {
         {this.state.page === Page.PERFORMANCE && this.state.selectedPerson && 
           <ViewPerformance
             performance={this.state.selectedPerson.photoPerformance}
-            onClose={() => this.onSetPage(Page.VIEW, null)}
+            onClose={() => this.onSetPage(Page.VIEW, null, null)}
           />
         }
         {this.state.error && 

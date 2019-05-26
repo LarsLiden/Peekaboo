@@ -7,12 +7,15 @@ import * as OF from 'office-ui-fabric-react'
 import { SocialNet, SocialNetIcon, SocialNetSearchIcon, SocialNetType, SocialNetSearch } from '../models/models'
 import { generateGUID } from '../Util';
 import { Person } from '../models/person'
+import { Page } from '../App'
+import { SubPage } from '../Pages/EditPage';
 import "./DetailEvents.css"
 import '../fabric.css'
 
 export interface ReceivedProps {
   person: Person
   inEdit?: boolean
+  onSetPage: (page: Page, backpage: Page | null, subPage: SubPage | null) => void
 }
 
 interface ComponentState {
@@ -31,6 +34,7 @@ class DetailSocialNetworks extends React.Component<ReceivedProps, ComponentState
     if (!link) {
       const searchUrl = `${SocialNetSearch[netType]}${this.props.person.firstName}%20${this.props.person.lastName}`
       window.open(searchUrl, "_blank", "new")  
+      this.props.onSetPage(Page.EDIT, Page.VIEW, SubPage.SOCIALNETWORKS)
     }
     else {
       window.open(link, "_blank", "new")

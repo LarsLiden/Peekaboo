@@ -564,6 +564,7 @@ class EditPage extends React.Component<ReceivedProps, ComponentState> {
               <DetailSocialNetworks
                 inEdit={true}
                 person={this.props.person}
+                onSetPage={() => {}}
               />
               <OF.IconButton
                   className="ButtonIcon ButtonDark EditPageButton"

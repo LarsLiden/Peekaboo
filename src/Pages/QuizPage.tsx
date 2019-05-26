@@ -202,6 +202,11 @@ class QuizPage extends React.Component<ReceivedProps, ComponentState> {
             <div className='ExpandedName'>
               {this.state.quizPerson.expandedName}
             </div>
+            {this.state.quizPerson.phoneticName &&
+              <div className='PhoneticName'>
+                {this.state.quizPerson.phoneticName}
+              </div>
+            }
             <div className='QuizDescription'>
               {this.state.quizPerson.description}
             </div>

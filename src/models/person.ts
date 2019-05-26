@@ -21,7 +21,9 @@ export class Person {
     maidenName: string = ""
     isArchived: boolean = false
     firstName: string = ""
+    firstPhonetic: string = ""
     lastName: string = ""
+    lastPhonetic: string = ""
     fullMaidenName: string = ""
     fullNickName: string = ""
     alternateName: string = ""
@@ -45,12 +47,19 @@ export class Person {
         }
     }
 
-    public fullName() {
+    public fullName(): string {
         return `${this.firstName} ${this.lastName}`
     }
 
-    public expandedName() {
+    public expandedName(): string {
         return `${this.firstName} ${this.nickName ? `"${this.nickName}"` : ""} ${this.lastName} ${this.maidenName ? `(${this.maidenName})` : ""}`
+    }
+
+    public phoneticName(): string {
+        if (!this.firstPhonetic && !this.lastPhonetic) {
+            return ""
+        } 
+        return `${this.firstPhonetic} ${this.lastPhonetic}`
     }
 
     public get getKey(): string {

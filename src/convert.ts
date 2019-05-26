@@ -18,6 +18,7 @@ export function toQuizPerson(person: Person, perfType: PerfType, userPersonId: s
     return {
         personId: person.personId!,
         expandedName: person.expandedName(),
+        phoneticName: person.phoneticName(),
         description: person.description,
         tags,
         topRelationships: topRelationships(person, userPersonId),
