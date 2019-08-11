@@ -525,6 +525,8 @@
   margin-right: auto;
   margin-bottom: 90px;
   margin-top: 60px;
+  overflow-y: auto;
+  height: 100%;
 }
 
 .FilterPage {

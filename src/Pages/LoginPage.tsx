@@ -10,7 +10,7 @@ import { HEAD_IMAGE } from '../Util'
 import { User } from '../models/models'
 import GoogleLogin from 'react-google-login';
 
-const VERSION = "0.25"
+const VERSION = "0.26"
 
 export interface ReceivedProps {
   onLoginComplete: (user: User) => void
@@ -43,6 +43,8 @@ class LoginPage extends React.Component<ReceivedProps, ComponentState> {
         name: profile.getName(),
         email: profile.getEmail()
       }
+
+      localStorage.setItem('user', JSON.stringify(user))
     
       try {
         let foundUser = await Client.Login(user)

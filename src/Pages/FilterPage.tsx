@@ -174,11 +174,14 @@ class FilterPage extends React.Component<ReceivedProps, ComponentState> {
             />
           </div>
         </div>
-        <OF.List
-          className="FilterList"
-          items={this.state.filteredTags}
-          onRenderCell={this.onRenderCell}
-        />
+        <div className="ModalBodyHolder">
+          <div className="ModalBodyContent">
+            <OF.List
+              items={this.state.filteredTags}
+              onRenderCell={this.onRenderCell}
+            />
+            </div>
+          </div>
         <div className="FooterHolder">
           <div className="FooterContent" >
             <OF.IconButton

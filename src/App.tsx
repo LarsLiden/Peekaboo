@@ -136,7 +136,7 @@ class App extends React.Component<{}, ComponentState> {
     }
   } 
 
-  componentDidMount() {
+  async componentDidMount() {
     window.onhashchange = this.onPageHashChanged
 
     window.addEventListener('beforeinstallprompt', (e: BeforeInstallPromptEvent) => {
@@ -145,7 +145,23 @@ class App extends React.Component<{}, ComponentState> {
       // Stash the event so it can be triggered later.
     
       this.setState({installEvent: e})
-    });
+    })
+
+    // Look for cached user
+    const userstring = localStorage.getItem('user')
+    if (userstring) {
+      const user: User = JSON.parse(userstring)
+      try {
+        let foundUser = await Client.Login(user)
+        
+        if (foundUser) {
+          this.onLoginComplete(foundUser)
+        }
+      }
+      catch (error) {
+        localStorage.removeItem('user')
+      }
+    }
   }
 
   @OF.autobind
@@ -282,7 +298,8 @@ class App extends React.Component<{}, ComponentState> {
       this.onSetPage(Page.VIEWQUIZ, Page.QUIZ, null)
   }
 
-  @OF.autobind async onLoginComplete(user: User) {
+  @OF.autobind 
+  async onLoginComplete(user: User) {
     await setStatePromise(this, {
       user: user,
       selectedPerson: null
@@ -292,9 +309,39 @@ class App extends React.Component<{}, ComponentState> {
 
   @OF.autobind 
   async loadPeople() {
-      let loaded: Person[][] = []
-      this.onSetPage(Page.LOAD, null, null)
 
+    // Attempt to get tags from local cache
+    const allTagsString = localStorage.getItem('allTags')
+    if (allTagsString) {
+      const allTags: Person[] = JSON.parse(allTagsString)
+      await setStatePromise(this, {allPeople: allTags})
+    }
+
+    // Attempt to get people from local cache
+    let loadedFromCache = false
+    const allPeopleString = localStorage.getItem('allPeople')
+    if (allPeopleString) {
+      const rawPeople: Person[] = JSON.parse(allPeopleString)
+      const allPeople = rawPeople.map(p => new Person(p))
+      loadedFromCache = true
+      await setStatePromise(this, {allPeople})
+
+      // Select random person on load
+      const selectedIndex = getRandomInt(0, this.state.allPeople.length - 1)
+      const selectedPerson = this.state.allPeople[selectedIndex]
+      this.setState({
+        selectedPerson
+      })
+
+      this.onSetPage(Page.SEARCH, Page.VIEW, null)
+    }
+    else {
+      // If I have no local cache go to load page
+      this.onSetPage(Page.LOAD, null, null)
+    }
+
+    // Now load people and tags from server
+    let loaded: Person[][] = []
       const letters = "ABCDEFGHIJKLMNOPQRSTUVWXYZ".split("")
       for (let letter of letters) {
         Client.getPeopleStartingWith(this.state.user!, letter, async (people) => {
@@ -339,24 +386,38 @@ class App extends React.Component<{}, ComponentState> {
               allTags
             })
 
+            localStorage.setItem('allPeople', JSON.stringify(allPeople))
+            localStorage.setItem('allTage', JSON.stringify(allTags))
+
             // Look for logged in user in list
             let userPerson = allPeople.find(p => p.fullName() === this.state.user!.name)
             let userPersonId = userPerson ? userPerson.personId : null
-
-            // Select random person on load
-            const selectedIndex = getRandomInt(0, this.state.allPeople.length - 1)
-            const selectedPerson = this.state.allPeople[selectedIndex]
-
             this.setState({
-              selectedPerson,
               userPersonId
             })
-            
+
             // Create initial filter set
             this.updateFilterSet()
 
             await this.sendUserStats()
 
+            let selectedPerson: Person | undefined
+            if (loadedFromCache) {
+              // Map old person to newly loaded one
+              if (this.state.selectedPerson) {
+                selectedPerson = this.state.allPeople.find(p => p.personId === this.state.selectedPerson!.personId)
+              }
+            }
+            else {
+              // Select random person on load
+              const selectedIndex = getRandomInt(0, this.state.allPeople.length - 1)
+              selectedPerson = this.state.allPeople[selectedIndex]
+
+              this.setState({
+                selectedPerson
+              })
+            }
+            
             if (this.state.user!.isNew) {
               this.onSetPage(Page.NEWUSER, null, null)
             } 
@@ -365,7 +426,7 @@ class App extends React.Component<{}, ComponentState> {
               this.onSetPage(Page.INSTALL, Page.VIEW, null)
             }
             // Open library 
-            else {
+            else if (!loadedFromCache) {
               this.viewLibraryPerson()
             }
           }
