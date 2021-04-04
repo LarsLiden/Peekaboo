@@ -48,7 +48,7 @@ class LoginPage extends React.Component<ReceivedProps, ComponentState> {
       localStorage.setItem('user', JSON.stringify(user))
     
       try {
-        let foundUser = await Client.Login(user)
+        let foundUser = await Client.LOGIN(user)
         
         if (foundUser) {
           this.props.onLoginComplete(foundUser)

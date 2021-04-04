@@ -98,7 +98,7 @@ class AdminPage extends React.Component<ReceivedProps, ComponentState> {
 
   @autobind
   async onLoginAs(user: User) {
-    let foundUser = await Client.Login(user)
+    let foundUser = await Client.LOGIN(user)
     
     if (foundUser) {
       foundUser.isSpoof = true

@@ -152,7 +152,7 @@ class App extends React.Component<{}, ComponentState> {
     if (userstring) {
       const user: User = JSON.parse(userstring)
       try {
-        let foundUser = await Client.Login(user)
+        let foundUser = await Client.LOGIN(user)
         
         if (foundUser) {
           this.onLoginComplete(foundUser)
@@ -229,7 +229,7 @@ class App extends React.Component<{}, ComponentState> {
   @autobind 
   async onClickAdmin() {
     if (this.state.user) {
-      let users = await Client.getUsers(this.state.user) 
+      let users = await Client.GETUSERS(this.state.user) 
       users = users.sort((a, b) => {
         if (a.isAdmin) { return -1 }
         if (a.name < b.name) { return -1 }
@@ -344,7 +344,7 @@ class App extends React.Component<{}, ComponentState> {
     let loaded: Person[][] = []
       const letters = "ABCDEFGHIJKLMNOPQRSTUVWXYZ".split("")
       for (let letter of letters) {
-        Client.getPeopleStartingWith(this.state.user!, letter, async (people) => {
+        Client.GETPEOPLESTARTINGWITH(this.state.user!, letter, async (people) => {
           if (!people) {
             this.setState({
               error: `Failed find your peeps`,
@@ -380,7 +380,7 @@ class App extends React.Component<{}, ComponentState> {
               else { return 0 }
             })
 
-            let allTags = await Client.getTags(this.state.user!)
+            let allTags = await Client.GET_TAGS(this.state.user!)
             await setStatePromise(this, {
               allPeople,
               allTags
@@ -437,7 +437,7 @@ class App extends React.Component<{}, ComponentState> {
   @autobind 
   async onDeleteTag(tag: Tag) {
 
-    await Client.deleteTag(this.state.user!, tag)
+    await Client.DELETE_TAG(this.state.user!, tag)
 
     let allTags = this.state.allTags.filter(t => t.tagId !== tag.tagId)
     await setStatePromise(this, { allTags })
@@ -446,7 +446,7 @@ class App extends React.Component<{}, ComponentState> {
   @autobind 
   async onSaveTag(tag: Tag) {
 
-    await Client.putTag(this.state.user!, tag)
+    await Client.PUT_TAG(this.state.user!, tag)
 
     let allTags = this.state.allTags.filter(t => t.tagId !== tag.tagId)
     allTags.push(tag)
@@ -470,13 +470,13 @@ class App extends React.Component<{}, ComponentState> {
       numPhotos,
       numTestResults
     }
-    await Client.updateUser(user)
+    await Client.UPDATEUSER(user)
 
     this.setState({user})
   }
   @autobind 
   async onClickImport() {
-      await Client.import(this.state.user!)
+      await Client.IMPORT(this.state.user!)
       this.loadPeople()
   }
 
@@ -507,7 +507,7 @@ class App extends React.Component<{}, ComponentState> {
   @autobind
   async onDeleteUser(userToDelete: User) {
     try {
-      await Client.deleteUser(this.state.user!, userToDelete) 
+      await Client.DELETEUSER(this.state.user!, userToDelete) 
       let users = this.state.users.filter(u => u.hwmid !== userToDelete.hwmid)
       this.setState({
         users
@@ -524,7 +524,7 @@ class App extends React.Component<{}, ComponentState> {
       let peopleIds = this.state.personList.length > 0 
         ? this.state.personList
         : this.state.filterSet.people.map(p => p.personId!)
-      await Client.exportToUser(this.state.user!, destination, peopleIds) 
+      await Client.EXPORT_TO_USER(this.state.user!, destination, peopleIds) 
     }
     catch {
       this.setState({error: `Failed to export ${destination.name}`})
@@ -534,7 +534,7 @@ class App extends React.Component<{}, ComponentState> {
   @autobind 
   async onDeletePerson(person: Person) {
     try {
-      await Client.deletePerson(this.state.user!, person)
+      await Client.DELETEPERSON(this.state.user!, person)
 
       // Delete local
       let people = this.state.allPeople.filter(p => p.personId !== person.personId)
@@ -584,7 +584,7 @@ class App extends React.Component<{}, ComponentState> {
         this.viewLibraryPerson()
       }
 
-      await Client.archivePerson(this.state.user!, person)
+      await Client.ARCHIVEPERSON(this.state.user!, person)
 
     }
     catch {
@@ -595,7 +595,7 @@ class App extends React.Component<{}, ComponentState> {
   @autobind 
   async onSavePerson(person: Person) {
     try {
-      await Client.putPerson(this.state.user!, person)
+      await Client.PUTPERSON(this.state.user!, person)
 
       // Replace or add to allPeople
       let people = this.state.allPeople.filter(p => p.personId !== person.personId)
@@ -614,7 +614,7 @@ class App extends React.Component<{}, ComponentState> {
   @autobind 
   async onDeletePhoto(person: Person, photoName: string) {
     try {
-      await Client.deletePhoto(this.state.user!, person, photoName)
+      await Client.DELETEPHOTO(this.state.user!, person, photoName)
 
       // Upldate local copy
       person.photoFilenames = person.photoFilenames.filter(p => p !== photoName)
@@ -631,7 +631,7 @@ class App extends React.Component<{}, ComponentState> {
   @autobind 
   async onSavePhoto(person: Person, photoData: string) {
     try {
-      let newPhotoName = await Client.putPhoto(this.state.user!, person, photoData)
+      let newPhotoName = await Client.PUTPHOTO(this.state.user!, person, photoData)
 
       // Upldate local copy
       person.photoFilenames.push(newPhotoName)
@@ -653,7 +653,7 @@ class App extends React.Component<{}, ComponentState> {
       let validTestResults = testResults.filter(tr => this.state.allPeople.find(p => p.personId === tr.personId))
       
       // Send results to server
-      let updatedPeople = await Client.postTestResults(this.state.user!, validTestResults)
+      let updatedPeople = await Client.POSTTESTRESULTS(this.state.user!, validTestResults)
       let allPeople: Person[] = [...this.state.allPeople]
       updatedPeople.forEach(p => 
         allPeople = replacePerson(allPeople, new Person(p))

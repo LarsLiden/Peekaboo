@@ -31,7 +31,7 @@ export class Person {
     personId: string | null = null
     description: string = ""
     creationDate: number | string = ""
-    searchCache: string | null
+    searchCache?: string | null
     
     public constructor(init?: Partial<Person>) {
         Object.assign(this, init)
