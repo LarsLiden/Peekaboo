@@ -9,6 +9,7 @@ import '../fabric.css'
 import { Person } from '../models/person'
 import { Relationship, RelationshipType } from '../models/relationship'
 import { Filter, Tag, User, KeyValue, Event, SocialNet } from '../models/models'
+import { autobind } from 'core-decorators'
 import CropPage from './CropPage'
 import DetailTags from '../Detail/DetailTags'
 import DetailText from '../Detail/DetailText'
@@ -101,7 +102,7 @@ class EditPage extends React.Component<ReceivedProps, ComponentState> {
   }
 
   // --- EDIT Strings ---
-  @OF.autobind
+  @autobind
   async onSaveEditStrings(person: Person): Promise<void> {
 
     // Fill in missing data
@@ -130,7 +131,7 @@ class EditPage extends React.Component<ReceivedProps, ComponentState> {
   }
 
   // --- EDIT TAGS ---
-  @OF.autobind
+  @autobind
   onSavePersonTags(tags: string[]): void {
 
     let newPerson = new Person({...this.props.person})
@@ -141,7 +142,7 @@ class EditPage extends React.Component<ReceivedProps, ComponentState> {
   }
 
   // --- EDIT REPLATIONSHIPS ---
-  @OF.autobind
+  @autobind
   onSaveEditRelationships(relationships: Relationship[]): void {
     this.saveReverseRelationships(relationships)
     let newPerson = new Person({...this.props.person})
@@ -231,7 +232,7 @@ class EditPage extends React.Component<ReceivedProps, ComponentState> {
   }
 
   // --- EDIT Events ---
-  @OF.autobind
+  @autobind
   onSaveEditEvents(events: Event[]): void {
     let newPerson = new Person({...this.props.person})
     newPerson.events = events
@@ -240,7 +241,7 @@ class EditPage extends React.Component<ReceivedProps, ComponentState> {
   }
 
   // --- EDIT KeyValues ---
-  @OF.autobind
+  @autobind
   onSaveEditKeyValues(keyValues: KeyValue[]): void {
     let newPerson = new Person({...this.props.person})
     newPerson.keyValues = keyValues
@@ -250,7 +251,7 @@ class EditPage extends React.Component<ReceivedProps, ComponentState> {
 
   // --- EDIT SocialNetworks ---
 
-  @OF.autobind
+  @autobind
   onSaveEditSocialNetworks(socialNets: SocialNet[]): void {
     let newPerson = new Person({...this.props.person})
     newPerson.socialNets = socialNets
@@ -260,30 +261,30 @@ class EditPage extends React.Component<ReceivedProps, ComponentState> {
 
   // --- Conflict ---
 
-  @OF.autobind
+  @autobind
   onNoConflict(): void {
     this.props.onSavePerson(this.state.newPerson!)
     this.props.onSetSubpage(null)
   }
 
-  @OF.autobind
+  @autobind
   onConflict(person: Person): void {
     this.props.onSelectPerson(person.personId!)
     this.props.onSetSubpage(null)
   }
 
   // --- DELETE PHOTO ---
-  @OF.autobind
+  @autobind
   onDeletePhoto(): void {
     this.setState({isConfirmDeletePhotoOpen: true})
   }
 
-  @OF.autobind
+  @autobind
   onCancelDeletePhoto(): void {
     this.setState({isConfirmDeletePhotoOpen: false})
   }
 
-  @OF.autobind
+  @autobind
   onConfirmDeletePhoto(): void {
     const deleteIndex = this.state.photoIndex
     this.setState({photoIndex: Math.max(0, this.state.photoIndex - 1)})
@@ -293,40 +294,40 @@ class EditPage extends React.Component<ReceivedProps, ComponentState> {
   }
 
   // --- DELETE PERSON ---
-  @OF.autobind
+  @autobind
   onCancelDelete(): void {
     this.setState({isConfirmDeleteOpen: false})
   }
 
-  @OF.autobind
+  @autobind
   onClickDelete(): void {
     this.setState({isConfirmDeleteOpen: true})
   }
 
-  @OF.autobind
+  @autobind
   onConfirmDelete(): void {
     this.setState({isConfirmDeleteOpen: false})
     this.props.onDeletePerson(this.props.person)
   }
 
   // --- ARCHIVE PERSON ---
-  @OF.autobind
+  @autobind
   onCancelArchive(): void {
     this.setState({isConfirmArchiveOpen: false})
   }
 
-  @OF.autobind
+  @autobind
   onClickArchive(): void {
     this.setState({isConfirmArchiveOpen: true})
   }
 
-  @OF.autobind
+  @autobind
   onConfirmArchive(): void {
     this.setState({isConfirmArchiveOpen: false})
     this.props.onArchivePerson(this.props.person)
   }
 
-  @OF.autobind
+  @autobind
   onNextPhoto(): void {
     let photoIndex = this.state.photoIndex + 1
     if (photoIndex >= this.props.person.photoFilenames.length) {
@@ -335,7 +336,7 @@ class EditPage extends React.Component<ReceivedProps, ComponentState> {
     this.setState({photoIndex})
   }
 
-  @OF.autobind
+  @autobind
   onPrevPhoto(): void {
     let photoIndex = this.state.photoIndex - 1
     if (photoIndex < 0) {
@@ -344,12 +345,12 @@ class EditPage extends React.Component<ReceivedProps, ComponentState> {
     this.setState({photoIndex})
   }
 
-  @OF.autobind
+  @autobind
   onClickClose(): void {
     this.props.onClose()
   }
 
-  @OF.autobind
+  @autobind
   async onSaveCrop(imageData: string): Promise<void> {
     this.setState({
       imageURL: null,
@@ -358,12 +359,12 @@ class EditPage extends React.Component<ReceivedProps, ComponentState> {
     await this.props.onSavePhoto(this.props.person, imageData)
   }
 
-  @OF.autobind
+  @autobind
   onCloseCropper(): void {
     this.setState({imageURL: null})
   }
 
-  @OF.autobind
+  @autobind
   onChangeFile(file: File) {
     this.setState({file})
 
@@ -376,7 +377,7 @@ class EditPage extends React.Component<ReceivedProps, ComponentState> {
     }
   }
 
-  @OF.autobind
+  @autobind
   onCropChange(crop: ReactCrop.Crop) {
     this.setState({ crop });  
   }

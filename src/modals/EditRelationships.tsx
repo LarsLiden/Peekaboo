@@ -9,6 +9,7 @@ import { Person } from '../models/person'
 import { Tag } from '../models/models'
 import Search from '../modals/Search'
 import { Relationship, RType, RelationshipType } from '../models/relationship'
+import { autobind } from 'core-decorators'
 
 export interface ReceivedProps {
   allPeople: Person[]
@@ -54,12 +55,12 @@ class EditRelationships extends React.Component<ReceivedProps, ComponentState> {
   }
 
   // --- Search ---
-  @OF.autobind
+  @autobind
   onCloseSearch(): void {
     this.setState({searchRelationship: null})
   }
 
-  @OF.autobind
+  @autobind
   onSelectSearch(person:  Person): void {
 
     if (this.state.searchRelationship) {
@@ -77,7 +78,7 @@ class EditRelationships extends React.Component<ReceivedProps, ComponentState> {
     }
   }
 
-  @OF.autobind 
+  @autobind 
   onTypeChange(option: OF.IDropdownOption, relationship: Relationship) {
     let type = RelationshipType.getRelationshipType(option.text)
 
@@ -89,24 +90,24 @@ class EditRelationships extends React.Component<ReceivedProps, ComponentState> {
     this.setState({relationships})
   }
 
-  @OF.autobind
+  @autobind
   onClickSearch(relationship: Relationship): void {
     this.setState({searchRelationship: relationship})
   }
   
-  @OF.autobind
+  @autobind
   onClickDelete(relationship: Relationship) {
     this.setState({
       relationships: this.state.relationships.filter(r => r.relationshipId !== relationship.relationshipId)
     }) 
   }
 
-  @OF.autobind
+  @autobind
   onClickSave() {
     this.props.onSave(this.state.relationships)
   }
 
-  @OF.autobind
+  @autobind
   onClickAdd() {
     const newRelationship: Relationship = {
       relationshipId: generateGUID(),
@@ -118,7 +119,7 @@ class EditRelationships extends React.Component<ReceivedProps, ComponentState> {
     }) 
   }
 
-  @OF.autobind
+  @autobind
   onRenderCell(relationship: Relationship, index: number, isScrolling: boolean): JSX.Element {
     const person = this.props.allPeople.find(p => p.personId === relationship.personId)
     const name = person ? person.fullName() : "--"
@@ -164,7 +165,7 @@ class EditRelationships extends React.Component<ReceivedProps, ComponentState> {
         exclude={this.props.person}
         onCancel={this.onCloseSearch}
         onSelect={this.onSelectSearch}
-        onClickSearchFilter={null}
+        onClickSearchFilter={null} 
       />
       )
     }

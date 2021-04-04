@@ -3,13 +3,13 @@
  * Licensed under the MIT License.
  */
 import * as React from 'react';
-import * as OF from 'office-ui-fabric-react'
 import '../fabric.css'
 import { Person } from "../models/person";
 import { QuizPerson, QuizSet, User } from '../models/models'
 //import ScaledColor from '../modals/ScaledColor'
 import { getRandomInt, /*PHOTO_HEIGHT, PHOTO_WIDTH, baseBlob*/ } from '../Util'
 import { TestResult } from '../models/performance'
+import { autobind } from 'core-decorators'
 
 export interface ReceivedProps {
   user: User
@@ -109,24 +109,24 @@ class CardPage extends React.Component<ReceivedProps, ComponentState> {
     */
   }
 
-  @OF.autobind
+  @autobind
   onClickKnow(index: number) {
     this.selectNextPerson(index)
   }
 
-  @OF.autobind
+  @autobind
   onClickQuestion() {
     this.setState({
       showName: true
     })
   }
 
-  @OF.autobind
+  @autobind
   onClickQuit() {
     this.props.onQuizDone(this.state.testResults/* PerfType*/)
   }
 
-  @OF.autobind
+  @autobind
   onImageLoaded() {
     // If I'm just reloading the page after showing user, don't re-start timer
     if (this.state.showName) {

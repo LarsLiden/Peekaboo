@@ -6,6 +6,7 @@ import * as React from 'react';
 import * as OF from 'office-ui-fabric-react'
 import '../fabric.css'
 import { Person } from '../models/person'
+import { autobind } from 'core-decorators'
 import DetailEditText from '../Detail/DetailEditText'
 import "../Pages/ViewPage.css"
 
@@ -57,47 +58,47 @@ class EditBasicInfo extends React.Component<ReceivedProps, ComponentState> {
     })
   }
 
-  @OF.autobind
-  onFirstNameChanged(text: string) {
-    this.setState({firstName: text})
+  @autobind
+  onFirstNameChanged(text: string | undefined) {
+    this.setState({firstName: text || ""})
   }
 
-  @OF.autobind
-  onFirstPhoneticChanged(text: string) {
-    this.setState({firstPhonetic: text})
+  @autobind
+  onFirstPhoneticChanged(text: string | undefined) {
+    this.setState({firstPhonetic: text || ""})
   }
 
-  @OF.autobind
-  onLastNameChanged(text: string) {
-      this.setState({lastName: text})
+  @autobind
+  onLastNameChanged(text: string | undefined) {
+      this.setState({lastName: text || ""})
   }
 
-  @OF.autobind
-  onLastPhoneticChanged(text: string) {
-    this.setState({lastPhonetic: text})
+  @autobind
+  onLastPhoneticChanged(text: string | undefined) {
+    this.setState({lastPhonetic: text || ""})
   }
 
-  @OF.autobind
-  onNickNameChanged(text: string) {
-    this.setState({nickName: text})
+  @autobind
+  onNickNameChanged(text: string | undefined) {
+    this.setState({nickName: text || ""})
   }
 
-  @OF.autobind
-  onMaidenNameChanged(text: string) {
-    this.setState({maidenName: text})
+  @autobind
+  onMaidenNameChanged(text: string | undefined) {
+    this.setState({maidenName: text || ""})
   }
 
-  @OF.autobind
-  onAlternativeNameChanged(text: string) {
-    this.setState({alternateName: text})
+  @autobind
+  onAlternativeNameChanged(text: string | undefined) {
+    this.setState({alternateName: text || ""})
   }
 
-  @OF.autobind
-  onDescriptionNameChanged(text: string) {
-    this.setState({description: text})
+  @autobind
+  onDescriptionNameChanged(text: string | undefined) {
+    this.setState({description: text || ""})
   }
 
-  @OF.autobind
+  @autobind
   onClickSave(): void {
 
     let newPerson = new Person({...this.props.person})
@@ -113,7 +114,7 @@ class EditBasicInfo extends React.Component<ReceivedProps, ComponentState> {
     this.props.onSave(newPerson)
   }
 
-  @OF.autobind
+  @autobind
   onClickCancel(): void {
     this.props.onCancel()
   }

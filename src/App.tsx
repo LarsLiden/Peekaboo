@@ -6,7 +6,7 @@ import * as React from 'react';
 import './App.css';
 import './fabric.css'
 import Client from './service/client'
-import * as OF from 'office-ui-fabric-react'
+import { autobind } from 'core-decorators'
 import { setStatePromise, replacePerson, getRandomInt, SAD_IMAGE } from './Util'
 import { QuizSet, QuizPerson, FilterSet, Tag, Filter, PerfType, User, SortType, SortDirection } from './models/models'
 import { Person } from './models/person'
@@ -106,7 +106,7 @@ class App extends React.Component<{}, ComponentState> {
     installEvent: null
   }
 
-  @OF.autobind
+  @autobind
   async onSetPage(page: Page, backpage: Page | null, subPage: SubPage | null) {
     await setStatePromise(this, {
       page,
@@ -122,7 +122,7 @@ class App extends React.Component<{}, ComponentState> {
     }
   }
   
-  @OF.autobind
+  @autobind
   async onSetSubpage(subpage: string | null) {
     await setStatePromise(this, {
       subpage,
@@ -164,7 +164,7 @@ class App extends React.Component<{}, ComponentState> {
     }
   }
 
-  @OF.autobind
+  @autobind
   async onPageHashChanged() {
 
     // If page has was manually changed, ignore it
@@ -192,7 +192,7 @@ class App extends React.Component<{}, ComponentState> {
     }
   }
 
-  @OF.autobind 
+  @autobind 
   async onClickTagFilter() {
   //  if (this.state.filteredTags.length === 0) { LARS
       let filteredPeople = Convert.filterPeople(this.state.allPeople, this.state.allTags, this.state.filter)
@@ -205,12 +205,12 @@ class App extends React.Component<{}, ComponentState> {
     this.onSetPage(Page.FILTER, Page.VIEW, null)
   }
 
-  @OF.autobind 
+  @autobind 
   async onEditTags() {
     this.onSetPage(Page.EDITTAGS, Page.VIEW, null)
   }
 
-  @OF.autobind 
+  @autobind 
   async onClickSearchFilter(searchTerm: string) {
 
     await setStatePromise(this, {
@@ -226,7 +226,7 @@ class App extends React.Component<{}, ComponentState> {
     await this.onSetPage(Page.VIEW, null, null)
   }
 
-  @OF.autobind 
+  @autobind 
   async onClickAdmin() {
     if (this.state.user) {
       let users = await Client.getUsers(this.state.user) 
@@ -243,7 +243,7 @@ class App extends React.Component<{}, ComponentState> {
     }
   }
 
-  @OF.autobind
+  @autobind
   addToPersonList() {
     if (this.state.selectedPerson && this.state.selectedPerson.personId) {
       let selectedPersonId = this.state.selectedPerson.personId
@@ -264,7 +264,7 @@ class App extends React.Component<{}, ComponentState> {
       console.log("WARNING: Unexpected missing selectdPerson or PersonId")
     }
   }
-  @OF.autobind 
+  @autobind 
   async onEdit() {
     if (this.state.page === Page.VIEWQUIZ) {
       this.onSetPage(Page.EDITQUIZ, Page.VIEWQUIZ, null)
@@ -274,7 +274,7 @@ class App extends React.Component<{}, ComponentState> {
     }
   }
 
-  @OF.autobind 
+  @autobind 
   async viewLibraryPerson() {
     if (this.state.allPeople.length === 0) {
       this.handleNoUsers()
@@ -289,7 +289,7 @@ class App extends React.Component<{}, ComponentState> {
     this.onSetPage(Page.VIEW, null, null)
   }
 
-  @OF.autobind 
+  @autobind 
   viewQuizDetail(quizPerson: QuizPerson) {
       let selectedPerson = Convert.getPerson(this.state.allPeople, quizPerson.personId) || null
       this.setState({
@@ -298,7 +298,7 @@ class App extends React.Component<{}, ComponentState> {
       this.onSetPage(Page.VIEWQUIZ, Page.QUIZ, null)
   }
 
-  @OF.autobind 
+  @autobind 
   async onLoginComplete(user: User) {
     await setStatePromise(this, {
       user: user,
@@ -307,7 +307,7 @@ class App extends React.Component<{}, ComponentState> {
     this.loadPeople()
   }
 
-  @OF.autobind 
+  @autobind 
   async loadPeople() {
 
     // Attempt to get tags from local cache
@@ -434,7 +434,7 @@ class App extends React.Component<{}, ComponentState> {
       }
   }
 
-  @OF.autobind 
+  @autobind 
   async onDeleteTag(tag: Tag) {
 
     await Client.deleteTag(this.state.user!, tag)
@@ -443,7 +443,7 @@ class App extends React.Component<{}, ComponentState> {
     await setStatePromise(this, { allTags })
   }
 
-  @OF.autobind 
+  @autobind 
   async onSaveTag(tag: Tag) {
 
     await Client.putTag(this.state.user!, tag)
@@ -474,13 +474,13 @@ class App extends React.Component<{}, ComponentState> {
 
     this.setState({user})
   }
-  @OF.autobind 
+  @autobind 
   async onClickImport() {
       await Client.import(this.state.user!)
       this.loadPeople()
   }
 
-  @OF.autobind 
+  @autobind 
   async onQuiz() {
       let quizSet = Convert.quizSet(this.state.allPeople, this.state.allTags, this.state.filter, this.state.userPersonId) 
       this.setState({
@@ -489,12 +489,12 @@ class App extends React.Component<{}, ComponentState> {
       this.onSetPage(Page.QUIZ, Page.VIEW, null)  // TODO save?
   }
 
-  @OF.autobind
+  @autobind
   onCloseError() {
     this.setState({error: null})
   }
 
-  @OF.autobind 
+  @autobind 
   async onCloseEditPage() {
     if (this.state.page === Page.EDITQUIZ) {
       this.onSetPage(Page.VIEWQUIZ, Page.QUIZ, null)  
@@ -504,7 +504,7 @@ class App extends React.Component<{}, ComponentState> {
     }
   }
 
-  @OF.autobind
+  @autobind
   async onDeleteUser(userToDelete: User) {
     try {
       await Client.deleteUser(this.state.user!, userToDelete) 
@@ -518,7 +518,7 @@ class App extends React.Component<{}, ComponentState> {
     }
   }
 
-  @OF.autobind
+  @autobind
   async onExportToUser(destination: User) {
     try {
       let peopleIds = this.state.personList.length > 0 
@@ -531,7 +531,7 @@ class App extends React.Component<{}, ComponentState> {
     }
   }
   
-  @OF.autobind 
+  @autobind 
   async onDeletePerson(person: Person) {
     try {
       await Client.deletePerson(this.state.user!, person)
@@ -556,7 +556,7 @@ class App extends React.Component<{}, ComponentState> {
     }
   }
 
-  @OF.autobind 
+  @autobind 
   async onArchivePerson(person: Person) {
     try {
       // Delete local
@@ -592,7 +592,7 @@ class App extends React.Component<{}, ComponentState> {
     }
   }
 
-  @OF.autobind 
+  @autobind 
   async onSavePerson(person: Person) {
     try {
       await Client.putPerson(this.state.user!, person)
@@ -611,7 +611,7 @@ class App extends React.Component<{}, ComponentState> {
     }
   }
 
-  @OF.autobind 
+  @autobind 
   async onDeletePhoto(person: Person, photoName: string) {
     try {
       await Client.deletePhoto(this.state.user!, person, photoName)
@@ -628,7 +628,7 @@ class App extends React.Component<{}, ComponentState> {
     }
   }
 
-  @OF.autobind 
+  @autobind 
   async onSavePhoto(person: Person, photoData: string) {
     try {
       let newPhotoName = await Client.putPhoto(this.state.user!, person, photoData)
@@ -645,7 +645,7 @@ class App extends React.Component<{}, ComponentState> {
     }
   }
 
-  @OF.autobind 
+  @autobind 
   async onQuizDone(testResults: TestResult[]) {
     this.onSetPage(Page.VIEW, null, null)
     try {
@@ -673,7 +673,7 @@ class App extends React.Component<{}, ComponentState> {
     }
   }
 
-  @OF.autobind
+  @autobind
   async onNewPerson(): Promise<void> {
     let person = new Person()
     let today = new Date()
@@ -684,7 +684,7 @@ class App extends React.Component<{}, ComponentState> {
     this.onSetPage(Page.EDIT, Page.VIEW, null)
   }
 
-  @OF.autobind
+  @autobind
   async onNextPerson(): Promise<void> {
     if (this.state.filterSet) {
       let selectedIndex = this.state.filterSet.selectedIndex + 1
@@ -698,7 +698,7 @@ class App extends React.Component<{}, ComponentState> {
     }
   }
 
-  @OF.autobind
+  @autobind
   async onPrevPerson(): Promise<void> {
     if (this.state.filterSet) {
       let selectedIndex = this.state.filterSet.selectedIndex - 1
@@ -712,7 +712,7 @@ class App extends React.Component<{}, ComponentState> {
     }
   }
 
-  @OF.autobind
+  @autobind
   async onSelectPerson(personId: string): Promise<void> {
     if (this.state.filterSet) {
       let selectedIndex = this.state.filterSet.people.findIndex(p => p.personId === personId)
@@ -729,7 +729,7 @@ class App extends React.Component<{}, ComponentState> {
     }
   }
 
-  @OF.autobind
+  @autobind
   async onCloseFliterPage(filter: Filter) {
     await setStatePromise(this, {
       filter
@@ -741,15 +741,15 @@ class App extends React.Component<{}, ComponentState> {
     await setStatePromise(this, {
       selectedPerson
     })
-    await this.onSetPage(Page.VIEW, null, null)
+    await this.onSetPage(Page.SEARCH, null, null)
   }
 
-  @OF.autobind
+  @autobind
   async onCloseEditTagsPage() {
     await this.onSetPage(Page.VIEW, null, null)
   }
 
-  @OF.autobind
+  @autobind
   showInstallPrompt() {
     if (!this.state.installEvent) {
       return
@@ -938,7 +938,10 @@ class App extends React.Component<{}, ComponentState> {
             allTags={this.state.allTags}
             onCancel={() => this.onSetPage(Page.VIEW, null, null)}
             onSelect={(person: Person) => this.onSelectPerson(person.personId!)}
+            onClickTagFilter={this.onClickTagFilter}
             onClickSearchFilter={this.onClickSearchFilter}
+            onClickQuiz={this.onQuiz}
+            onNewPerson={this.onNewPerson}
           />
         }
         {this.state.page === Page.PERFORMANCE && this.state.selectedPerson && 

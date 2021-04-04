@@ -8,6 +8,7 @@ import * as OF from 'office-ui-fabric-react'
 import Client from '../service/client'
 import { HEAD_IMAGE } from '../Util'
 import { User } from '../models/models'
+import { autobind } from 'core-decorators'
 import GoogleLogin from 'react-google-login';
 
 const VERSION = "0.26"
@@ -24,7 +25,7 @@ interface ComponentState {
 
 class LoginPage extends React.Component<ReceivedProps, ComponentState> {
 
-  private _startButtonElement = OF.createRef<HTMLElement>();
+  private _startButtonElement = React.createRef<HTMLElement>();
 
   state: ComponentState = {
     waitingCalloutText: null,
@@ -32,7 +33,7 @@ class LoginPage extends React.Component<ReceivedProps, ComponentState> {
     loginDisable: false
   }
 
-  @OF.autobind
+  @autobind
   private async loginSuccess(googleUser: any) {
 
     this.setState({loginDisable: true})
@@ -68,7 +69,7 @@ class LoginPage extends React.Component<ReceivedProps, ComponentState> {
     }
   }
 
-  @OF.autobind
+  @autobind
   private onWaitCalloutDismiss(): void {
     this.setState({waitingCalloutText: null})
   }

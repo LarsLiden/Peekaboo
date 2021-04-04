@@ -5,6 +5,7 @@
 import * as React from 'react';
 import * as OF from 'office-ui-fabric-react'
 import { User, FilterSet } from '../models/models'
+import { autobind } from 'core-decorators'
 import ConfirmModal from '../modals/Confirm'
 import Client from '../service/client'
 
@@ -35,17 +36,17 @@ class AdminPage extends React.Component<ReceivedProps, ComponentState> {
   }
 
   // --- DELETE USER ---
-  @OF.autobind
+  @autobind
   onDeleteUser(user: User): void {
     this.setState({isConfirmDeleteUser: user})
   }
 
-  @OF.autobind
+  @autobind
   onCancelDeleteUser(): void {
     this.setState({isConfirmDeleteUser: null})
   }
 
-  @OF.autobind
+  @autobind
   async onConfirmDeleteUser(): Promise<void> {
     if (this.state.isConfirmDeleteUser) {
       await this.props.onDeleteUser(this.state.isConfirmDeleteUser)
@@ -56,17 +57,17 @@ class AdminPage extends React.Component<ReceivedProps, ComponentState> {
   }
 
   // --- EXPORT TO USER ---
-  @OF.autobind
+  @autobind
   onExportToUser(user: User): void {
     this.setState({isConfirmExportToUser: user})
   }
 
-  @OF.autobind
+  @autobind
   onCancelExportToUser(): void {
     this.setState({isConfirmExportToUser: null})
   }
 
-  @OF.autobind
+  @autobind
   async onConfirmExportToUser(): Promise<void> {
     if (this.state.isConfirmExportToUser) {
       this.setState({
@@ -77,17 +78,17 @@ class AdminPage extends React.Component<ReceivedProps, ComponentState> {
   }
 
   // --- IMPORT TO SELF ---
-  @OF.autobind
+  @autobind
   onClickImport(): void {
     this.setState({isConfirmImportOpen: true})
   }
 
-  @OF.autobind
+  @autobind
   onCancelImport(): void {
     this.setState({isConfirmImportOpen: false})
   }
 
-  @OF.autobind
+  @autobind
   async onConfirmImport(): Promise<void> {
       await this.props.onImport()
       this.setState({
@@ -95,7 +96,7 @@ class AdminPage extends React.Component<ReceivedProps, ComponentState> {
       })
   }
 
-  @OF.autobind
+  @autobind
   async onLoginAs(user: User) {
     let foundUser = await Client.Login(user)
     
@@ -105,12 +106,12 @@ class AdminPage extends React.Component<ReceivedProps, ComponentState> {
     }
   }
 
-  @OF.autobind
+  @autobind
   onClickClose() {
     this.props.onClose()
   }
 
-  @OF.autobind
+  @autobind
   onRenderCell(user: any, index: number, isScrolling: boolean): JSX.Element {
     let joined = new Date(user.createdDateTime).toLocaleDateString()
     let last = new Date(user.lastUsedDatTime).toLocaleDateString()

@@ -7,7 +7,8 @@ import * as OF from 'office-ui-fabric-react'
 import DetailEditText from '../Detail/DetailEditText'
 import { Person } from '../models/person'
 import { SocialNet, SocialNetType, SocialNetSearchIcon, SocialNetSearch } from '../models/models'
-import { generateGUID } from '../Util';
+import { generateGUID } from '../Util'
+import { autobind } from 'core-decorators'
 
 export interface ReceivedProps {
   person: Person
@@ -55,20 +56,20 @@ class EditSocialNetworks extends React.Component<ReceivedProps, ComponentState> 
     }
   }
 
-  @OF.autobind
+  @autobind
   onClickDelete(socialNetType: SocialNetType) {
     this.setState({
       socialNets: this.state.socialNets.filter(k => k.netType !== socialNetType)
     }) 
   }
 
-  @OF.autobind
+  @autobind
   onClickSave() {
     const socialNets = this.state.socialNets.filter(sn => sn.URL !== "")
     this.props.onSave(socialNets)
   }
 
-  @OF.autobind
+  @autobind
   onClickAdd() {
     const newSocialNet: SocialNet = {
       socialNetId: generateGUID(),
@@ -81,26 +82,28 @@ class EditSocialNetworks extends React.Component<ReceivedProps, ComponentState> 
     }) 
   }
 
-  @OF.autobind
-  onURLChanged(url: string, socialNetType: SocialNetType) {
-    let changed = this.state.socialNets.find(r => r.netType === socialNetType)
-    changed!.URL = url
+  @autobind
+  onURLChanged(url: string | undefined, socialNetType: SocialNetType) {
+    if (url) {
+      let changed = this.state.socialNets.find(r => r.netType === socialNetType)
+      changed!.URL = url
+    }
   }
 
-  @OF.autobind 
+  @autobind 
   onTypeChange(option: OF.IDropdownOption, socialNet: SocialNet) {
     let changed = this.state.socialNets.find(r => r.socialNetId === socialNet.socialNetId)
     changed!.netType = SocialNetType[option.text]
   }
 
-  @OF.autobind
+  @autobind
   onOpenLink(e: any, socialNetType: SocialNetType) {
     e.preventDefault()
     const url = `${SocialNetSearch[socialNetType]}${this.props.person.firstName}%20${this.props.person.lastName}`
     window.open(url, "_blank", socialNetType)
   }
 
-  @OF.autobind
+  @autobind
   onRenderCell(socialNetType: SocialNetType): JSX.Element {
     let socialNet = this.state.socialNets.find(r => r.netType === socialNetType)
     let url = socialNet ? socialNet.URL : null
@@ -150,10 +153,12 @@ class EditSocialNetworks extends React.Component<ReceivedProps, ComponentState> 
         </div>
         <div className="ModalBodyHolder">
           <div className="ModalBodyContent">
-            {Object.keys(SocialNetType).map(key =>{ 
-              return (
-                this.onRenderCell(SocialNetType[key])
-              )}
+            {
+              Object.keys(SocialNetType).map(key => { 
+                  return (
+                    this.onRenderCell(SocialNetType[key])
+                  )
+                }
             )}
           </div>
         </div>

@@ -5,6 +5,7 @@
 import * as React from 'react';
 import { Relationship } from '../models/relationship'
 import { Person } from '../models/person'
+import { autobind } from 'core-decorators'
 import * as OF from 'office-ui-fabric-react'
 import '../fabric.css'
 
@@ -17,7 +18,7 @@ export interface ReceivedProps {
 
 class DetailRelationships extends React.Component<ReceivedProps, {}> {
 
-  @OF.autobind
+  @autobind
   onRenderCell(relationship: Relationship, index: number, isScrolling: boolean): JSX.Element {
     const person = this.props.allPeople.find(p => p.personId === relationship.personId)
     const name = person ? person.fullName() : relationship.personId.split("_")[0]

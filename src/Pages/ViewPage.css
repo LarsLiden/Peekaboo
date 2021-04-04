@@ -91,6 +91,7 @@
   padding: 0px !important;
   color: var(--color-themeTertiary) !important;
   background-color: transparent !important;
+  border-color: transparent;
 }
 
 .DetailRelationshipLink:hover {

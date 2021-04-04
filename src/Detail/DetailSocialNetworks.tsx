@@ -9,6 +9,7 @@ import { generateGUID } from '../Util';
 import { Person } from '../models/person'
 import { Page } from '../App'
 import { SubPage } from '../Pages/EditPage';
+import { autobind } from 'core-decorators'
 import "./DetailEvents.css"
 import '../fabric.css'
 
@@ -28,7 +29,7 @@ class DetailSocialNetworks extends React.Component<ReceivedProps, ComponentState
     socialNets: []
   }
 
-  @OF.autobind
+  @autobind
   onOpenLink(e: any, link: string, netType: SocialNetType) {
     e.preventDefault()
     if (!link) {

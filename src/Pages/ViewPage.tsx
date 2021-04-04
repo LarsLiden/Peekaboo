@@ -19,6 +19,7 @@ import DetailSocialNetworks from '../Detail/DetailSocialNetworks'
 import Swipe from 'react-easy-swipe'
 import ResizeText from '../modals/ResizeText'
 import { Page } from '../App'
+import { autobind } from 'core-decorators'
 import "./ViewPage.css"
 import { MAX_TIME } from '../models/const';
 import { SubPage } from './EditPage';
@@ -61,7 +62,7 @@ class ViewPage extends React.Component<ReceivedProps, ComponentState> {
     yMove: 0
   }
 
-  @OF.autobind
+  @autobind
   onNextPhoto(): void {
   
     let photoIndex = this.state.photoIndex + 1
@@ -72,7 +73,7 @@ class ViewPage extends React.Component<ReceivedProps, ComponentState> {
 
   }
 
-  @OF.autobind
+  @autobind
   onPrevPhoto(): void {
       let photoIndex = this.state.photoIndex - 1
       if (photoIndex < 0) {
@@ -81,19 +82,19 @@ class ViewPage extends React.Component<ReceivedProps, ComponentState> {
       this.setState({photoIndex})
   }
   
-  @OF.autobind
+  @autobind
   onNextPerson(): void {
     this.setState({photoIndex: 0})
     this.props.onNextPerson()
   }
 
-  @OF.autobind
+  @autobind
   onPrevPerson(): void {
     this.setState({photoIndex: 0})
     this.props.onPrevPerson()
   }
 
-  @OF.autobind
+  @autobind
   onSwipeStart(event: any) {
     this.setState({
       xMove: 0,
@@ -102,7 +103,7 @@ class ViewPage extends React.Component<ReceivedProps, ComponentState> {
     console.log('Start swiping...', event);
   }
  
-  @OF.autobind
+  @autobind
   onSwipeMove(position: any, event: any) {
     this.setState({
       xMove: position.x,
@@ -112,7 +113,7 @@ class ViewPage extends React.Component<ReceivedProps, ComponentState> {
     console.log(`Moved ${position.y} pixels vertically`, event);
   }
  
-  @OF.autobind
+  @autobind
   onSwipeEnd(event: any) {
     if (this.state.xMove > SWIPE_THRESHOLD && Math.abs(this.state.yMove) < SWIPE_THRESHOLD) {
       this.onPrevPerson()

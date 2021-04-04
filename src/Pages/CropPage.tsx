@@ -5,6 +5,7 @@
 import * as React from 'react';
 import * as OF from 'office-ui-fabric-react'
 import { PHOTO_HEIGHT, PHOTO_WIDTH, setStatePromise } from '../Util'
+import { autobind } from 'core-decorators'
 import ReactCrop from 'react-image-crop'
 import 'react-image-crop/dist/ReactCrop.css'
 
@@ -84,7 +85,7 @@ class CropPage extends React.Component<ReceivedProps, ComponentState> {
 
   }
 
-  @OF.autobind
+  @autobind
   onSave() {
   
     if (!this.state.cropped) {
@@ -116,7 +117,7 @@ class CropPage extends React.Component<ReceivedProps, ComponentState> {
     this.props.onSave(data)
   }
 
-  @OF.autobind
+  @autobind
   onCropChange(crop: ReactCrop.Crop) {
     this.setState({ 
       crop, 
@@ -124,7 +125,7 @@ class CropPage extends React.Component<ReceivedProps, ComponentState> {
       isCalloutVisible: false });  
   }
 
-  @OF.autobind
+  @autobind
   onClickClose() {
     this.props.onClose()
   }

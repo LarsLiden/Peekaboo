@@ -7,6 +7,7 @@ import * as OF from 'office-ui-fabric-react'
 import { Tag } from '../models/models'
 import AddEditTag from './AddEditTag'
 import { expandTagIds } from '../convert'
+import { autobind } from 'core-decorators'
 
 export interface ReceivedProps {
   allTags: Tag[]
@@ -71,7 +72,7 @@ class EditTags extends React.Component<ReceivedProps, ComponentState> {
     })   
   }
 
-  @OF.autobind
+  @autobind
   onClickEditTag(tag: Tag | null) {
     this.setState({
       isEditTagModalOpen: true,
@@ -79,7 +80,7 @@ class EditTags extends React.Component<ReceivedProps, ComponentState> {
     })
   }
 
-  @OF.autobind
+  @autobind
   onSubmitEditTag(tag: Tag) {
     this.setState({
       isEditTagModalOpen: false,
@@ -88,7 +89,7 @@ class EditTags extends React.Component<ReceivedProps, ComponentState> {
     this.props.onSaveTag(tag)
   }
 
-  @OF.autobind
+  @autobind
   onDeleteEditTag() {
     if (this.state.editingTag) {
       this.props.onDeleteTag(this.state.editingTag)
@@ -100,7 +101,7 @@ class EditTags extends React.Component<ReceivedProps, ComponentState> {
     })
   }
 
-  @OF.autobind
+  @autobind
   onCancelEditTag() {
     this.setState({
       isEditTagModalOpen: false,
@@ -108,13 +109,13 @@ class EditTags extends React.Component<ReceivedProps, ComponentState> {
     })
   }
 
-  @OF.autobind
+  @autobind
   onClickSave() {
     let tagNames = this.state.personTags.filter(t => t.count === 1).map(t => t.tagId!)
     this.props.onSavePersonTags(tagNames)
   }
 
-  @OF.autobind
+  @autobind
   onCheckboxChange(isChecked: boolean = false, tag: Tag) {
     // Can't change status of auto inluded parent tags
     if (tag.count === 2) {
@@ -136,7 +137,7 @@ class EditTags extends React.Component<ReceivedProps, ComponentState> {
     return (<span className="TagSpacer">{`${spacer}`}</span>)
   }
 
-  @OF.autobind
+  @autobind
   onRenderCell(tag: Tag, index: number, isScrolling: boolean): JSX.Element {
     let className = `FilterCheckbox FilterCheckboxInclude`
     if (tag.count === 1) {

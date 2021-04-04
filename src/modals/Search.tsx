@@ -7,6 +7,7 @@ import * as OF from 'office-ui-fabric-react'
 import { Person } from '../models/person'
 import { Tag } from '../models/models'
 import { setStatePromise } from '../Util'
+import { autobind } from 'core-decorators'
 
 export interface ReceivedProps {
   allPeople: Person[]
@@ -14,6 +15,9 @@ export interface ReceivedProps {
   exclude?: Person
   onSelect: (person: Person) => void
   onCancel: () => void
+  onClickTagFilter?: () => void
+  onNewPerson?: () => void
+  onClickQuiz?: () => void
   onClickSearchFilter: ((searchTerm: string) => void) | null
 }
 
@@ -31,12 +35,16 @@ class Search extends React.Component<ReceivedProps, ComponentState> {
     results: []
   }
 
-  @OF.autobind
-  onSearchChanged(text: string) {
-    if (text.length === 0) {
+  componentWillMount() {
+    this.setState({results: this.props.allPeople})
+  }
+
+  @autobind
+  onSearchChanged(text: string | undefined) {
+    if (!text || text.length === 0) {
       this.setState({
-        searchText: text,
-        results: []
+        searchText: text || "",
+        results: [...this.props.allPeople]
       })
       return
     }
@@ -91,13 +99,13 @@ class Search extends React.Component<ReceivedProps, ComponentState> {
       )
   }
 
-  @OF.autobind
+  @autobind
   async onToggleSearch(ev: React.MouseEvent<HTMLElement>, checked: boolean) {
     await setStatePromise(this, {byNameOnly: checked})
     this.onSearchChanged(this.state.searchText)
   }
 
-  @OF.autobind
+  @autobind
   onRenderCell(person: Person, index: number, isScrolling: boolean): JSX.Element {
     
     let nameRender: JSX.Element | null
@@ -145,22 +153,46 @@ class Search extends React.Component<ReceivedProps, ComponentState> {
       </div>
     );
   }
-
+/*
+            <OF.Label className="SearchLabel">
+              {this.state.byNameOnly ? "Search by Name:" : "Search All Fields:"}
+            </OF.Label>
+                        <OF.Toggle
+              className="FloatRight"
+              defaultChecked={true}
+              label="Name Only"
+              onChange={this.onToggleSearch}
+            />
+            LARS */
   public render() {
     return (
       <div className="ModalPage">
         <div className="HeaderHolder HeaderHolderMedium">
           <div className="HeaderContent">
-            <OF.Label className="SearchLabel">
-              {this.state.byNameOnly ? "Search by Name:" : "Search All Fields:"}
-            </OF.Label>
+            <OF.IconButton
+                className="FloatLeft"
+                onClick={() => {}}
+                iconProps={{ iconName: 'ProfileSearch' }}
+            />
             <OF.TextField
               className="SearchInput"
               underlined={true}
-              onChanged={text => this.onSearchChanged(text)}
+              onChange={(event, text) => this.onSearchChanged(text)}
               value={this.state.searchText}
               autoFocus={true}
-            />  
+            />
+            <div className="SearchToggleGroup">
+              <div className='SearchToggleTitle'>
+                {this.state.byNameOnly ? "By Name" : "By All"}
+              </div>
+              <OF.Toggle
+                className="FloatRight"
+                defaultChecked={true}
+                inlineLabel={false}
+                label=""
+                onChange={this.onToggleSearch}
+              />
+            </div>
           </div>
         </div>
         <div className="ModalBodyHolder">
@@ -168,6 +200,8 @@ class Search extends React.Component<ReceivedProps, ComponentState> {
             <OF.List
               items={this.state.results}
               onRenderCell={this.onRenderCell}
+              data-is-scrollable="true"
+              onShouldVirtualize={() => {return true }}
             />
           </div>
         </div>
@@ -178,18 +212,39 @@ class Search extends React.Component<ReceivedProps, ComponentState> {
                 onClick={this.props.onCancel}
                 iconProps={{ iconName: 'ChromeBack' }}
             />
-            <OF.Toggle
-              className="FloatRight"
-              defaultChecked={true}
-              label="Name Only"
-              onChange={this.onToggleSearch}
-            />
+            {this.props.onClickTagFilter &&
+              <OF.IconButton
+                className="ButtonIcon ButtonPrimary FloatLeft"
+                onClick={this.props.onClickTagFilter}
+                iconProps={{ iconName: 'Filter' }}
+              />
+            }
             {this.props.onClickSearchFilter &&
               <OF.IconButton
                 className="ButtonIcon ButtonPrimary FloatLeft"
                 onClick={() => this.props.onClickSearchFilter!(this.state.searchText.toUpperCase())}
                 iconProps={{ iconName: 'Filter' }}
               />
+            }
+            {this.props.onNewPerson &&
+              <OF.IconButton
+                  className="ButtonIcon ButtonPrimary FloatLeft"
+                  onClick={this.props.onNewPerson}
+                  iconProps={{ iconName: 'CirclePlus' }}
+              />
+            }
+            {this.props.onClickQuiz && 
+              <OF.Button
+                  className="ButtonIcon ButtonPrimary FloatRight"
+                  onClick={this.props.onClickQuiz}
+              >
+                <OF.Image
+                  className="QuizImageHolder"
+                  src={"https://peekaboo.blob.core.windows.net/resources/quizicon.png"}
+                  width={100}
+                  height={30}
+                />
+              </OF.Button>
             }
             </div>
         </div>

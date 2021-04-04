@@ -11,6 +11,7 @@ import ScaledColor from '../modals/ScaledColor'
 import { getRandomInt, PHOTO_HEIGHT, PHOTO_WIDTH, baseBlob } from '../Util'
 import { TestResult } from '../models/performance'
 import { MAX_TIME } from '../models/const'
+import { autobind } from 'core-decorators'
 
 export interface ReceivedProps {
   user: User
@@ -109,20 +110,20 @@ class QuizPage extends React.Component<ReceivedProps, ComponentState> {
     })
   }
 
-  @OF.autobind
+  @autobind
   onClickKnow() {
     this.addTestResult(this.state.timerValue)
     this.selectNextPerson()
   }
 
-  @OF.autobind
+  @autobind
   onClickDontKnow() {
     this.addTestResult(MAX_TIME)
     this.selectNextPerson()
     this.clearTimer()
   }
 
-  @OF.autobind
+  @autobind
   onClickQuestion() {
     this.clearTimer()
     this.setState({
@@ -130,7 +131,7 @@ class QuizPage extends React.Component<ReceivedProps, ComponentState> {
     })
   }
 
-  @OF.autobind
+  @autobind
   onClickQuit() {
     this.clearTimer()
     this.props.onQuizDone(this.state.testResults/* PerfType*/)
@@ -145,7 +146,7 @@ class QuizPage extends React.Component<ReceivedProps, ComponentState> {
     }
   }
 
-  @OF.autobind
+  @autobind
   onImageLoaded() {
     // If I'm just reloading the page after showing user, don't re-start timer
     if (this.state.showName) {

@@ -8,6 +8,7 @@ import DetailEditText from '../Detail/DetailEditText'
 import { Person } from '../models/person'
 import { KeyValue } from '../models/models'
 import { generateGUID, isValid, MAX_KEY_LENGTH, MAX_VALUE_LENGTH } from '../Util';
+import { autobind } from 'core-decorators'
 
 export interface ReceivedProps {
   person: Person
@@ -34,19 +35,19 @@ class EditKeyValues extends React.Component<ReceivedProps, ComponentState> {
     }
   }
 
-  @OF.autobind
+  @autobind
   onClickDelete(keyValue: KeyValue) {
     this.setState({
       keyValues: this.state.keyValues.filter(k => k.keyValueId !== keyValue.keyValueId)
     }) 
   }
 
-  @OF.autobind
+  @autobind
   onClickSave() {
     this.props.onSave(this.state.keyValues)
   }
 
-  @OF.autobind
+  @autobind
   onClickAdd() {
     const newKeyValue: KeyValue = {
       key: "",
@@ -58,29 +59,33 @@ class EditKeyValues extends React.Component<ReceivedProps, ComponentState> {
     }) 
   }
 
-  @OF.autobind
-  onKeyChanged(key: string, keyValue: KeyValue) {
-    let existingKV = this.state.keyValues.find(kv => kv.keyValueId === keyValue.keyValueId)
-    let newKeyValue = {...existingKV!, key}
+  @autobind
+  onKeyChanged(key: string | undefined, keyValue: KeyValue) {
+    if (key) {
+      let existingKV = this.state.keyValues.find(kv => kv.keyValueId === keyValue.keyValueId)
+      let newKeyValue = {...existingKV!, key}
 
-    let index = this.state.keyValues.indexOf(keyValue)
-    let keyValues = [...this.state.keyValues]
-    keyValues[index] = newKeyValue
-    this.setState({keyValues})
+      let index = this.state.keyValues.indexOf(keyValue)
+      let keyValues = [...this.state.keyValues]
+      keyValues[index] = newKeyValue
+      this.setState({keyValues})
+    }
   }
 
-  @OF.autobind
-  onValueChanged(value: string, keyValue: KeyValue) {
-    let existingKV = this.state.keyValues.find(kv => kv.keyValueId === keyValue.keyValueId)
-    let newKeyValue = {...existingKV!, value}
+  @autobind
+  onValueChanged(value: string | undefined, keyValue: KeyValue) {
+    if (value) {
+      let existingKV = this.state.keyValues.find(kv => kv.keyValueId === keyValue.keyValueId)
+      let newKeyValue = {...existingKV!, value}
 
-    let index = this.state.keyValues.indexOf(keyValue)
-    let keyValues = [...this.state.keyValues]
-    keyValues[index] = newKeyValue
-    this.setState({keyValues})
+      let index = this.state.keyValues.indexOf(keyValue)
+      let keyValues = [...this.state.keyValues]
+      keyValues[index] = newKeyValue
+      this.setState({keyValues})
+    }
   }
 
-  @OF.autobind
+  @autobind
   onRenderCell(keyValue: KeyValue, index: number, isScrolling: boolean): JSX.Element {
     return (
       <div className="SectionBorder">

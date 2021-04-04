@@ -103,6 +103,12 @@
   padding: 15px !important;
 }
 
+.ms-Button--icon i[data-icon-name="ProfileSearch"] {
+  font-size: 25px;
+  padding-top: 20px !important;
+  color: white !important;
+}
+
 .ms-TextField-errorMessage {
   color: #ff9999 !important;
   margin-left: 11px !important;
@@ -164,7 +170,7 @@
   width: 40px !important;
   border-radius: 10px !important;
   color: white !important;
-  margin: 5px;
+  margin: 5px !important;
 }
 
 .ButtonTopLeft {
@@ -240,6 +246,7 @@
 .App {
   text-align: center;
   background-color: black;
+  color: #ffffff;
 }
 
 .CropCallout {
@@ -283,9 +290,24 @@
 
 .SearchInput {
   text-align: center;
-  width: 300px;
+  width: 250px;
   margin-left: auto !important;
   margin-right: auto !important;
+  display: inline-block;
+}
+
+.SearchToggleGroup {
+  float: right;
+  align-content: center;
+  text-align: center;
+  margin: auto;
+}
+
+.SearchToggleTitle {
+  font-size: 10px;
+  color: #ffffff;
+  margin-top: -6px;
+  padding-bottom: 5px;
 }
 
 .SearchLabel {
@@ -304,6 +326,7 @@
 
 .SearchText {
   font-size: 20px !important;
+  border: none;
 }
 
 .SortItem {
@@ -702,6 +725,7 @@
   max-width: var(--max-width);
   margin-left: auto;
   margin-right: auto;
+  color: #ffffff !important;
 }
 
 .ExpandedName{

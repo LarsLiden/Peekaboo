@@ -5,6 +5,7 @@
 import * as React from 'react';
 import * as OF from 'office-ui-fabric-react'
 import { HEAD_IMAGE } from '../Util'
+import { autobind } from 'core-decorators'
 
 export interface ReceivedProps {
   onClose: () => void
@@ -20,7 +21,7 @@ class NewUserPage extends React.Component<ReceivedProps, ComponentState> {
     isFooterVisible: true
   }
   
-  @OF.autobind
+  @autobind
   onClickDone() {
     this.setState({isFooterVisible: false})
     this.props.onClose()

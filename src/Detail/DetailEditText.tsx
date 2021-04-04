@@ -6,6 +6,7 @@ import * as React from 'react';
 import '../fabric.css'
 import './Detail.css'
 import * as OF from 'office-ui-fabric-react'
+import { autobind } from 'core-decorators'
 
 export interface ReceivedProps {
   label: string
@@ -16,7 +17,7 @@ export interface ReceivedProps {
   maxLength?: number
   minLength?: number
   onEnter?: (text: string) => void
-  onChanged: (text: string) => void
+  onChanged: (text: string | undefined) => void
 }
 
 class DetailEditText extends React.Component<ReceivedProps, {}> {
@@ -35,7 +36,7 @@ class DetailEditText extends React.Component<ReceivedProps, {}> {
     }
   }
 
-  @OF.autobind
+  @autobind
   getErrorMessage(value: string): string {
     let text = value.trim()
     if (this.props.maxLength && text.length > this.props.maxLength) {
@@ -62,7 +63,7 @@ class DetailEditText extends React.Component<ReceivedProps, {}> {
           className="DetailTextField"
           underlined={true}
           onGetErrorMessage={this.getErrorMessage}
-          onChanged={text => this.props.onChanged(text)}
+          onChange={(event, text) => this.props.onChanged(text)}
           onKeyDown={this.props.onEnter ? this.onKeyDown : undefined}
           value={this.props.value}
         />   

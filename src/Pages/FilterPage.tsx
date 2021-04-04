@@ -7,6 +7,7 @@ import * as OF from 'office-ui-fabric-react'
 import * as Convert from '../convert'
 import { Person } from '../models/person'
 import { Tag, Filter, PerfType } from '../models/models'
+import { autobind } from 'core-decorators'
 
 export interface ReceivedProps {
   allPeople: Person[]
@@ -47,12 +48,12 @@ class FilterPage extends React.Component<ReceivedProps, ComponentState> {
       })
   }
 
-  @OF.autobind
+  @autobind
   onClickClose() {
     this.props.onClose(this.state.filter)
   }
 
-  @OF.autobind
+  @autobind
   onClickClear() {
     this.setState({
       filter: {...this.state.filter,
@@ -64,7 +65,7 @@ class FilterPage extends React.Component<ReceivedProps, ComponentState> {
     }, () => this.updateTags())
   }
 
-  @OF.autobind
+  @autobind
   onCheckboxRequireChange(isChecked: boolean = false, tag: Tag) {
     if (isChecked) {
       if (this.state.filter.requiredTagIds.indexOf(tag.tagId!) <= 0) {
@@ -90,7 +91,7 @@ class FilterPage extends React.Component<ReceivedProps, ComponentState> {
     }
   }
 
-  @OF.autobind
+  @autobind
   onCheckboxBlockChange(isChecked: boolean = false, tag: Tag) {
     if (isChecked) { 
       if (this.state.filter.blockedTagIds.indexOf(tag.tagId!) <= 0) {
@@ -116,13 +117,13 @@ class FilterPage extends React.Component<ReceivedProps, ComponentState> {
     }
   }
 
-  @OF.autobind
+  @autobind
   async onDeleteTag(tag: Tag) {
     await this.props.onDeleteTag(tag)
     this.updateTags()
   }
 
-  @OF.autobind
+  @autobind
   onRenderCell(item: Tag, index: number, isScrolling: boolean): JSX.Element {
     let isRequired = this.state.filter.requiredTagIds.indexOf(item.tagId!) > -1
     let isBlocked = this.state.filter.blockedTagIds.indexOf(item.tagId!) > -1

@@ -9,6 +9,7 @@ import '../fabric.css'
 import { isValid, MAX_TAG_LENGTH, generateGUID } from '../Util'
 import DetailEditText from '../Detail/DetailEditText'
 import { expandTagIds } from '../convert'
+import { autobind } from 'core-decorators'
 import "../Pages/ViewPage.css"
 
 export interface ReceivedProps {
@@ -16,7 +17,7 @@ export interface ReceivedProps {
   allTags: Tag[]
   onSubmit: (tag: Tag) => void
   onCancel: () => void
-  onDelete:( ) => void
+  onDelete: () => void
 }
 
 interface ComponentState { 
@@ -79,17 +80,17 @@ class AddEditTag extends React.Component<ReceivedProps, ComponentState> {
     }
   }
 
-  @OF.autobind
-  onTagNameChanged(text: string) {
-    this.setState({tagName: text})
+  @autobind
+  onTagNameChanged(text: string | undefined ) {
+    this.setState({tagName: text || ""})
   }
 
-  @OF.autobind 
+  @autobind 
   onParentChange(option: OF.IDropdownOption) {
     this.setState({ parentId: option.key as string })
   }
   
-  @OF.autobind
+  @autobind
   onClickSave(): void {
     if (isValid(this.state.tagName, 1, MAX_TAG_LENGTH)) {
       let tag: Tag = {
@@ -102,12 +103,12 @@ class AddEditTag extends React.Component<ReceivedProps, ComponentState> {
     }
   }
 
-  @OF.autobind
+  @autobind
   onClickCancel(): void {
     this.props.onCancel()
   }
 
-  @OF.autobind
+  @autobind
   onClickDelete(): void {
     this.props.onDelete()
   }

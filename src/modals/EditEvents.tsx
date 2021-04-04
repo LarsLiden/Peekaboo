@@ -8,6 +8,7 @@ import DetailEditText from '../Detail/DetailEditText'
 import { generateGUID } from '../Util'
 import { Person } from '../models/person'
 import { Event } from '../models/models'
+import { autobind } from 'core-decorators'
 
 export interface ReceivedProps {
   person: Person
@@ -55,19 +56,19 @@ class EditEvents extends React.Component<ReceivedProps, ComponentState> {
     }
   }
 
-  @OF.autobind
+  @autobind
   onClickDelete(event: Event) {
     this.setState({
       events: this.state.events.filter(k => k.eventId !== event.eventId)
     }) 
   }
 
-  @OF.autobind
+  @autobind
   onClickSave() {
     this.props.onSave(this.state.events)
   }
 
-  @OF.autobind
+  @autobind
   onClickAdd() {
     const newEvent: Event = {
       eventId: generateGUID(),
@@ -80,30 +81,30 @@ class EditEvents extends React.Component<ReceivedProps, ComponentState> {
     }) 
   }
 
-  @OF.autobind
-  onDescriptionChanged(description: string, event: Event) {
+  @autobind
+  onDescriptionChanged(description: string | undefined, event: Event) {
     let changed = this.state.events.find(e => e.eventId === event.eventId)
-    changed!.description = description
+    changed!.description = description || ""
   }
 
-  @OF.autobind
-  onLocationChanged(location: string, event: Event) {
+  @autobind
+  onLocationChanged(location: string | undefined, event: Event) {
     let changed = this.state.events.find(e => e.eventId === event.eventId)
-    changed!.location = location
+    changed!.location = location || ""
   }
 
-  @OF.autobind
+  @autobind
   onDateChanged(date: Date | null | undefined, event: Event) {
     let changed = this.state.events.find(e => e.eventId === event.eventId)
     changed!.date = date!.toJSON()
   }
 
-  @OF.autobind
+  @autobind
   onFormatDate(date: Date): string {
       return `${date.getMonth() + 1}/${date.getDate()}/${date.getFullYear()}`
   }
 
-  @OF.autobind
+  @autobind
   onRenderCell(event: Event, index: number, isScrolling: boolean): JSX.Element {
     return (
       <div className="SectionBorder">

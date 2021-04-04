@@ -7,6 +7,7 @@ import * as OF from 'office-ui-fabric-react'
 import { Tag } from '../models/models'
 import { Person } from '../models/person'
 import { sortTags, expandTagIds } from '../convert'
+import { autobind } from 'core-decorators'
 import AddEditTag from '../modals/AddEditTag'
 
 export interface ReceivedProps {
@@ -69,7 +70,7 @@ class TagEditorPage extends React.Component<ReceivedProps, ComponentState> {
     })   
   }
 
-  @OF.autobind
+  @autobind
   onClickEditTag(tag: Tag | null) {
     this.setState({
       isEditTagModalOpen: true,
@@ -77,7 +78,7 @@ class TagEditorPage extends React.Component<ReceivedProps, ComponentState> {
     })
   }
 
-  @OF.autobind
+  @autobind
   onSubmitEditTag(tag: Tag) {
     this.setState({
       isEditTagModalOpen: false,
@@ -86,7 +87,7 @@ class TagEditorPage extends React.Component<ReceivedProps, ComponentState> {
     this.props.onSaveTag(tag)
   }
 
-  @OF.autobind
+  @autobind
   onDeleteEditTag() {
     if (this.state.editingTag) {
       this.props.onDeleteTag(this.state.editingTag)
@@ -98,7 +99,7 @@ class TagEditorPage extends React.Component<ReceivedProps, ComponentState> {
     })
   }
 
-  @OF.autobind
+  @autobind
   onCancelEditTag() {
     this.setState({
       isEditTagModalOpen: false,
@@ -106,7 +107,7 @@ class TagEditorPage extends React.Component<ReceivedProps, ComponentState> {
     })
   }
 
-  @OF.autobind
+  @autobind
   onCheckboxChange(isChecked: boolean = false, tag: Tag) {
     let editTags = [...this.state.sortedTags]
     let curTag = editTags.find(t => t.tagId === tag.tagId)
@@ -120,7 +121,7 @@ class TagEditorPage extends React.Component<ReceivedProps, ComponentState> {
     }
   }
 
-  @OF.autobind
+  @autobind
   async onDeleteTag(tag: Tag) {
     await this.props.onDeleteTag(tag)
   }
@@ -145,7 +146,7 @@ class TagEditorPage extends React.Component<ReceivedProps, ComponentState> {
       return [this.spacer("└")]
     }
   }
-  @OF.autobind
+  @autobind
   onRenderCell(tag: Tag, index: number, isScrolling: boolean): JSX.Element {
     return (
       <div

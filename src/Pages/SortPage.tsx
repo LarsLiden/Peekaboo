@@ -6,6 +6,7 @@ import * as React from 'react';
 import * as OF from 'office-ui-fabric-react'
 import { Person } from '../models/person'
 import { Tag, Filter, SortType, SortDirection } from '../models/models'
+import { autobind } from 'core-decorators'
 
 export interface ReceivedProps {
   allPeople: Person[]
@@ -38,19 +39,19 @@ class SortPage extends React.Component<ReceivedProps, ComponentState> {
     })   
   }
 
-  @OF.autobind
+  @autobind
   onClickClose() {
     this.props.onClose(this.state.filter)
   }
 
-  @OF.autobind 
+  @autobind 
   onSortTypeChange(option: OF.IDropdownOption) {
     this.setState({ 
       filter: {...this.state.filter, sortType: SortType[option.text]}
     })
   }
 
-  @OF.autobind 
+  @autobind 
   onSortDirectionChange(option: OF.IDropdownOption) {
     this.setState({
        filter: {...this.state.filter, sortDirection: SortDirection[option.text]}

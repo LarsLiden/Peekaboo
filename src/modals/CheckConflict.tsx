@@ -7,6 +7,7 @@ import * as OF from 'office-ui-fabric-react'
 import * as Util from '../Util'
 import { Person } from '../models/person'
 import { User } from '../models/models'
+import { autobind } from 'core-decorators'
 
 export interface ReceivedProps {
   user: User,
@@ -36,7 +37,7 @@ class CheckConflict extends React.Component<ReceivedProps, ComponentState> {
     })
   }
 
-  @OF.autobind
+  @autobind
   public onNoConflict() {
     // Remove from conflict list
     let remainingConflicts = [...this.state.remainingConflicts]
