@@ -7,11 +7,11 @@ import '../fabric.css'
 import './Detail.css'
 
 export interface ReceivedProps {
-  title?: string
-  className?: string
-  text: string
-  isLong?: boolean
-  showEmpty?: boolean
+  title?: string;
+  className?: string;
+  text: string;
+  isLong?: boolean;
+  showEmpty?: boolean;
 }
 
 class DetailText extends React.Component<ReceivedProps, {}> {

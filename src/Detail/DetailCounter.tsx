@@ -7,8 +7,8 @@ import '../fabric.css'
 import "./DetailCounter.css"
 
 export interface ReceivedProps {
-  current: number
-  total: number
+  current: number;
+  total: number;
 }
 
 class DetailCounter extends React.Component<ReceivedProps, {}> {

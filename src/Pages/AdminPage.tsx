@@ -10,21 +10,21 @@ import ConfirmModal from '../modals/Confirm'
 import Client from '../service/client'
 
 export interface ReceivedProps {
-  user: User
-  users: User[]
-  filterSet: FilterSet
-  personList: string[]
-  onDeleteUser: (user: User) => {}
-  onExportToUser: (user: User) => {}
-  onImport: () => {}
-  onClose: () => {}
-  onLogin: (user: User) => {} 
+  user: User;
+  users: User[];
+  filterSet: FilterSet;
+  personList: string[];
+  onDeleteUser: (user: User) => {};
+  onExportToUser: (user: User) => {};
+  onImport: () => {};
+  onClose: () => {};
+  onLogin: (user: User) => {}; 
 }
 
 interface ComponentState {
-  isConfirmDeleteUser: User | null
-  isConfirmExportToUser: User | null
-  isConfirmImportOpen: boolean
+  isConfirmDeleteUser: User | null;
+  isConfirmExportToUser: User | null;
+  isConfirmImportOpen: boolean;
 }
 
 class AdminPage extends React.Component<ReceivedProps, ComponentState> {

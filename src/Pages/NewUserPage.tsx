@@ -67,7 +67,7 @@ class NewUserPage extends React.Component<ReceivedProps, ComponentState> {
         </div>
       </div>
     )
-  }
+  };
 }
 
 export default NewUserPage;

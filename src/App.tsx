@@ -47,12 +47,12 @@ export enum Page {
 }
 
 interface ComponentState {
-  user: User | null
+  user: User | null;
   // If user included in db, this is user's Id
-  userPersonId: string | null
-  users: User[]
-  allPeople: Person[]
-  allTags: Tag[]
+  userPersonId: string | null;
+  users: User[];
+  allPeople: Person[];
+  allTags: Tag[];
   loadletter: string,
   loadlettercount: number
   loadpeoplecount: number

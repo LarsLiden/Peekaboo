@@ -9,11 +9,11 @@ import '../fabric.css'
 import './Detail.css'
 
 export interface ReceivedProps {
-  tagIds: string[]
-  allTags: Tag[]
-  filter: Filter
-  isLong?: boolean
-  inEdit?: boolean
+  tagIds: string[];
+  allTags: Tag[];
+  filter: Filter;
+  isLong?: boolean;
+  inEdit?: boolean;
 }
 
 class DetailTags extends React.Component<ReceivedProps, {}> {

@@ -9,16 +9,16 @@ import { Tag, Filter, SortType, SortDirection } from '../models/models'
 import { autobind } from 'core-decorators'
 
 export interface ReceivedProps {
-  allPeople: Person[]
-  allTags: Tag[]
-  filter: Filter
-  onClose: (filter: Filter) => void
+  allPeople: Person[];
+  allTags: Tag[];
+  filter: Filter;
+  onClose: (filter: Filter) => void;
 }
 
 interface ComponentState {
-  sortTypes: { key: string; text: any; }[]
-  sortDirections: { key: string; text: any; }[]
-  filter: Filter
+  sortTypes: { key: string; text: any; }[];
+  sortDirections: { key: string; text: any; }[];
+  filter: Filter;
 }
 
 class SortPage extends React.Component<ReceivedProps, ComponentState> {

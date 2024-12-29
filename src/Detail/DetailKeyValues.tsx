@@ -10,7 +10,7 @@ import '../fabric.css'
 
 export interface ReceivedProps {
   keyValues: KeyValue[]
-  inEdit?: boolean
+  inEdit?: boolean;
 }
 
 const columns: OF.IColumn[] = [

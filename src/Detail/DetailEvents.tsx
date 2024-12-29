@@ -9,8 +9,8 @@ import "./DetailEvents.css"
 import '../fabric.css'
 
 export interface ReceivedProps {
-  events: Event[]
-  inEdit?: boolean
+  events: Event[];
+  inEdit?: boolean;
 }
 
 class DetailEvents extends React.Component<ReceivedProps, {}> {

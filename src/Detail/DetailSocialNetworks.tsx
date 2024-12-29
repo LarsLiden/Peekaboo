@@ -14,9 +14,9 @@ import "./DetailEvents.css"
 import '../fabric.css'
 
 export interface ReceivedProps {
-  person: Person
-  inEdit?: boolean
-  onSetPage: (page: Page, backpage: Page | null, subPage: SubPage | null) => void
+  person: Person;
+  inEdit?: boolean;
+  onSetPage: (page: Page, backpage: Page | null, subPage: SubPage | null) => void;
 }
 
 interface ComponentState {
