@@ -9,9 +9,9 @@ import Client from '../service/client'
 import { HEAD_IMAGE } from '../Util'
 import { User } from '../models/models'
 import { autobind } from 'core-decorators'
-import GoogleLogin from 'react-google-login';
+import { GoogleOAuthProvider, GoogleLogin } from '@react-oauth/google';
 
-const VERSION = "0.26"
+const VERSION = "0.27"
 
 export interface ReceivedProps {
   onLoginComplete: (user: User) => void
@@ -34,15 +34,14 @@ class LoginPage extends React.Component<ReceivedProps, ComponentState> {
   }
 
   @autobind
-  private async loginSuccess(googleUser: any) {
-
+  private async loginSuccess(response: any) {
     this.setState({loginDisable: true})
     try {
-      let profile = googleUser.getBasicProfile();
+      const profile = response.profileObj;
       let user: User = {
-        googleId: profile.getId(),
-        name: profile.getName(),
-        email: profile.getEmail()
+        googleId: profile.googleId,
+        name: profile.name,
+        email: profile.email
       }
 
       localStorage.setItem('user', JSON.stringify(user))
@@ -87,13 +86,14 @@ class LoginPage extends React.Component<ReceivedProps, ComponentState> {
         }}
       >
       {!this.state.loginDisable &&
-        <GoogleLogin
-            className="LoginButton"
-            clientId="757831696321-kdog1rehu946i1ch7rb3pvmf5r3rr2r4.apps.googleusercontent.com"
-            buttonText="Have We Met?"
+        <GoogleOAuthProvider clientId="757831696321-kdog1rehu946i1ch7rb3pvmf5r3rr2r4.apps.googleusercontent.com">
+          <GoogleLogin
             onSuccess={this.loginSuccess}
-            onFailure={()=>{}}
-        />
+            onFailure={() => {}}
+            buttonText="Have We Met?"
+            className="LoginButton"
+          />
+        </GoogleOAuthProvider>
       }
       <div className="LoginVersion">{VERSION}</div>
       </div>
