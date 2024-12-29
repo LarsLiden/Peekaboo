@@ -10,10 +10,10 @@ import * as OF from 'office-ui-fabric-react'
 import '../fabric.css'
 
 export interface ReceivedProps {
-  relationships: Relationship[]
-  allPeople: Person[]
-  inEdit?: boolean
-  onSelectPerson: (personId: string) => void
+  relationships: Relationship[];
+  allPeople: Person[];
+  inEdit?: boolean;
+  onSelectPerson: (personId: string) => void;
 }
 
 class DetailRelationships extends React.Component<ReceivedProps, {}> {

@@ -13,17 +13,17 @@ import { autobind } from 'core-decorators'
 import "../Pages/ViewPage.css"
 
 export interface ReceivedProps {
-  tag: Tag | null
-  allTags: Tag[]
-  onSubmit: (tag: Tag) => void
-  onCancel: () => void
-  onDelete: () => void
+  tag: Tag | null;
+  allTags: Tag[];
+  onSubmit: (tag: Tag) => void;
+  onCancel: () => void;
+  onDelete: () => void;
 }
 
 interface ComponentState { 
-  tagName: string
-  parentId: string | null
-  parents: { key: string; text: any; }[]
+  tagName: string;
+  parentId: string | null;
+  parents: { key: string; text: any; }[];
 }
 
 const NONE_KEY = "NONE"

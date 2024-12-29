@@ -9,15 +9,15 @@ import '../fabric.css'
 import './Detail.css'
 
 export interface ReceivedProps {
-  onPrev: () => void
-  onNext: () => void
-  isVertical: boolean
-  currentIndex: number
-  total: number
+  onPrev: () => void;
+  onNext: () => void;
+  isVertical: boolean;
+  currentIndex: number;
+  total: number;
 }
 
 interface ComponentState { 
-  inEditMode: boolean
+  inEditMode: boolean;
 }
 
 class DetailIndexer extends React.Component<ReceivedProps, ComponentState> {

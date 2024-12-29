@@ -9,8 +9,8 @@ import 'react-image-crop/dist/ReactCrop.css'
 const timerInterval = 60
 
 export interface ReceivedProps {
-  letter: string
-  count: number
+  letter: string;
+  count: number;
 }
 
 interface ComponentState { 

@@ -14,12 +14,12 @@ import { MAX_TIME } from '../models/const'
 import { autobind } from 'core-decorators'
 
 export interface ReceivedProps {
-  user: User
-  quizSet: QuizSet | null
-  hidden: boolean
-  allPeople: Person[]
-  onQuizDone: (testResults: TestResult[]) => Promise<void>
-  onViewDetail: (quizperson: QuizPerson) => void
+  user: User;
+  quizSet: QuizSet | null;
+  hidden: boolean;
+  allPeople: Person[];
+  onQuizDone: (testResults: TestResult[]) => Promise<void>;
+  onViewDetail: (quizperson: QuizPerson) => void;
 }
 
 const timerInterval = 100

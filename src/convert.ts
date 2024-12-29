@@ -309,7 +309,7 @@ export function quizSet(people: Person[], allTags: Tag[], filter: Filter, userPe
         // Caculate the frequency for each
         else {
             let newFrequency = Math.ceil(1 + (BIAS * ((maxAverageTime / minAverageTime) - 1)))
-                    	
+                     
             quizPeople.forEach(person => {
                 // If a new person, use largest time
                 if (person.performance.numPresentations === 0) {

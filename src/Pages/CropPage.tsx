@@ -10,9 +10,9 @@ import ReactCrop from 'react-image-crop'
 import 'react-image-crop/dist/ReactCrop.css'
 
 export interface ReceivedProps {
-  originalImageURL: string
-  onSave: (imageData: string) => void
-  onClose: () => void
+  originalImageURL: string;
+  onSave: (imageData: string) => void;
+  onClose: () => void;
 }
 
 interface ComponentState {

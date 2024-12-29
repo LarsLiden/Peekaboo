@@ -27,31 +27,31 @@ import { SubPage } from './EditPage';
 const SWIPE_THRESHOLD = 50
 
 export interface ReceivedProps {
-  filterSet: FilterSet | null
-  person: Person
-  user: User
-  allPeople: Person[]
-  allTags: Tag[]
-  filter: Filter
-  personList: string[]
-  onSetPage: (page: Page, backpage: Page | null, subPage: SubPage | null) => void
-  onClickQuiz: () => void
-  onContinueQuiz: () => void
-  onEdit: () => void
-  onClickTagFilter: () => void
-  onClickSort: () => void
-  onClickAdmin: () => void
-  onNewPerson: () => void
-  onNextPerson: () => void
-  onPrevPerson: () => void
-  onAddToPersonList: () => void
-  onSelectPerson: (personId: string) => void
+  filterSet: FilterSet | null;
+  person: Person;
+  user: User;
+  allPeople: Person[];
+  allTags: Tag[];
+  filter: Filter;
+  personList: string[];
+  onSetPage: (page: Page, backpage: Page | null, subPage: SubPage | null) => void;
+  onClickQuiz: () => void;
+  onContinueQuiz: () => void;
+  onEdit: () => void;
+  onClickTagFilter: () => void;
+  onClickSort: () => void;
+  onClickAdmin: () => void;
+  onNewPerson: () => void;
+  onNextPerson: () => void;
+  onPrevPerson: () => void;
+  onAddToPersonList: () => void;
+  onSelectPerson: (personId: string) => void;
 }
 
 interface ComponentState { 
-  photoIndex: number
-  xMove: number
-  yMove: number
+  photoIndex: number;
+  xMove: number;
+  yMove: number;
 }
 
 class ViewPage extends React.Component<ReceivedProps, ComponentState> {

@@ -10,18 +10,18 @@ import { Tag, Filter, PerfType } from '../models/models'
 import { autobind } from 'core-decorators'
 
 export interface ReceivedProps {
-  allPeople: Person[]
-  allTags: Tag[]
-  filter: Filter
-  onClose: (filter: Filter) => void
-  onDeleteTag: (tag: Tag) => void
-  onEditTags: () => void
+  allPeople: Person[];
+  allTags: Tag[];
+  filter: Filter;
+  onClose: (filter: Filter) => void;
+  onDeleteTag: (tag: Tag) => void;
+  onEditTags: () => void;
 }
 
 interface ComponentState {
-  filteredTags: Tag[]
-  filteredPeople: Person[]
-  filter: Filter
+  filteredTags: Tag[];
+  filteredPeople: Person[];
+  filter: Filter;
 }
 
 class FilterPage extends React.Component<ReceivedProps, ComponentState> {

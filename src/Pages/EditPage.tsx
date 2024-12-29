@@ -31,23 +31,23 @@ import { FilePicker } from 'react-file-picker'
 import "./ViewPage.css"
 
 export interface ReceivedProps {
-  person: Person
-  user: User
-  filter: Filter
-  allTags: Tag[]
-  allPeople: Person[]
-  subpage: string | null
-  onSetSubpage: (subpage: string | null) => void
-  onSavePhoto: (person: Person, photoData: string) => void
-  onSavePerson: (person: Person) => void
-  onDeletePhoto: (person: Person, photoName: string) => void
-  onDeletePerson: (person: Person) => void
-  onArchivePerson: (person: Person) => void
-  onClose: (person?: Person) => void
-  onSelectPerson: (personId: string) => void
-  onSaveTag: (tag: Tag) => void
-  onDeleteTag: (tag: Tag) => void
-  onEditTags: () => void
+  person: Person;
+  user: User;
+  filter: Filter;
+  allTags: Tag[];
+  allPeople: Person[];
+  subpage: string | null;
+  onSetSubpage: (subpage: string | null) => void;
+  onSavePhoto: (person: Person, photoData: string) => void;
+  onSavePerson: (person: Person) => void;
+  onDeletePhoto: (person: Person, photoName: string) => void;
+  onDeletePerson: (person: Person) => void;
+  onArchivePerson: (person: Person) => void;
+  onClose: (person?: Person) => void;
+  onSelectPerson: (personId: string) => void;
+  onSaveTag: (tag: Tag) => void;
+  onDeleteTag: (tag: Tag) => void;
+  onEditTags: () => void;
 }
 
 export enum SubPage {

@@ -9,15 +9,15 @@ import * as OF from 'office-ui-fabric-react'
 import { autobind } from 'core-decorators'
 
 export interface ReceivedProps {
-  label: string
-  value: string
-  rows?: number
-  multiline?: boolean
-  autoFocus?: boolean
-  maxLength?: number
-  minLength?: number
-  onEnter?: (text: string) => void
-  onChanged: (text: string | undefined) => void
+  label: string;
+  value: string;
+  rows?: number;
+  multiline?: boolean;
+  autoFocus?: boolean;
+  maxLength?: number;
+  minLength?: number;
+  onEnter?: (text: string) => void;
+  onChanged: (text: string | undefined) => void;
 }
 
 class DetailEditText extends React.Component<ReceivedProps, {}> {

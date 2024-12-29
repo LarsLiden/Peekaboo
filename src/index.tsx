@@ -46,6 +46,6 @@ ReactDOM.render(
   <Fabric>
     <App />
   </Fabric>,
-  document.getElementById('root') as HTMLElement
+  document.getElementById('root') as HTMLElement;
 );
 registerServiceWorker();

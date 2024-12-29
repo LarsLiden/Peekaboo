@@ -18,9 +18,9 @@ export interface ReceivedProps {
 }
 
 interface ComponentState {
-  waitingCalloutText: string | null
-  userLoginValue: string
-  loginDisable: boolean
+  waitingCalloutText: string | null;
+  userLoginValue: string;
+  loginDisable: boolean;
 }
 
 class LoginPage extends React.Component<ReceivedProps, ComponentState> {
