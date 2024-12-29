@@ -9,7 +9,7 @@
     "eject": "react-scripts-ts eject"
   },
   "dependencies": {
-    "axios": "^0.21.2",
+    "axios": "^0.28.0",
     "core-decorators": "^0.20.0",
     "office-ui-fabric-react": "^7.165.2",
     "react": "^16.14.0",
