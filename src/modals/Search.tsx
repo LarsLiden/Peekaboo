@@ -10,21 +10,21 @@ import { setStatePromise } from '../Util'
 import { autobind } from 'core-decorators'
 
 export interface ReceivedProps {
-  allPeople: Person[]
-  allTags: Tag[]
-  exclude?: Person
-  onSelect: (person: Person) => void
-  onCancel: () => void
-  onClickTagFilter?: () => void
-  onNewPerson?: () => void
-  onClickQuiz?: () => void
-  onClickSearchFilter: ((searchTerm: string) => void) | null
+  allPeople: Person[];
+  allTags: Tag[];
+  exclude?: Person;
+  onSelect: (person: Person) => void;
+  onCancel: () => void;
+  onClickTagFilter?: () => void;
+  onNewPerson?: () => void;
+  onClickQuiz?: () => void;
+  onClickSearchFilter: ((searchTerm: string) => void) | null;
 }
 
 interface ComponentState {
-  searchText: string
-  byNameOnly: boolean
-  results: Person[]
+  searchText: string;
+  byNameOnly: boolean;
+  results: Person[];
 }
 
 class Search extends React.Component<ReceivedProps, ComponentState> {

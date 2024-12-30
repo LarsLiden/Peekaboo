@@ -11,21 +11,21 @@ import DetailEditText from '../Detail/DetailEditText'
 import "../Pages/ViewPage.css"
 
 export interface ReceivedProps {
-  person: Person
-  allPeople: Person[]
-  onSave: (person: Person) => void
-  onCancel: () => void
+  person: Person;
+  allPeople: Person[];
+  onSave: (person: Person) => void;
+  onCancel: () => void;
 }
 
 interface ComponentState { 
-  firstName: string
-  firstPhonetic: string
-  lastName: string
-  lastPhonetic: string
-  nickName: string
-  maidenName: string
-  alternateName: string
-  description: string
+  firstName: string;
+  firstPhonetic: string;
+  lastName: string;
+  lastPhonetic: string;
+  nickName: string;
+  maidenName: string;
+  alternateName: string;
+  description: string;
 }
 
 class EditBasicInfo extends React.Component<ReceivedProps, ComponentState> {

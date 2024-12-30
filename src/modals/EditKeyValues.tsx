@@ -11,9 +11,9 @@ import { generateGUID, isValid, MAX_KEY_LENGTH, MAX_VALUE_LENGTH } from '../Util
 import { autobind } from 'core-decorators'
 
 export interface ReceivedProps {
-  person: Person
-  onSave: (keyValues: KeyValue[]) => void
-  onCancel: () => void
+  person: Person;
+  onSave: (keyValues: KeyValue[]) => void;
+  onCancel: () => void;
 }
 
 interface ComponentState {

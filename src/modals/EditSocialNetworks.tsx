@@ -11,14 +11,14 @@ import { generateGUID } from '../Util'
 import { autobind } from 'core-decorators'
 
 export interface ReceivedProps {
-  person: Person
-  onSave: (socialNets: SocialNet[]) => void
-  onCancel: () => void
+  person: Person;
+  onSave: (socialNets: SocialNet[]) => void;
+  onCancel: () => void;
 }
 
 interface ComponentState {
-  socialNets: SocialNet[]
-  types: { key: string; text: any; }[]
+  socialNets: SocialNet[];
+  types: { key: string; text: any; }[];
 }
 
 class EditSocialNetworks extends React.Component<ReceivedProps, ComponentState> {

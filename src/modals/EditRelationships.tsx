@@ -12,17 +12,17 @@ import { Relationship, RType, RelationshipType } from '../models/relationship'
 import { autobind } from 'core-decorators'
 
 export interface ReceivedProps {
-  allPeople: Person[]
-  allTags: Tag[]
-  person: Person
-  onSave: (relationships: Relationship[]) => void
-  onCancel: () => void
+  allPeople: Person[];
+  allTags: Tag[];
+  person: Person;
+  onSave: (relationships: Relationship[]) => void;
+  onCancel: () => void;
 }
 
 interface ComponentState {
-  relationships: Relationship[]
-  types: { key: string; text: any; }[]
-  searchRelationship: Relationship | null
+  relationships: Relationship[];
+  types: { key: string; text: any; }[];
+  searchRelationship: Relationship | null;
 }
 
 function getTypes(): { key: string; text: any; }[] {
