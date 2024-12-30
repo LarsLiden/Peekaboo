@@ -19,7 +19,7 @@
     "react-file-picker": "0.0.5",
     "react-google-login": "^5.2.2",
     "react-image-crop": "^6.0.18",
-    "react-scripts": "4.0.3"
+    "react-scripts": "5.0.1"
   },
   "devDependencies": {
     "@types/blob-to-buffer": "^1.2.0",
