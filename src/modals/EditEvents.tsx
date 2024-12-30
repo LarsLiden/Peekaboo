@@ -11,9 +11,9 @@ import { Event } from '../models/models'
 import { autobind } from 'core-decorators'
 
 export interface ReceivedProps {
-  person: Person
-  onSave: (events: Event[]) => void
-  onCancel: () => void
+  person: Person;
+  onSave: (events: Event[]) => void;
+  onCancel: () => void;
 }
 
 const DayPickerStrings: OF.IDatePickerStrings = {

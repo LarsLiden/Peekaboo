@@ -6,8 +6,8 @@ import * as React from 'react';
 import '../fabric.css'
 
 export interface ReceivedProps {
-  text: string
-  maxWidth: number
+  text: string;
+  maxWidth: number;
 }
 
 const fontWidth = 11
@@ -27,10 +27,10 @@ class ResizeText extends React.Component<ReceivedProps, {}> {
         overflowWrap: 'break-word',
         wordBreak: 'break-word',
         marginBottom: '18px'
-      }
+      };
     }
     else {
-      return {fontSize: `${fontSize}px`}
+      return {fontSize: `${fontSize}px`};
     }
   }
 
@@ -40,7 +40,7 @@ class ResizeText extends React.Component<ReceivedProps, {}> {
       <div className="DetailName" style={this.getStyle()}>
         {this.props.text}
       </div>
-    )
+    );
   }
 }
 

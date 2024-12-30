@@ -10,19 +10,19 @@ import { expandTagIds } from '../convert'
 import { autobind } from 'core-decorators'
 
 export interface ReceivedProps {
-  allTags: Tag[]
-  tagIds: string[]
-  onSaveTag: (tag: Tag) => void
-  onSavePersonTags: (tagNames: string[]) => void
-  onDeleteTag: (tag: Tag) => void
-  onEditTags: () => void
-  onCancel: () => void
+  allTags: Tag[];
+  tagIds: string[];
+  onSaveTag: (tag: Tag) => void;
+  onSavePersonTags: (tagNames: string[]) => void;
+  onDeleteTag: (tag: Tag) => void;
+  onEditTags: () => void;
+  onCancel: () => void;
 }
 
 interface ComponentState {
-  personTags: Tag[]
-  isEditTagModalOpen: boolean
-  editingTag: Tag | null
+  personTags: Tag[];
+  isEditTagModalOpen: boolean;
+  editingTag: Tag | null;
 }
 
 class EditTags extends React.Component<ReceivedProps, ComponentState> {

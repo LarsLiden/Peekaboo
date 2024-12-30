@@ -3,9 +3,9 @@
  * Licensed under the MIT License.
  */
 export interface Relationship {
-    relationshipId: string
-    type: RelationshipType
-    personId: string
+    relationshipId: string,
+    type: RelationshipType,
+    personId: string,
     name?: string
 }
 

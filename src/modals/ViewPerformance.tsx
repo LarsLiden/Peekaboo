@@ -11,8 +11,8 @@ import "../Pages/ViewPage.css"
 import { MAX_TIME } from '../models/const';
 
 export interface ReceivedProps {
-  performance: Performance
-  onClose: () => void
+  performance: Performance;
+  onClose: () => void;
 }
 
 class ViewPerformance extends React.Component<ReceivedProps, {}> {

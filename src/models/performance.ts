@@ -5,16 +5,16 @@
 import { MAX_TIME } from './const'
 
 export class Performance {
-    public bestTime = MAX_TIME
-    public avgTime = MAX_TIME
-    public worstTime = 0
-    public numPresentations = 0
-    public frequency: number = 0
-    public rank = 0
-    public lastTested = 0 
-    public familiarity = 0
-    public frequencyOffsetStart = 0
-    public frequencyOffsetEnd = 0
+    public bestTime = MAX_TIME;
+    public avgTime = MAX_TIME;
+    public worstTime = 0;
+    public numPresentations = 0;
+    public frequency: number = 0;
+    public rank = 0;
+    public lastTested = 0;
+    public familiarity = 0;
+    public frequencyOffsetStart = 0;
+    public frequencyOffsetEnd = 0;
 
     public constructor(init?: Partial<Performance>) {
         Object.assign(this, init)

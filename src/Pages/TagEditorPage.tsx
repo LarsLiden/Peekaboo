@@ -11,11 +11,11 @@ import { autobind } from 'core-decorators'
 import AddEditTag from '../modals/AddEditTag'
 
 export interface ReceivedProps {
-  allTags: Tag[]
-  allPeople: Person[]
-  onSaveTag: (tag: Tag) => void
-  onDeleteTag: (tag: Tag) => void
-  onClose: () => void
+  allTags: Tag[];
+  allPeople: Person[];
+  onSaveTag: (tag: Tag) => void;
+  onDeleteTag: (tag: Tag) => void;
+  onClose: () => void;
 }
 
 interface ComponentState {

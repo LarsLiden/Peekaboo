@@ -15,54 +15,54 @@ export enum PerfType {
 }
 
 export interface User {
-    name: string,
-    googleId: string,
-    email: string,
-    photoBlobPrefix?: string,
-    hwmid?: string
-    isAdmin?: boolean
-    isNew?: boolean
-    isSpoof?: boolean
-    numPeople?: number
-    numPhotos?: number,
-    numTestResults?: number
+    name: string;
+    googleId: string;
+    email: string;
+    photoBlobPrefix?: string;
+    hwmid?: string;
+    isAdmin?: boolean;
+    isNew?: boolean;
+    isSpoof?: boolean;
+    numPeople?: number;
+    numPhotos?: number;
+    numTestResults?: number;
 }
 
 export interface QuizSet {
-    quizPeople: QuizPerson[]
-    frequencyTotal: number
+    quizPeople: QuizPerson[];
+    frequencyTotal: number;
 }
 
 export interface QuizPerson {
-    personId: string
-    photoBlobnames: string[]
-    expandedName: string
-    phoneticName: string
-    description: string
-    tags: string
-    topRelationships: Relationship[]
-    performance: Performance
+    personId: string;
+    photoBlobnames: string[];
+    expandedName: string;
+    phoneticName: string;
+    description: string;
+    tags: string;
+    topRelationships: Relationship[];
+    performance: Performance;
 }
 
 export interface FilterSet {
-    people: Person[]
-    selectedIndex: number
+    people: Person[];
+    selectedIndex: number;
 }
 
 export interface Tag {
-    tagId?: string // LARS
-    name: string
-    parentId: string | null
-    count: number
+    tagId?: string; // LARS
+    name: string;
+    parentId: string | null;
+    count: number;
 }
 
 export interface Filter {
-    perfType: PerfType
-    requiredTagIds: string[]
-    blockedTagIds: string[]
-    searchTerm: string | null
-    sortType: SortType
-    sortDirection: SortDirection
+    perfType: PerfType;
+    requiredTagIds: string[];
+    blockedTagIds: string[];
+    searchTerm: string | null;
+    sortType: SortType;
+    sortDirection: SortDirection;
 }
 
 export enum SortType {
@@ -77,16 +77,16 @@ export enum SortDirection {
 }
 
 export interface Event {
-    eventId: string
-    date?: string
-    description: string
-    location: string
+    eventId: string;
+    date?: string;
+    description: string;
+    location: string;
 }
 
 export interface KeyValue {
-    keyValueId: string
-    key: string
-    value: string
+    keyValueId: string;
+    key: string;
+    value: string;
 }
 
 export enum SocialNetType {
@@ -118,8 +118,8 @@ export enum SocialNetSearch {
 }
 
 export interface SocialNet {
-    socialNetId: string
-    URL: string
-    profileID: string
-    netType: SocialNetType
+    socialNetId: string;
+    URL: string;
+    profileID: string;
+    netType: SocialNetType;
 }

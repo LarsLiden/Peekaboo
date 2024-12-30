@@ -7,31 +7,31 @@ import { Relationship } from "./relationship"
 import { PerfType, Event, KeyValue, SocialNet, Tag } from './models'
 
 export class Person {
-    photoFilenames: string[] = []
-    temptags: string[] = []    // LARS REMOVE
-    tagIds: string[] = []
-    keyValues: KeyValue[] = []
-    photoPerformance: Performance = new Performance()
-    namePerformance: Performance = new Performance()
-    descPerformance: Performance = new Performance()
-    socialNets: SocialNet[] = []
-    events: Event[]  = [] 
-    relationships: Relationship[] = []
-    nickName: string = ""
-    maidenName: string = ""
-    isArchived: boolean = false
-    firstName: string = ""
-    firstPhonetic: string = ""
-    lastName: string = ""
-    lastPhonetic: string = ""
-    fullMaidenName: string = ""
-    fullNickName: string = ""
-    alternateName: string = ""
-    fullAternateName: string = ""
-    personId: string | null = null
-    description: string = ""
-    creationDate: number | string = ""
-    searchCache?: string | null
+    photoFilenames: string[] = [];
+    temptags: string[] = []  ;  // LARS REMOVE
+    tagIds: string[] = [];
+    keyValues: KeyValue[] = [];
+    photoPerformance: Performance = new Performance();
+    namePerformance: Performance = new Performance();
+    descPerformance: Performance = new Performance();
+    socialNets: SocialNet[] = [];
+    events: Event[]  = [] ;
+    relationships: Relationship[] = [];
+    nickName: string = "";
+    maidenName: string = "";
+    isArchived: boolean = false;
+    firstName: string = "";
+    firstPhonetic: string = "";
+    lastName: string = "";
+    lastPhonetic: string = "";
+    fullMaidenName: string = "";
+    fullNickName: string = "";
+    alternateName: string = "";
+    fullAternateName: string = "";
+    personId: string | null = null;
+    description: string = "";
+    creationDate: number | string = "";
+    searchCache?: string | null;
     
     public constructor(init?: Partial<Person>) {
         Object.assign(this, init)

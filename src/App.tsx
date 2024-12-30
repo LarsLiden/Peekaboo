@@ -53,22 +53,22 @@ interface ComponentState {
   users: User[];
   allPeople: Person[];
   allTags: Tag[];
-  loadletter: string,
-  loadlettercount: number
-  loadpeoplecount: number
-  page: Page
-  subpage: string | null
-  backpage: Page | null
-  pageHashChanged: boolean
-  quizSet: QuizSet | null
-  filterSet: FilterSet
-  filteredTags: Tag[]
-  filteredPeopleCount: number
-  selectedPerson: Person | null
-  personList: string[]
-  filter: Filter
-  error: string | null
-  installEvent: BeforeInstallPromptEvent | null
+  loadletter: string;
+  loadlettercount: number;
+  loadpeoplecount: number;
+  page: Page;
+  subpage: string | null;
+  backpage: Page | null;
+  pageHashChanged: boolean;
+  quizSet: QuizSet | null;
+  filterSet: FilterSet;
+  filteredTags: Tag[];
+  filteredPeopleCount: number;
+  selectedPerson: Person | null;
+  personList: string[];
+  filter: Filter;
+  error: string | null;
+  installEvent: BeforeInstallPromptEvent | null;
 }
 
 class App extends React.Component<{}, ComponentState> {

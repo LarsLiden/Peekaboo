@@ -6,11 +6,11 @@ import * as React from 'react';
 import * as OF from 'office-ui-fabric-react'
 
 export interface ReceivedProps {
-  title: string
-  subtitle?: string
-  image?: string
-  onConfirm?: () => void,
-  onCancel?: () => void
+  title: string;
+  subtitle?: string;
+  image?: string;
+  onConfirm?: () => void;
+  onCancel?: () => void;
 }
 
 class Confirm extends React.Component<ReceivedProps, {}> {

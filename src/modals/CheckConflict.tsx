@@ -10,15 +10,15 @@ import { User } from '../models/models'
 import { autobind } from 'core-decorators'
 
 export interface ReceivedProps {
-  user: User,
-  conflicts: Person[]
-  onConflict: (person: Person) => void,
-  onNoConflict: () => void
+  user: User;
+  conflicts: Person[];
+  onConflict: (person: Person) => void;
+  onNoConflict: () => void;
 }
 
 interface ComponentState { 
-  curConflict: Person | null
-  remainingConflicts: Person[]
+  curConflict: Person | null;
+  remainingConflicts: Person[];
 }
 
 class CheckConflict extends React.Component<ReceivedProps, ComponentState> {
