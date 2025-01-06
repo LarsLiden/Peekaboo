@@ -44,7 +44,7 @@ class CardPage extends React.Component<ReceivedProps, ComponentState> {
   componentDidUpdate() {
     // Check the quizPerson is still in the set (may have been archived)
     if (this.props.quizSet && this.state.quizPeople) {
-      //LARSif (!this.props.quizSet.quizPeople.find(q => q.personId === this.state.quizPeople!.personId)) {
+      //LARSif (!this.props.quizSet.quizPeople.find(q => q.personId === this.state.quizPeople.personId)) {
        //LARS this.selectNextPerson()
       //LARS}
     }

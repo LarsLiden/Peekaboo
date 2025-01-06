@@ -15,7 +15,7 @@ export interface ReceivedProps {
 
 class Confirm extends React.Component<ReceivedProps, {}> {
 
-  public render() {
+  render() {
     return (
       <div className="ModalPage">
         <div className="ConfirmTitle">

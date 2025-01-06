@@ -16,7 +16,7 @@ export function toQuizPerson(person: Person, perfType: PerfType, userPersonId: s
         }).join(", ")
 
     return {
-        personId: person.personId!,
+        personId: person.personId ?? "",
         expandedName: person.expandedName(),
         phoneticName: person.phoneticName(),
         description: person.description,
@@ -31,7 +31,7 @@ export function toQuizPerson(person: Person, perfType: PerfType, userPersonId: s
 export function topRelationships(person: Person, userPersonId: string | null): Relationship[] {
 
     // Next get by priority
-    let relationships = person.relationships.sort((a, b) => {
+    let relationships = person.relationships.sort((a: Relationship, b: Relationship) => {
         // Relationships to user are most important
         const aVal = a.personId === userPersonId ? 0 : a.type.priority
         const bVal = b.personId === userPersonId ? 0 : b.type.priority
@@ -48,7 +48,11 @@ export function expandTagIds(tagIds: string[], allTags: Tag[]): string[] {
     let todoIds = [...tagIds]
     while (todoIds.length > 0) {
         let tagId = todoIds.pop()
-        expandedIds.push(tagId!)
+        if (!tagId) {
+            console.log("Missing Tag")
+            continue
+        }
+        expandedIds.push(tagId)
         let tag = allTags.find(t => t.tagId === tagId)
         if (!tag) {
             console.log("Missing Tag")
@@ -149,9 +153,9 @@ export function getFilterSet(people: Person[], allTags: Tag[], filter: Filter, s
 export function extractBlockedTags(people: Person[], allTags: Tag[], blockedTags: string[]): Tag[] {
 
     let tags: Tag[] = []
-    people.map(p => {
-        let expandedIds = expandTagIds(p.tagIds, allTags)
-        expandedIds.map(tagId => {
+    people.forEach(p => {
+        let expandedIds = expandTagIds(p.tagIds, allTags);
+        expandedIds.forEach(tagId => {
             const isBlocked = blockedTags.find(bid => bid === tagId)
             if (isBlocked) {
                 const tag = tags.find(t => t.tagId === tagId)
@@ -168,8 +172,8 @@ export function extractBlockedTags(people: Person[], allTags: Tag[], blockedTags
                     }
                 } 
             }
-        }) 
-    })
+        });
+    });
     return tags
 }
 
@@ -204,9 +208,9 @@ export function extractTags(people: Person[], allTags: Tag[], usedOnly: boolean)
         ? []
         : allTags.map(t => { return {...t, count: 0 }})
 
-    people.map(p => {
+    people.forEach(p => {
         let expandedIds = expandTagIds(p.tagIds, allTags)
-        expandedIds.map(tagId => {
+        expandedIds.forEach(tagId => {
             const tag = tags.find(t => t.tagId === tagId)
             if (tag) {
                 tag.count = tag.count + 1

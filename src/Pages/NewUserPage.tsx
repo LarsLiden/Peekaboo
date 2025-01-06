@@ -5,6 +5,7 @@
 import * as React from 'react';
 import * as OF from 'office-ui-fabric-react'
 import { HEAD_IMAGE } from '../Util'
+// eslint-disable-next-line 
 import { autobind } from 'core-decorators'
 
 export interface ReceivedProps {
@@ -27,7 +28,7 @@ class NewUserPage extends React.Component<ReceivedProps, ComponentState> {
     this.props.onClose()
   }
 
-  public render() {
+  render() {
   
     return (
       <div className="ModalPage">

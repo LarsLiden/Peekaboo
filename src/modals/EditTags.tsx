@@ -7,6 +7,7 @@ import * as OF from 'office-ui-fabric-react'
 import { Tag } from '../models/models'
 import AddEditTag from './AddEditTag'
 import { expandTagIds } from '../convert'
+// eslint-disable-next-line 
 import { autobind } from 'core-decorators'
 
 export interface ReceivedProps {
@@ -111,7 +112,7 @@ class EditTags extends React.Component<ReceivedProps, ComponentState> {
 
   @autobind
   onClickSave() {
-    let tagNames = this.state.personTags.filter(t => t.count === 1).map(t => t.tagId!)
+    let tagNames = this.state.personTags.filter(t => t.count === 1).map(t => t.tagId ?? "")
     this.props.onSavePersonTags(tagNames)
   }
 
@@ -121,10 +122,10 @@ class EditTags extends React.Component<ReceivedProps, ComponentState> {
     if (tag.count === 2) {
       return 
     }
-    let selectedTagIds = this.state.personTags.filter(t => t.count === 1).map(t => t.tagId!)
+    let selectedTagIds = this.state.personTags.filter(t => t.count === 1).map(t => t.tagId ?? "")
     let index = selectedTagIds.findIndex(tid => tid === tag.tagId)
     if (index === -1) {
-      selectedTagIds.push(tag.tagId!)
+      selectedTagIds.push(tag.tagId ?? "")
     }
     else {
       selectedTagIds.splice(index, 1)
@@ -138,7 +139,10 @@ class EditTags extends React.Component<ReceivedProps, ComponentState> {
   }
 
   @autobind
-  onRenderCell(tag: Tag, index: number, isScrolling: boolean): JSX.Element {
+  onRenderCell(tag?: Tag, index?: number, isScrolling?: boolean): JSX.Element {
+    if (!tag) {
+      return <div>No Tag Provided</div>
+    }
     let className = `FilterCheckbox FilterCheckboxInclude`
     if (tag.count === 1) {
       className = `${className} FilterCheckboxIncludeSelected`
@@ -160,7 +164,7 @@ class EditTags extends React.Component<ReceivedProps, ComponentState> {
     );
   }
 
-  public render() {
+  render() {
     return (
       <div>
         {this.state.isEditTagModalOpen 

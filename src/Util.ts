@@ -24,7 +24,7 @@ export function getRandomInt(min: number, max: number): number {
 }
 
 export function setStatePromise(that: any, newState: any) {
-    return new Promise((resolve) => {
+    return new Promise<void>((resolve) => {
         that.setState(newState, () => {
             resolve();
         });
@@ -46,7 +46,7 @@ export function baseBlob(user: User) {
 }
 
 export function printDate(date: Date): string {
-    const options = { day: '2-digit', year: '2-digit', month: '2-digit' };
+    const options: Intl.DateTimeFormatOptions = { day: '2-digit', year: '2-digit', month: '2-digit' };
     return date.toLocaleDateString('en-US', options)
 }
 

@@ -6,6 +6,7 @@ import * as React from 'react';
 import './App.css';
 import './fabric.css'
 import Client from './service/client'
+// eslint-disable-next-line 
 import { autobind } from 'core-decorators'
 import { setStatePromise, replacePerson, getRandomInt, SAD_IMAGE } from './Util'
 import { QuizSet, QuizPerson, FilterSet, Tag, Filter, PerfType, User, SortType, SortDirection } from './models/models'
@@ -115,10 +116,10 @@ class App extends React.Component<{}, ComponentState> {
       pageHashChanged: true
     })
     if (subPage) {
-      location.hash = `${this.state.page}_${subPage}`
+      window.location.hash = `${this.state.page}_${subPage}`
     }
     else {
-      location.hash = `${this.state.page}`
+      window.location.hash = `${this.state.page}`
     }
   }
   
@@ -129,23 +130,24 @@ class App extends React.Component<{}, ComponentState> {
       pageHashChanged: true
     })
     if (subpage) {
-      location.hash = `${this.state.page}_${subpage}`
+      window.location.hash = `${this.state.page}_${subpage}`
     }
     else {
-      location.hash = `${this.state.page}`
+      window.location.hash = `${this.state.page}`
     }
   } 
 
   async componentDidMount() {
     window.onhashchange = this.onPageHashChanged
 
-    window.addEventListener('beforeinstallprompt', (e: BeforeInstallPromptEvent) => {
+    // LARS TODO 2024 - diable to get to compile, not sure what it does anymore
+    //window.addEventListener('beforeinstallprompt', (e: BeforeInstallPromptEvent) => {
       // Prevent Chrome 67 and earlier from automatically showing the prompt
-      e.preventDefault();
+    //  e.preventDefault();
       // Stash the event so it can be triggered later.
     
-      this.setState({installEvent: e})
-    })
+    //  this.setState({installEvent: e})
+    //})
 
     // Look for cached user
     const userstring = localStorage.getItem('user')
@@ -177,18 +179,18 @@ class App extends React.Component<{}, ComponentState> {
     else if (this.state.subpage) {
       await setStatePromise(this, {
         subpage: null,
-        pageHashChanged: (location.hash !== `#${this.state.page}`)
+        pageHashChanged: (window.location.hash !== `#${this.state.page}`)
       })
-      location.hash = `${this.state.page}`
+      window.location.hash = `${this.state.page}`
     }
     else if (this.state.backpage) {
       let backpage = this.state.backpage
       await setStatePromise(this, {
         page: this.state.backpage,
         backpage: null,
-        pageHashChanged: (location.hash !== `#${backpage}`)
+        pageHashChanged: (window.location.hash !== `#${backpage}`)
       })
-      location.hash = backpage
+      window.location.hash = backpage
     }
   }
 
@@ -211,18 +213,18 @@ class App extends React.Component<{}, ComponentState> {
   }
 
   @autobind 
-  async onClickSearchFilter(searchTerm: string) {
-
+  async onClickSearchFilter(searchTerm?: string) {
+    if (!searchTerm) {
+      throw new Error("Unexpected missing searchTerm")
+    }
     await setStatePromise(this, {
       filter: {...this.state.filter, searchTerm }
     })
     this.updateFilterSet()
 
     let personId = this.state.filterSet.people[this.state.filterSet.selectedIndex].personId
-    let selectedPerson = Convert.getPerson(this.state.allPeople, personId!) || null
-    await setStatePromise(this, {
-      selectedPerson
-    })
+    let selectedPerson = Convert.getPerson(this.state.allPeople, personId ?? "") || null
+    await setStatePromise(this, {selectedPerson})
     await this.onSetPage(Page.VIEW, null, null)
   }
 
@@ -230,7 +232,7 @@ class App extends React.Component<{}, ComponentState> {
   async onClickAdmin() {
     if (this.state.user) {
       let users = await Client.GETUSERS(this.state.user) 
-      users = users.sort((a, b) => {
+      users = users.sort((a: User, b: User) => {
         if (a.isAdmin) { return -1 }
         if (a.name < b.name) { return -1 }
         else if (b.name < a.name) { return 1 }
@@ -255,8 +257,12 @@ class App extends React.Component<{}, ComponentState> {
       }
       // Or add
       else {
+        // Assert that selectPerson is not null
+        if (this.state.selectedPerson == null) {  
+          throw new Error("Unexpected missing selectedPerson")
+        }
         this.setState({
-          personList: [...this.state.personList, this.state.selectedPerson!.personId!]
+          personList: [...this.state.personList, this.state.selectedPerson.personId]
         })
       }
     }
@@ -282,7 +288,7 @@ class App extends React.Component<{}, ComponentState> {
     }
 
     let personId = this.state.filterSet.people[this.state.filterSet.selectedIndex].personId
-    let selectedPerson = Convert.getPerson(this.state.allPeople, personId!) || null
+    let selectedPerson = Convert.getPerson(this.state.allPeople, personId ?? "") || null
     this.setState({
       selectedPerson
     })
@@ -290,12 +296,15 @@ class App extends React.Component<{}, ComponentState> {
   }
 
   @autobind 
-  viewQuizDetail(quizPerson: QuizPerson) {
-      let selectedPerson = Convert.getPerson(this.state.allPeople, quizPerson.personId) || null
-      this.setState({
-        selectedPerson
-      })
-      this.onSetPage(Page.VIEWQUIZ, Page.QUIZ, null)
+  viewQuizDetail(quizPerson: QuizPerson | null) {
+    if (!quizPerson) {
+      throw new Error("Unexpected missing quizPerson")
+    }
+    let selectedPerson = Convert.getPerson(this.state.allPeople, quizPerson.personId) || null
+    this.setState({
+      selectedPerson
+    })
+    this.onSetPage(Page.VIEWQUIZ, Page.QUIZ, null)
   }
 
   @autobind 
@@ -344,7 +353,10 @@ class App extends React.Component<{}, ComponentState> {
     let loaded: Person[][] = []
       const letters = "ABCDEFGHIJKLMNOPQRSTUVWXYZ".split("")
       for (let letter of letters) {
-        Client.GETPEOPLESTARTINGWITH(this.state.user!, letter, async (people) => {
+        if (this.state.user == null) {
+          throw new Error("Unexpected missing user")
+        }
+        Client.GETPEOPLESTARTINGWITH(this.state.user, letter, async (people) => {
           if (!people) {
             this.setState({
               error: `Failed find your peeps`,
@@ -380,7 +392,10 @@ class App extends React.Component<{}, ComponentState> {
               else { return 0 }
             })
 
-            let allTags = await Client.GET_TAGS(this.state.user!)
+            if (!this.state.user) {
+              throw new Error("Unexpected missing user")
+            }
+            let allTags = await Client.GET_TAGS(this.state.user)
             await setStatePromise(this, {
               allPeople,
               allTags
@@ -390,7 +405,11 @@ class App extends React.Component<{}, ComponentState> {
             localStorage.setItem('allTage', JSON.stringify(allTags))
 
             // Look for logged in user in list
-            let userPerson = allPeople.find(p => p.fullName() === this.state.user!.name)
+            if (!this.state.user) {
+              throw new Error("Unexpected missing user")
+            }
+            let userName = this.state.user.name
+            let userPerson = allPeople.find(p => p.fullName() === userName)
             let userPersonId = userPerson ? userPerson.personId : null
             this.setState({
               userPersonId
@@ -404,8 +423,9 @@ class App extends React.Component<{}, ComponentState> {
             let selectedPerson: Person | undefined
             if (loadedFromCache) {
               // Map old person to newly loaded one
-              if (this.state.selectedPerson) {
-                selectedPerson = this.state.allPeople.find(p => p.personId === this.state.selectedPerson!.personId)
+              if (this.state.selectedPerson != null) {
+                let selectedPersonId = this.state.selectedPerson.personId
+                selectedPerson = this.state.allPeople.find(p => p.personId === selectedPersonId)
               }
             }
             else {
@@ -418,7 +438,10 @@ class App extends React.Component<{}, ComponentState> {
               })
             }
             
-            if (this.state.user!.isNew) {
+            if (this.state.user == null) {
+              throw new Error("Unexpected missing user")
+            }
+            if (this.state.user.isNew) {
               this.onSetPage(Page.NEWUSER, null, null)
             } 
             // Prompt for install PWA
@@ -437,7 +460,10 @@ class App extends React.Component<{}, ComponentState> {
   @autobind 
   async onDeleteTag(tag: Tag) {
 
-    await Client.DELETE_TAG(this.state.user!, tag)
+    if (this.state.user == null) {
+      throw new Error("Unexpected missing user")
+    }
+    await Client.DELETE_TAG(this.state.user, tag)
 
     let allTags = this.state.allTags.filter(t => t.tagId !== tag.tagId)
     await setStatePromise(this, { allTags })
@@ -446,7 +472,10 @@ class App extends React.Component<{}, ComponentState> {
   @autobind 
   async onSaveTag(tag: Tag) {
 
-    await Client.PUT_TAG(this.state.user!, tag)
+    if (this.state.user == null) {
+      throw new Error("Unexpected missing user")
+    }
+    await Client.PUT_TAG(this.state.user, tag)
 
     let allTags = this.state.allTags.filter(t => t.tagId !== tag.tagId)
     allTags.push(tag)
@@ -463,9 +492,12 @@ class App extends React.Component<{}, ComponentState> {
 
   // Send stats back to server
   async sendUserStats(): Promise<void> {
+    if (this.state.user == null) {
+      throw new Error("Unexpected missing user")
+    }
     const numPhotos = this.state.allPeople.reduce((acc, person) => {return acc + person.photoFilenames.length}, 0)
     const numTestResults = this.state.allPeople.reduce((acc, person) => {return acc + person.photoPerformance.numPresentations}, 0)
-    let user = {...this.state.user!,
+    let user = {...this.state.user,
       numPeople: this.state.allPeople.length,
       numPhotos,
       numTestResults
@@ -476,8 +508,11 @@ class App extends React.Component<{}, ComponentState> {
   }
   @autobind 
   async onClickImport() {
-      await Client.IMPORT(this.state.user!)
-      this.loadPeople()
+    if (this.state.user == null) {
+      throw new Error("Unexpected missing user")
+    }
+    await Client.IMPORT(this.state.user)
+    this.loadPeople()
   }
 
   @autobind 
@@ -506,8 +541,11 @@ class App extends React.Component<{}, ComponentState> {
 
   @autobind
   async onDeleteUser(userToDelete: User) {
+    if (this.state.user == null) {
+      throw new Error("Unexpected missing user")
+    }
     try {
-      await Client.DELETEUSER(this.state.user!, userToDelete) 
+      await Client.DELETEUSER(this.state.user, userToDelete) 
       let users = this.state.users.filter(u => u.hwmid !== userToDelete.hwmid)
       this.setState({
         users
@@ -520,11 +558,23 @@ class App extends React.Component<{}, ComponentState> {
 
   @autobind
   async onExportToUser(destination: User) {
+    if (this.state.user == null) {
+      throw new Error("Unexpected missing user")
+    }
     try {
       let peopleIds = this.state.personList.length > 0 
         ? this.state.personList
-        : this.state.filterSet.people.map(p => p.personId!)
-      await Client.EXPORT_TO_USER(this.state.user!, destination, peopleIds) 
+        : this.state.filterSet.people.map(p => p.personId)
+      
+      // If any personId is null, throw an error
+      if (peopleIds.find(p => p == null)) {
+        throw new Error("Unexpected missing personId")
+      }
+
+      // Filter out any null values (above check should prevent this, but need for compiler error)
+      let pIds = peopleIds.filter((p): p is string => p !== null);
+
+      await Client.EXPORT_TO_USER(this.state.user, destination, pIds) 
     }
     catch {
       this.setState({error: `Failed to export ${destination.name}`})
@@ -533,8 +583,11 @@ class App extends React.Component<{}, ComponentState> {
   
   @autobind 
   async onDeletePerson(person: Person) {
+    if (this.state.user == null) {
+      throw new Error("Unexpected missing user")
+    }
     try {
-      await Client.DELETEPERSON(this.state.user!, person)
+      await Client.DELETEPERSON(this.state.user, person)
 
       // Delete local
       let people = this.state.allPeople.filter(p => p.personId !== person.personId)
@@ -584,7 +637,10 @@ class App extends React.Component<{}, ComponentState> {
         this.viewLibraryPerson()
       }
 
-      await Client.ARCHIVEPERSON(this.state.user!, person)
+      if (this.state.user == null) {
+        throw new Error("Unexpected missing user")
+      }
+      await Client.ARCHIVEPERSON(this.state.user, person)
 
     }
     catch {
@@ -594,8 +650,11 @@ class App extends React.Component<{}, ComponentState> {
 
   @autobind 
   async onSavePerson(person: Person) {
+    if (this.state.user == null) {
+      throw new Error("Unexpected missing user")
+    }
     try {
-      await Client.PUTPERSON(this.state.user!, person)
+      await Client.PUTPERSON(this.state.user, person)
 
       // Replace or add to allPeople
       let people = this.state.allPeople.filter(p => p.personId !== person.personId)
@@ -613,8 +672,11 @@ class App extends React.Component<{}, ComponentState> {
 
   @autobind 
   async onDeletePhoto(person: Person, photoName: string) {
+    if (this.state.user == null) {
+      throw new Error("Unexpected missing user")
+    }
     try {
-      await Client.DELETEPHOTO(this.state.user!, person, photoName)
+      await Client.DELETEPHOTO(this.state.user, person, photoName)
 
       // Upldate local copy
       person.photoFilenames = person.photoFilenames.filter(p => p !== photoName)
@@ -630,8 +692,11 @@ class App extends React.Component<{}, ComponentState> {
 
   @autobind 
   async onSavePhoto(person: Person, photoData: string) {
+    if (this.state.user == null) {
+      throw new Error("Unexpected missing user")
+    }
     try {
-      let newPhotoName = await Client.PUTPHOTO(this.state.user!, person, photoData)
+      let newPhotoName = await Client.PUTPHOTO(this.state.user, person, photoData)
 
       // Upldate local copy
       person.photoFilenames.push(newPhotoName)
@@ -648,12 +713,15 @@ class App extends React.Component<{}, ComponentState> {
   @autobind 
   async onQuizDone(testResults: TestResult[]) {
     this.onSetPage(Page.VIEW, null, null)
+    if (this.state.user == null) {
+      throw new Error("Unexpected missing user")
+    }
     try {
       // Remove any archived people
       let validTestResults = testResults.filter(tr => this.state.allPeople.find(p => p.personId === tr.personId))
       
       // Send results to server
-      let updatedPeople = await Client.POSTTESTRESULTS(this.state.user!, validTestResults)
+      let updatedPeople = await Client.POSTTESTRESULTS(this.state.user, validTestResults)
       let allPeople: Person[] = [...this.state.allPeople]
       updatedPeople.forEach(p => 
         allPeople = replacePerson(allPeople, new Person(p))
@@ -675,7 +743,7 @@ class App extends React.Component<{}, ComponentState> {
 
   @autobind
   async onNewPerson(): Promise<void> {
-    let person = new Person()
+    let person = new Person(null)
     let today = new Date()
     person.creationDate = `${today.getMonth() + 1}/${today.getDate()}/${today.getFullYear()}`
     this.setState({
@@ -713,7 +781,10 @@ class App extends React.Component<{}, ComponentState> {
   }
 
   @autobind
-  async onSelectPerson(personId: string): Promise<void> {
+  async onSelectPerson(personId: string | null): Promise<void> {
+    if (personId == null) {
+      throw new Error("Unexpected missing personId")
+    }
     if (this.state.filterSet) {
       let selectedIndex = this.state.filterSet.people.findIndex(p => p.personId === personId)
       
@@ -737,7 +808,10 @@ class App extends React.Component<{}, ComponentState> {
     this.updateFilterSet()
 
     let personId = this.state.filterSet.people[this.state.filterSet.selectedIndex].personId
-    let selectedPerson = Convert.getPerson(this.state.allPeople, personId!) || null
+    if (personId == null) {
+      throw new Error("Unexpected missing personId")
+    }
+    let selectedPerson = Convert.getPerson(this.state.allPeople, personId) || null
     await setStatePromise(this, {
       selectedPerson
     })
@@ -773,7 +847,10 @@ class App extends React.Component<{}, ComponentState> {
   }
   
   handleNoUsers() {
-    if (this.state.user!.isAdmin) {
+    if (this.state.user == null) {
+      throw new Error("Unexpected missing user")
+    }
+    if (this.state.user.isAdmin) {
       this.onSetPage(Page.ADMIN, Page.VIEW, null)
     }
     else {
@@ -807,7 +884,10 @@ class App extends React.Component<{}, ComponentState> {
     }
   }
 
-  public render() {
+  render() {
+    if (!this.state.user) { 
+      throw new Error("Unexpected missing user")
+    }
     let baseClass = 'App'
     if (this.state.user && this.state.user.isSpoof) {
       baseClass = `${baseClass} Spoof`
@@ -835,9 +915,9 @@ class App extends React.Component<{}, ComponentState> {
         {(this.state.page === Page.VIEW || this.state.page === Page.VIEWQUIZ) 
           && this.state.selectedPerson &&
           <ViewPage
-            filterSet={this.state.page === Page.VIEW ? this.state.filterSet! : null}
+            filterSet={this.state.page === Page.VIEW ? this.state.filterSet : null}
             person={this.state.selectedPerson}
-            user={this.state.user!}
+            user={this.state.user}
             filter={this.state.filter}
             allPeople={this.state.allPeople}
             allTags={this.state.allTags}
@@ -864,7 +944,7 @@ class App extends React.Component<{}, ComponentState> {
         {(this.state.page === Page.EDIT || this.state.page === Page.EDITQUIZ) && this.state.selectedPerson &&
           <EditPage
             person={this.state.selectedPerson}
-            user={this.state.user!}
+            user={this.state.user}
             filter={this.state.filter}
             allTags={this.state.allTags}
             allPeople={this.state.allPeople}
@@ -909,7 +989,7 @@ class App extends React.Component<{}, ComponentState> {
             filter={this.state.filter}
           />
         }
-        {this.state.user && this.state.user!.isAdmin && this.state.page === Page.ADMIN &&
+        {this.state.user && this.state.user.isAdmin && this.state.page === Page.ADMIN &&
           <AdminPage
             user={this.state.user}
             users={this.state.users}
@@ -925,7 +1005,7 @@ class App extends React.Component<{}, ComponentState> {
         {(this.state.page === Page.QUIZ || this.state.page === Page.VIEWQUIZ || this.state.page === Page.EDITQUIZ) && 
           <QuizPage
             hidden={this.state.page !== Page.QUIZ}
-            user={this.state.user!}
+            user={this.state.user}
             allPeople={this.state.allPeople}
             quizSet={this.state.quizSet}
             onQuizDone={this.onQuizDone}
@@ -937,7 +1017,7 @@ class App extends React.Component<{}, ComponentState> {
             allPeople={this.state.allPeople}
             allTags={this.state.allTags}
             onCancel={() => this.onSetPage(Page.VIEW, null, null)}
-            onSelect={(person: Person) => this.onSelectPerson(person.personId!)}
+            onSelect={(person: Person) => this.onSelectPerson(person.personId)}
             onClickTagFilter={this.onClickTagFilter}
             onClickSearchFilter={this.onClickSearchFilter}
             onClickQuiz={this.onQuiz}

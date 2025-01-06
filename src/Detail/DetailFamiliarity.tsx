@@ -20,6 +20,12 @@ export class Color {
   public r: number;
   public g: number;
   public b: number;
+
+  constructor(r: number, g: number, b: number) {
+      this.r = r;
+      this.g = g;
+      this.b = b;
+  }
 }
 
 class DetailFamiliarity extends React.Component<ReceivedProps, ComponentState> {
@@ -47,10 +53,10 @@ class DetailFamiliarity extends React.Component<ReceivedProps, ComponentState> {
           g = (255*(familiarity/50))
       }
 
-      return {r, g, b: 0}
+      return new Color(r, g, 0)
   }
 
-  public render() {
+  render() {
 
       const bodyClass = this.props.isLong ? "DetailLongBody" : "DetailBody"
       return (

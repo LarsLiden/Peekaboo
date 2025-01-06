@@ -12,7 +12,7 @@ export interface ReceivedProps {
 
 class InstallPage extends React.Component<ReceivedProps, {}> {
 
-  public render() {
+  render() {
     return (
       <div className="ModalPage">
         <div className="ConfirmTitle">

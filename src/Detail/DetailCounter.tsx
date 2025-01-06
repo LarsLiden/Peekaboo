@@ -13,7 +13,7 @@ export interface ReceivedProps {
 
 class DetailCounter extends React.Component<ReceivedProps, {}> {
 
-  public render() {
+  render() {
       return (
         <div className="DetailCount">
           <div>

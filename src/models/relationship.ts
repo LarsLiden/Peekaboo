@@ -6,7 +6,7 @@ export interface Relationship {
     relationshipId: string,
     type: RelationshipType,
     personId: string,
-    name?: string
+    name?: string | null
 }
 
 export enum RType {
@@ -30,24 +30,32 @@ export enum RType {
     STEP_SIBLING_OF = "Step Sibling of",
     STEP_CHILD_OF = "Stepchild of",
     STEP_PARENT_OF = "Stepparent of"
-}
-export class RelationshipType {
-    static relationshipTypes: RelationshipType[] | null = null
+};
 
-    public static getRelationshipType(name: string): RelationshipType {
+export class RelationshipType {
+    from: RType;
+    to: RType;
+    priority: number;
+
+    static relationshipTypes: RelationshipType[] | null = null;
+
+    static getRelationshipType(name: string): RelationshipType {
         if (!this.relationshipTypes) {
             this.init()
         }
-        const relationshipType = this.relationshipTypes!.find(rt => rt.from.toString() === name )
+        if (!this.relationshipTypes) {
+            throw new Error('No relationship types');
+        }
+        const relationshipType = this.relationshipTypes.find(rt => rt.from.toString() === name );
         if (!relationshipType) {
-            throw new Error(`Can't find rtype ${name}`)
+            throw new Error(`Can't find rtype ${name}`);
         }
         return relationshipType
     }
 
-    private static addRType(priority: number, from: RType, to?: RType): void {
+    static addRType(priority: number, from: RType, to?: RType): void {
         if (!this.relationshipTypes) {
-            this.relationshipTypes = []
+            this.relationshipTypes = [];
         }
         if (!to) {
             this.relationshipTypes.push(new RelationshipType(from, from, priority))   
@@ -58,7 +66,7 @@ export class RelationshipType {
         }
     }
     
-    private static init(): void {
+    static init(): void {
         // Create types
         this.addRType(1, RType.MARRIED_TO)
         this.addRType(1, RType.CHILD_OF, RType.PARENT_OF)
@@ -76,6 +84,9 @@ export class RelationshipType {
         this.addRType(6, RType.PM_BY, RType.PM_OF)
     } 
 
-    constructor(public from: RType, public to: RType, public priority: number) {
+    constructor(from: RType, to: RType, priority: number) {
+        this.from = from;
+        this.to = to;
+        this.priority = priority;
     } 
 }

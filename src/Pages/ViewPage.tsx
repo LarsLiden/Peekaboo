@@ -19,6 +19,7 @@ import DetailSocialNetworks from '../Detail/DetailSocialNetworks'
 import Swipe from 'react-easy-swipe'
 import ResizeText from '../modals/ResizeText'
 import { Page } from '../App'
+// eslint-disable-next-line 
 import { autobind } from 'core-decorators'
 import "./ViewPage.css"
 import { MAX_TIME } from '../models/const';
@@ -52,7 +53,7 @@ interface ComponentState {
   photoIndex: number;
   xMove: number;
   yMove: number;
-}
+};
 
 class ViewPage extends React.Component<ReceivedProps, ComponentState> {
 
@@ -65,11 +66,11 @@ class ViewPage extends React.Component<ReceivedProps, ComponentState> {
   @autobind
   onNextPhoto(): void {
   
-    let photoIndex = this.state.photoIndex + 1
+    let photoIndex = this.state.photoIndex + 1;
     if (photoIndex >= this.props.person.photoFilenames.length) {
       photoIndex = 0
     }
-    this.setState({photoIndex})
+    this.setState({photoIndex});
 
   }
 
@@ -123,8 +124,8 @@ class ViewPage extends React.Component<ReceivedProps, ComponentState> {
     }
   }
 
-  public render() {
-    let photoBlobName = HEAD_IMAGE
+  render() {
+    let photoBlobName = HEAD_IMAGE;
     if (this.props.person.photoFilenames.length > 0) {
       photoBlobName = baseBlob(this.props.user) 
         + getPhotoBlobName(this.props.person, this.props.person.photoFilenames[this.state.photoIndex])
@@ -235,9 +236,11 @@ class ViewPage extends React.Component<ReceivedProps, ComponentState> {
                 onSelectPerson={this.props.onSelectPerson}
               />
               <DetailEvents
+                inEdit={false}
                 events={this.props.person.events}
               />
               <DetailKeyValues
+                inEdit={false}
                 keyValues={this.props.person.keyValues}
               />
             </div>

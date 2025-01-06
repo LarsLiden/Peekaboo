@@ -7,6 +7,7 @@ import * as OF from 'office-ui-fabric-react'
 import * as Convert from '../convert'
 import { Person } from '../models/person'
 import { Tag, Filter, PerfType } from '../models/models'
+// eslint-disable-next-line 
 import { autobind } from 'core-decorators'
 
 export interface ReceivedProps {
@@ -68,9 +69,9 @@ class FilterPage extends React.Component<ReceivedProps, ComponentState> {
   @autobind
   onCheckboxRequireChange(isChecked: boolean = false, tag: Tag) {
     if (isChecked) {
-      if (this.state.filter.requiredTagIds.indexOf(tag.tagId!) <= 0) {
+      if (this.state.filter.requiredTagIds.indexOf(tag.tagId ?? "") <= 0) {
         let blockedTagIds = this.state.filter.blockedTagIds.filter(tid => tid !== tag.tagId)
-        let requiredTagIds = [...this.state.filter.requiredTagIds, tag.tagId!] 
+        let requiredTagIds = [...this.state.filter.requiredTagIds, tag.tagId ?? ""] 
         this.setState({
           filter: {...this.state.filter,
             requiredTagIds,
@@ -94,8 +95,8 @@ class FilterPage extends React.Component<ReceivedProps, ComponentState> {
   @autobind
   onCheckboxBlockChange(isChecked: boolean = false, tag: Tag) {
     if (isChecked) { 
-      if (this.state.filter.blockedTagIds.indexOf(tag.tagId!) <= 0) {
-        let blockedTagIds = [...this.state.filter.blockedTagIds, tag.tagId!] 
+      if (this.state.filter.blockedTagIds.indexOf(tag.tagId ?? "") <= 0) {
+        let blockedTagIds = [...this.state.filter.blockedTagIds, tag.tagId ?? ""] 
         let requiredTagIds = this.state.filter.requiredTagIds.filter(tid => tid !== tag.tagId)
         this.setState({
           filter: {
@@ -124,9 +125,12 @@ class FilterPage extends React.Component<ReceivedProps, ComponentState> {
   }
 
   @autobind
-  onRenderCell(item: Tag, index: number, isScrolling: boolean): JSX.Element {
-    let isRequired = this.state.filter.requiredTagIds.indexOf(item.tagId!) > -1
-    let isBlocked = this.state.filter.blockedTagIds.indexOf(item.tagId!) > -1
+  onRenderCell(item?: Tag, index?: number, isScrolling?: boolean): JSX.Element {
+    if (!item) {
+      return <div>No Item Provided</div>
+    }
+    let isRequired = this.state.filter.requiredTagIds.indexOf(item.tagId ?? "") > -1
+    let isBlocked = this.state.filter.blockedTagIds.indexOf(item.tagId ?? "") > -1
 
     let includeClass = (item.count === 0)
       ? `FilterCheckbox FilterCheckboxDisabled`
@@ -162,7 +166,7 @@ class FilterPage extends React.Component<ReceivedProps, ComponentState> {
     )
   }
 
-  public render() {
+  render() {
     return (
       <div className="ModalPage">
         <div className="HeaderHolder">

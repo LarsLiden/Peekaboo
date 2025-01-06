@@ -7,12 +7,13 @@ import * as OF from 'office-ui-fabric-react'
 import * as Util from '../Util'
 import { Person } from '../models/person'
 import { User } from '../models/models'
+// eslint-disable-next-line 
 import { autobind } from 'core-decorators'
 
 export interface ReceivedProps {
   user: User;
   conflicts: Person[];
-  onConflict: (person: Person) => void;
+  onConflict: (person: Person | null) => void;
   onNoConflict: () => void;
 }
 
@@ -31,29 +32,32 @@ class CheckConflict extends React.Component<ReceivedProps, ComponentState> {
   componentDidMount() {
     let remainingConflicts = [...this.props.conflicts]
     let curConflict = remainingConflicts.pop()
+    if (curConflict == null) {
+      throw new Error("No conflicts")
+    }
     this.setState({
-      curConflict: curConflict!,
+      curConflict: curConflict,
       remainingConflicts
     })
   }
 
   @autobind
-  public onNoConflict() {
+  onNoConflict() {
     // Remove from conflict list
-    let remainingConflicts = [...this.state.remainingConflicts]
-    let curConflict = remainingConflicts.pop()
+    let remainingConflicts = [...this.state.remainingConflicts];
+    let curConflict = remainingConflicts.pop();
     if (!curConflict) {
-      this.props.onNoConflict()
+      this.props.onNoConflict();
     }
     else {
       this.setState({
-        curConflict: curConflict!,
+        curConflict: curConflict,
         remainingConflicts
       })
     }
   }
 
-  public render() {
+  render() {
     if (!this.state.curConflict) {
       return null
     }
@@ -82,10 +86,10 @@ class CheckConflict extends React.Component<ReceivedProps, ComponentState> {
           <div className="FooterContent"> 
             <OF.IconButton
                 className="ButtonIcon ButtonPrimary FloatLeft"
-                onClick={() => this.props.onConflict(this.state.curConflict!)}
+                onClick={() => this.props.onConflict(this.state.curConflict)}
                 iconProps={{ iconName: 'LikeSolid' }}
             />
-            {this.props.onConflict &&
+            {this.props.onConflict != null &&
               <OF.IconButton
                   className="ButtonIcon ButtonPrimary FloatRight"
                   onClick={this.onNoConflict}

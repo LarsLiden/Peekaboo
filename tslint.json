@@ -5,6 +5,7 @@
   ],
   "defaultSeverity": "warning",
   "rules": {
+      "no-unused-vars": false,
       "align": [
           true,
           "parameters",

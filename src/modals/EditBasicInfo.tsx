@@ -6,6 +6,7 @@ import * as React from 'react';
 import * as OF from 'office-ui-fabric-react'
 import '../fabric.css'
 import { Person } from '../models/person'
+// eslint-disable-next-line 
 import { autobind } from 'core-decorators'
 import DetailEditText from '../Detail/DetailEditText'
 import "../Pages/ViewPage.css"
@@ -119,7 +120,7 @@ class EditBasicInfo extends React.Component<ReceivedProps, ComponentState> {
     this.props.onCancel()
   }
 
-  public render() {
+  render() {
     return (
       <div className="ModalPage">
           <div className="HeaderHolder">

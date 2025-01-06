@@ -2,7 +2,6 @@
  * Copyright (c) Lars Liden. All rights reserved.  
  * Licensed under the MIT License.
  */
-import * as React from 'react';
 import * as ReactDOM from 'react-dom';
 import App from './App';
 import './index.css';
@@ -46,6 +45,6 @@ ReactDOM.render(
   <Fabric>
     <App />
   </Fabric>,
-  document.getElementById('root') as HTMLElement
+  document.getElementById('root')
 );
 registerServiceWorker();

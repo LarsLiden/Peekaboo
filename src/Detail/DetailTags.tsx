@@ -18,13 +18,13 @@ export interface ReceivedProps {
 
 class DetailTags extends React.Component<ReceivedProps, {}> {
 
-  public render() {
+  render() {
       if (!this.props.inEdit && this.props.tagIds.length === 0) {
         return null
       }
 
       // Get unique parent tags Ids
-      let parentIds = [... new Set(expandTagIds(this.props.tagIds, this.props.allTags))]
+      let parentIds = [...new Set(expandTagIds(this.props.tagIds, this.props.allTags))]
         .filter(eid => this.props.tagIds.indexOf(eid) === -1)
 
       return (

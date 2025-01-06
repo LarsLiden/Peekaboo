@@ -7,6 +7,7 @@ import * as OF from 'office-ui-fabric-react'
 import { Tag } from '../models/models'
 import { Person } from '../models/person'
 import { sortTags, expandTagIds } from '../convert'
+// eslint-disable-next-line 
 import { autobind } from 'core-decorators'
 import AddEditTag from '../modals/AddEditTag'
 
@@ -19,9 +20,9 @@ export interface ReceivedProps {
 }
 
 interface ComponentState {
-  sortedTags: Tag[]
-  isEditTagModalOpen: boolean
-  editingTag: Tag | null
+  sortedTags: Tag[];
+  isEditTagModalOpen: boolean;
+  editingTag: Tag | null;
 }
 
 class TagEditorPage extends React.Component<ReceivedProps, ComponentState> {
@@ -111,12 +112,15 @@ class TagEditorPage extends React.Component<ReceivedProps, ComponentState> {
   onCheckboxChange(isChecked: boolean = false, tag: Tag) {
     let editTags = [...this.state.sortedTags]
     let curTag = editTags.find(t => t.tagId === tag.tagId)
+    if (!curTag) {
+      throw new Error("Tag not found")
+    }
     if (isChecked) {
-      curTag!.count = 1
+      curTag.count = 1
       this.setState({sortedTags: editTags})
     }
     else {
-      curTag!.count = 0
+      curTag.count = 0
       this.setState({sortedTags: editTags})
     }
   }
@@ -147,7 +151,10 @@ class TagEditorPage extends React.Component<ReceivedProps, ComponentState> {
     }
   }
   @autobind
-  onRenderCell(tag: Tag, index: number, isScrolling: boolean): JSX.Element {
+  onRenderCell(tag?: Tag, index?: number, isScrolling?: boolean): JSX.Element {
+    if (!tag) {
+      return <div>No Tag Provided</div>
+    }
     return (
       <div
         key={`${tag.name}_DIV`}
@@ -169,7 +176,7 @@ class TagEditorPage extends React.Component<ReceivedProps, ComponentState> {
     );
   }
 
-  public render() {
+  render() {
     return (
       <div>
         {this.state.isEditTagModalOpen 

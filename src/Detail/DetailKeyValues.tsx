@@ -9,8 +9,8 @@ import "./DetailEvents.css"
 import '../fabric.css'
 
 export interface ReceivedProps {
-  keyValues: KeyValue[]
-  inEdit?: boolean;
+  keyValues: KeyValue[];
+  inEdit: boolean | null;
 }
 
 const columns: OF.IColumn[] = [
@@ -41,7 +41,7 @@ const columns: OF.IColumn[] = [
 
 class DetailKeyValues extends React.Component<ReceivedProps, {}> {
 
-  public render() {
+  render() {
     if (!this.props.inEdit && this.props.keyValues.length === 0) {
       return null
     }

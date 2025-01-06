@@ -59,7 +59,7 @@ class LoadPage extends React.Component<ReceivedProps, ComponentState> {
     }
   }
 
-  public render() {
+  render() {
   
     return (
       <div className="FilterPage">

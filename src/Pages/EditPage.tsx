@@ -9,6 +9,7 @@ import '../fabric.css'
 import { Person } from '../models/person'
 import { Relationship, RelationshipType } from '../models/relationship'
 import { Filter, Tag, User, KeyValue, Event, SocialNet } from '../models/models'
+// eslint-disable-next-line 
 import { autobind } from 'core-decorators'
 import CropPage from './CropPage'
 import DetailTags from '../Detail/DetailTags'
@@ -61,18 +62,18 @@ export enum SubPage {
 } 
 
 interface ComponentState { 
-  edited: boolean
-  photoIndex: number
-  selectNewPhoto: number | undefined
-  showCropPage: boolean
-  imageURL: string | null
-  crop: ReactCrop.Crop
-  file: File | null
-  newPerson: Person | null
-  conflicts: Person[]
-  isConfirmDeletePhotoOpen: boolean
-  isConfirmDeleteOpen: boolean,
-  isConfirmArchiveOpen: boolean
+  edited: boolean;
+  photoIndex: number;
+  selectNewPhoto: number | undefined;
+  showCropPage: boolean;
+  imageURL: string | null;
+  crop: ReactCrop.Crop;
+  file: File | null;
+  newPerson: Person | null;
+  conflicts: Person[];
+  isConfirmDeletePhotoOpen: boolean;
+  isConfirmDeleteOpen: boolean;
+  isConfirmArchiveOpen: boolean;
 }
 
 class EditPage extends React.Component<ReceivedProps, ComponentState> {
@@ -208,8 +209,11 @@ class EditPage extends React.Component<ReceivedProps, ComponentState> {
     added.forEach(addedRelationship => {
       let reversePerson = this.getReversePerson(updatedPeople, addedRelationship)
       if (reversePerson) {
+        if (this.props.person.personId == null) {
+          throw new Error("Person ID is null")
+        }
         // Create and add reverse relationship
-        let reverseRelationship = this.makeReverseRelationship(addedRelationship, this.props.person.personId!)
+        let reverseRelationship = this.makeReverseRelationship(addedRelationship, this.props.person.personId)
         reversePerson.relationships.push(reverseRelationship)
       }
     })
@@ -222,7 +226,10 @@ class EditPage extends React.Component<ReceivedProps, ComponentState> {
         reversePerson.relationships = reversePerson.relationships.filter(r => r.relationshipId !== changedRelationship.relationshipId)
 
         // Create and add reverse new relationship
-        let reverseRelationship = this.makeReverseRelationship(changedRelationship, this.props.person.personId!)
+        if (!this.props.person.personId) {
+          throw new Error("Person ID is null")
+        }
+        let reverseRelationship = this.makeReverseRelationship(changedRelationship, this.props.person.personId)
         reversePerson.relationships.push(reverseRelationship)
       }
     })
@@ -263,13 +270,22 @@ class EditPage extends React.Component<ReceivedProps, ComponentState> {
 
   @autobind
   onNoConflict(): void {
-    this.props.onSavePerson(this.state.newPerson!)
+    if (!this.state.newPerson) {
+      throw new Error("No new person")
+    }
+    this.props.onSavePerson(this.state.newPerson)
     this.props.onSetSubpage(null)
   }
 
   @autobind
-  onConflict(person: Person): void {
-    this.props.onSelectPerson(person.personId!)
+  onConflict(person: Person | null): void {
+    if (!person) {
+      throw new Error("Person is null")
+    }
+    if (!person.personId) {
+      throw new Error("Person ID is null")
+    }
+    this.props.onSelectPerson(person.personId)
     this.props.onSetSubpage(null)
   }
 
@@ -382,7 +398,7 @@ class EditPage extends React.Component<ReceivedProps, ComponentState> {
     this.setState({ crop });  
   }
 
-  public render() {
+  render() {
 
     // If a brand new person
     if (this.props.subpage === SubPage.CONFLICT) {
@@ -390,7 +406,7 @@ class EditPage extends React.Component<ReceivedProps, ComponentState> {
         <CheckConflict
           user={this.props.user}
           conflicts={this.state.conflicts}
-          onConflict={(person: Person) => this.onConflict(person)}
+          onConflict={(person: Person | null) => this.onConflict(person)}
           onNoConflict={this.onNoConflict}
         />
       )

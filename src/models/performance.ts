@@ -5,24 +5,35 @@
 import { MAX_TIME } from './const'
 
 export class Performance {
-    public bestTime = MAX_TIME;
-    public avgTime = MAX_TIME;
-    public worstTime = 0;
-    public numPresentations = 0;
-    public frequency: number = 0;
-    public rank = 0;
-    public lastTested = 0;
-    public familiarity = 0;
-    public frequencyOffsetStart = 0;
-    public frequencyOffsetEnd = 0;
+    bestTime: number;
+    avgTime: number;
+    worstTime: number;
+    numPresentations: number;
+    frequency: number;
+    rank: number;
+    lastTested: number;
+    familiarity: number;
+    frequencyOffsetStart: number;
+    frequencyOffsetEnd: number;
 
-    public constructor(init?: Partial<Performance>) {
-        Object.assign(this, init)
+    constructor(init?: Partial<Performance>) {
+        this.worstTime = 0;
+        this.numPresentations = 0;
+        this.frequency = 0;
+        this.rank = 0;
+        this.lastTested = 0;
+        this.familiarity = 0;
+        this.frequencyOffsetStart = 0;
+        this.frequencyOffsetEnd = 0;
+        this.bestTime = MAX_TIME;
+        this.avgTime = MAX_TIME;
+
+        Object.assign(this, init);
     }
 
     /// Time bias to add to testing frequency based on how long it's been
     /// since this person was tested last
-    public ageBias(): number
+    ageBias(): number
     {
         // LARS recheck this math
         let millisecondsPassed = Date.now() - this.lastTested
@@ -32,6 +43,6 @@ export class Performance {
 }
 
 export interface TestResult {
-    personId: string,
-    result: number
+    personId: string;
+    result: number;
 }

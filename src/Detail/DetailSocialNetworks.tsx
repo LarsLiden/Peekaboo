@@ -9,6 +9,7 @@ import { generateGUID } from '../Util';
 import { Person } from '../models/person'
 import { Page } from '../App'
 import { SubPage } from '../Pages/EditPage';
+// eslint-disable-next-line 
 import { autobind } from 'core-decorators'
 import "./DetailEvents.css"
 import '../fabric.css'
@@ -46,7 +47,7 @@ class DetailSocialNetworks extends React.Component<ReceivedProps, ComponentState
     if (this.props.person !== prevProps.person || this.state.socialNets.length === 0) {
       let socialNets: SocialNet[] = []
       Object.keys(SocialNetType).forEach(key => {
-        let snt = SocialNetType[key]
+        let snt = SocialNetType[key as keyof typeof SocialNetType]
         let exists = this.props.person.socialNets.find(sn => sn.netType === snt)
         if (exists) {
           socialNets.push({...exists})
@@ -67,7 +68,7 @@ class DetailSocialNetworks extends React.Component<ReceivedProps, ComponentState
     }
   }
 
-  public render() {
+  render() {
     if (this.state.socialNets.length === 0) {
       return null
     }

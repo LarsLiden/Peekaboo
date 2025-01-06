@@ -3,13 +3,14 @@
  * Licensed under the MIT License.
  */
 import * as React from 'react';
-import * as OF from 'office-ui-fabric-react'
-import { generateGUID } from '../Util'
-import { Person } from '../models/person'
-import { Tag } from '../models/models'
-import Search from '../modals/Search'
-import { Relationship, RType, RelationshipType } from '../models/relationship'
-import { autobind } from 'core-decorators'
+import * as OF from 'office-ui-fabric-react';
+import { generateGUID } from '../Util';
+import { Person } from '../models/person';
+import { Tag } from '../models/models';
+import Search from '../modals/Search';
+import { Relationship, RType, RelationshipType } from '../models/relationship';
+// eslint-disable-next-line 
+import { autobind } from 'core-decorators';
 
 export interface ReceivedProps {
   allPeople: Person[];
@@ -27,12 +28,12 @@ interface ComponentState {
 
 function getTypes(): { key: string; text: any; }[] {
   let types = Object.keys(RType).map(e => {
-    return {key: RType[e], text: RType[e]}
-  })
+    return {key: RType[e as keyof typeof RType], text: RType[e as keyof typeof RType]};
+  });
   types = types.sort((a, b) => {
-    if (a.key < b.key) { return -1 }
-    else if (b.key < a.key) { return 1 }
-    else { return 0 }
+    if (a.key < b.key) { return -1; }
+    else if (b.key < a.key) { return 1; }
+    else { return 0; }
     })
   return types
   }
@@ -64,7 +65,7 @@ class EditRelationships extends React.Component<ReceivedProps, ComponentState> {
   onSelectSearch(person:  Person): void {
 
     if (this.state.searchRelationship) {
-      let newRelationship = {...this.state.searchRelationship, personId: person.personId!}
+      let newRelationship = {...this.state.searchRelationship, personId: person.personId ?? ""}
 
       let index = this.state.relationships.indexOf(this.state.searchRelationship)
       let relationships = [...this.state.relationships]
@@ -79,10 +80,13 @@ class EditRelationships extends React.Component<ReceivedProps, ComponentState> {
   }
 
   @autobind 
-  onTypeChange(option: OF.IDropdownOption, relationship: Relationship) {
+  onTypeChange(option: OF.IDropdownOption, relationship?: Relationship) {
+    if (!relationship) {
+      throw new Error("Missing relationship")
+    }
     let type = RelationshipType.getRelationshipType(option.text)
 
-    let newRelationship = {...relationship!, type}
+    let newRelationship = {...relationship, type}
 
     let index = this.state.relationships.indexOf(relationship)
     let relationships = [...this.state.relationships]
@@ -120,7 +124,10 @@ class EditRelationships extends React.Component<ReceivedProps, ComponentState> {
   }
 
   @autobind
-  onRenderCell(relationship: Relationship, index: number, isScrolling: boolean): JSX.Element {
+  onRenderCell(relationship?: Relationship, index?: number, isScrolling?: boolean): JSX.Element {
+    if (!relationship) {
+      return <div>No Relationship Provided</div>
+    }
     const person = this.props.allPeople.find(p => p.personId === relationship.personId)
     const name = person ? person.fullName() : "--"
     return (
@@ -128,9 +135,9 @@ class EditRelationships extends React.Component<ReceivedProps, ComponentState> {
         <div className='EditRelationshipSection'>
           <div>
             <OF.Dropdown
-              key={relationship.relationshipId}
+              key={relationship?.relationshipId}
               className="EditDropdown"
-              defaultSelectedKey={relationship.type.from}
+              defaultSelectedKey={relationship?.type.from}
               options={this.state.types}
               onChanged={(obj) => this.onTypeChange(obj, relationship)}
             />
@@ -155,7 +162,7 @@ class EditRelationships extends React.Component<ReceivedProps, ComponentState> {
     );
   }
 
-  public render() {
+  render() {
   
     if (this.state.searchRelationship) {
       return (
@@ -165,7 +172,7 @@ class EditRelationships extends React.Component<ReceivedProps, ComponentState> {
         exclude={this.props.person}
         onCancel={this.onCloseSearch}
         onSelect={this.onSelectSearch}
-        onClickSearchFilter={null} 
+        onClickSearchFilter={() => {}} 
       />
       )
     }

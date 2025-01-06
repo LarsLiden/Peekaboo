@@ -8,6 +8,7 @@ import DetailEditText from '../Detail/DetailEditText'
 import { generateGUID } from '../Util'
 import { Person } from '../models/person'
 import { Event } from '../models/models'
+// eslint-disable-next-line 
 import { autobind } from 'core-decorators'
 
 export interface ReceivedProps {
@@ -84,28 +85,46 @@ class EditEvents extends React.Component<ReceivedProps, ComponentState> {
   @autobind
   onDescriptionChanged(description: string | undefined, event: Event) {
     let changed = this.state.events.find(e => e.eventId === event.eventId)
-    changed!.description = description || ""
+    if (changed == null) {
+      throw new Error("Event not found")
+    }
+    changed.description = description || ""
   }
 
   @autobind
   onLocationChanged(location: string | undefined, event: Event) {
     let changed = this.state.events.find(e => e.eventId === event.eventId)
-    changed!.location = location || ""
+    if (!changed) {
+      throw new Error("Event not found")
+    }
+    changed.location = location || ""
   }
 
   @autobind
   onDateChanged(date: Date | null | undefined, event: Event) {
     let changed = this.state.events.find(e => e.eventId === event.eventId)
-    changed!.date = date!.toJSON()
+    if (!changed) {
+      throw new Error("Event not found")
+    }
+    if (!date) {
+      throw new Error("Date is null")
+    }
+    changed.date = date.toJSON()
   }
 
   @autobind
-  onFormatDate(date: Date): string {
-      return `${date.getMonth() + 1}/${date.getDate()}/${date.getFullYear()}`
+  onFormatDate(date?: Date): string {
+    if (!date) {
+      return ""
+    }
+    return `${date.getMonth() + 1}/${date.getDate()}/${date.getFullYear()}`
   }
 
   @autobind
-  onRenderCell(event: Event, index: number, isScrolling: boolean): JSX.Element {
+  onRenderCell(event?: Event, index?: number, isScrolling?: boolean): JSX.Element {
+    if (!event) {
+      return <div>No Event Provided</div>
+    }
     return (
       <div className="SectionBorder">
         <div className='EditKeyValueSection'>
@@ -146,7 +165,7 @@ class EditEvents extends React.Component<ReceivedProps, ComponentState> {
     );
   }
 
-  public render() {
+  render() {
     return (
       <div className="ModalPage">
         <div className="HeaderHolder">

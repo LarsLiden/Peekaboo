@@ -40,7 +40,7 @@ class ScaledColor extends React.Component<ReceivedProps, {}> {
       return `rgb(${r}, ${g}, 0)`
   }
 
-  public render() {
+  render() {
     const overrideStyles = OF.mergeStyles({
       backgroundColor: this.backgroundColor(),
       color: this.fontColor(),

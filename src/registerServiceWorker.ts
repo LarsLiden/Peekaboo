@@ -21,9 +21,13 @@ const isLocalhost = Boolean(
 
 export default function register() {
   if (process.env.NODE_ENV === 'production' && 'serviceWorker' in navigator) {
+
+    if (process.env.PUBLIC_URL === undefined) {
+      throw new Error("PUBLIC_URL is not defined")
+    }
     // The URL constructor is available in all browsers that support SW.
     const publicUrl = new URL(
-      process.env.PUBLIC_URL!,
+      process.env.PUBLIC_URL,
       window.location.toString()
     );
     if (publicUrl.origin !== window.location.origin) {
@@ -91,10 +95,14 @@ function checkValidServiceWorker(swUrl: string) {
   // Check if the service worker can be found. If it can't reload the page.
   fetch(swUrl)
     .then(response => {
+      let type = response.headers.get('content-type')
+      if (type == null) {
+        throw new Error("No content type")
+      }
       // Ensure service worker exists, and that we really are getting a JS file.
       if (
         response.status === 404 ||
-        response.headers.get('content-type')!.indexOf('javascript') === -1
+        type.indexOf('javascript') === -1
       ) {
         // No service worker found. Probably a different app. Reload the page.
         navigator.serviceWorker.ready.then(registration => {

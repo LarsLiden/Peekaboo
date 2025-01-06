@@ -7,6 +7,7 @@ import * as OF from 'office-ui-fabric-react'
 import { Person } from '../models/person'
 import { Tag } from '../models/models'
 import { setStatePromise } from '../Util'
+// eslint-disable-next-line 
 import { autobind } from 'core-decorators'
 
 export interface ReceivedProps {
@@ -18,7 +19,7 @@ export interface ReceivedProps {
   onClickTagFilter?: () => void;
   onNewPerson?: () => void;
   onClickQuiz?: () => void;
-  onClickSearchFilter: ((searchTerm: string) => void) | null;
+  onClickSearchFilter: ((searchTerm?: string) => void);
 }
 
 interface ComponentState {
@@ -100,14 +101,16 @@ class Search extends React.Component<ReceivedProps, ComponentState> {
   }
 
   @autobind
-  async onToggleSearch(ev: React.MouseEvent<HTMLElement>, checked: boolean) {
+  async onToggleSearch(ev?: React.MouseEvent<HTMLElement>, checked?: boolean) {
     await setStatePromise(this, {byNameOnly: checked})
     this.onSearchChanged(this.state.searchText)
   }
 
   @autobind
-  onRenderCell(person: Person, index: number, isScrolling: boolean): JSX.Element {
-    
+  onRenderCell(person?: Person, index?: number, isScrolling?: boolean): JSX.Element {
+    if (!person) {
+      return <div>No Person Provided</div>
+    }
     let nameRender: JSX.Element | null
     if (this.props.exclude && person.personId === this.props.exclude.personId) {
       nameRender = (<span className="SearchDisabled">{person.fullName()}</span>)
@@ -164,7 +167,7 @@ class Search extends React.Component<ReceivedProps, ComponentState> {
               onChange={this.onToggleSearch}
             />
             LARS */
-  public render() {
+  render() {
     return (
       <div className="ModalPage">
         <div className="HeaderHolder HeaderHolderMedium">
@@ -222,7 +225,7 @@ class Search extends React.Component<ReceivedProps, ComponentState> {
             {this.props.onClickSearchFilter &&
               <OF.IconButton
                 className="ButtonIcon ButtonPrimary FloatLeft"
-                onClick={() => this.props.onClickSearchFilter!(this.state.searchText.toUpperCase())}
+                onClick={() => this.props.onClickSearchFilter(this.state.searchText.toUpperCase())}
                 iconProps={{ iconName: 'Filter' }}
               />
             }

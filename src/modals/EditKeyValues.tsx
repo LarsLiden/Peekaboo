@@ -8,6 +8,7 @@ import DetailEditText from '../Detail/DetailEditText'
 import { Person } from '../models/person'
 import { KeyValue } from '../models/models'
 import { generateGUID, isValid, MAX_KEY_LENGTH, MAX_VALUE_LENGTH } from '../Util';
+// eslint-disable-next-line
 import { autobind } from 'core-decorators'
 
 export interface ReceivedProps {
@@ -63,7 +64,10 @@ class EditKeyValues extends React.Component<ReceivedProps, ComponentState> {
   onKeyChanged(key: string | undefined, keyValue: KeyValue) {
     if (key) {
       let existingKV = this.state.keyValues.find(kv => kv.keyValueId === keyValue.keyValueId)
-      let newKeyValue = {...existingKV!, key}
+      if (existingKV === undefined) {
+        throw new Error("Key Value not found")
+      }
+      let newKeyValue = {...existingKV, key}
 
       let index = this.state.keyValues.indexOf(keyValue)
       let keyValues = [...this.state.keyValues]
@@ -76,7 +80,10 @@ class EditKeyValues extends React.Component<ReceivedProps, ComponentState> {
   onValueChanged(value: string | undefined, keyValue: KeyValue) {
     if (value) {
       let existingKV = this.state.keyValues.find(kv => kv.keyValueId === keyValue.keyValueId)
-      let newKeyValue = {...existingKV!, value}
+      if (!existingKV) {
+        throw new Error("Key Value not found")
+      }
+      let newKeyValue = {...existingKV, value}
 
       let index = this.state.keyValues.indexOf(keyValue)
       let keyValues = [...this.state.keyValues]
@@ -86,7 +93,10 @@ class EditKeyValues extends React.Component<ReceivedProps, ComponentState> {
   }
 
   @autobind
-  onRenderCell(keyValue: KeyValue, index: number, isScrolling: boolean): JSX.Element {
+  onRenderCell(keyValue?: KeyValue, index?: number, isScrolling?: boolean): JSX.Element {
+    if (!keyValue) {
+      return <div>No KeyValue Provided</div>
+    }
     return (
       <div className="SectionBorder">
         <div className='EditKeyValueSection'>
@@ -98,6 +108,7 @@ class EditKeyValues extends React.Component<ReceivedProps, ComponentState> {
               autoFocus={keyValue.key === ""}
               maxLength={MAX_KEY_LENGTH}
               minLength={1}
+              multiline={false}
             />
             <DetailEditText
               label="Value"
@@ -131,7 +142,7 @@ class EditKeyValues extends React.Component<ReceivedProps, ComponentState> {
     return valid
   }
 
-  public render() {
+  render() {
     return (
       <div className="ModalPage">
         <div className="HeaderHolder">

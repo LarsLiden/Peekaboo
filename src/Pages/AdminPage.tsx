@@ -5,6 +5,7 @@
 import * as React from 'react';
 import * as OF from 'office-ui-fabric-react'
 import { User, FilterSet } from '../models/models'
+// eslint-disable-next-line 
 import { autobind } from 'core-decorators'
 import ConfirmModal from '../modals/Confirm'
 import Client from '../service/client'
@@ -112,7 +113,7 @@ class AdminPage extends React.Component<ReceivedProps, ComponentState> {
   }
 
   @autobind
-  onRenderCell(user: any, index: number, isScrolling: boolean): JSX.Element {
+  onRenderCell(user?: any, index?: number, isScrolling?: boolean): JSX.Element {
     let joined = new Date(user.createdDateTime).toLocaleDateString()
     let last = new Date(user.lastUsedDatTime).toLocaleDateString()
     return (
@@ -158,7 +159,7 @@ class AdminPage extends React.Component<ReceivedProps, ComponentState> {
     );
   }
 
-  public render() {
+  render() {
     return (
       <div className="ModalPage">
         <div className="HeaderHolder">

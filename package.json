@@ -32,7 +32,7 @@
     "tslint-config-prettier": "^1.18.0",
     "tslint-config-standard": "^7.0.0",
     "tslint-microsoft-contrib": "^5.0.3",
-    "typescript": "^4.9.5"
+    "typescript": "^5.7.2"
   },
   "browserslist": {
     "production": [
@@ -44,6 +44,11 @@
       "last 1 chrome version",
       "last 1 firefox version",
       "last 1 safari version"
+    ]
+  },
+  "eslintConfig": {
+    "extends": [
+      "react-app"
     ]
   }
 }

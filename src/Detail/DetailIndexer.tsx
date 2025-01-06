@@ -26,7 +26,7 @@ class DetailIndexer extends React.Component<ReceivedProps, ComponentState> {
     inEditMode: false
   }
 
-  public render() {
+  render() {
     return (
       <div
         className={`DetailIndexer${this.props.isVertical ? " DetailIndexerVertical" : ""}`}

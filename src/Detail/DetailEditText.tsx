@@ -6,16 +6,17 @@ import * as React from 'react';
 import '../fabric.css'
 import './Detail.css'
 import * as OF from 'office-ui-fabric-react'
+// eslint-disable-next-line 
 import { autobind } from 'core-decorators'
 
 export interface ReceivedProps {
   label: string;
   value: string;
   rows?: number;
-  multiline?: boolean;
-  autoFocus?: boolean;
-  maxLength?: number;
-  minLength?: number;
+  multiline?: boolean | null;
+  autoFocus?: boolean | null;
+  maxLength?: number | null;
+  minLength?: number | null;
   onEnter?: (text: string) => void;
   onChanged: (text: string | undefined) => void;
 }
@@ -48,7 +49,7 @@ class DetailEditText extends React.Component<ReceivedProps, {}> {
     return ''
   }
 
-  public render() {
+  render() {
 
     return (
       <div className={`DetailText AlignLeft"}`}>

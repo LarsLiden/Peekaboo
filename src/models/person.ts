@@ -7,33 +7,58 @@ import { Relationship } from "./relationship"
 import { PerfType, Event, KeyValue, SocialNet, Tag } from './models'
 
 export class Person {
-    photoFilenames: string[] = [];
-    temptags: string[] = []  ;  // LARS REMOVE
-    tagIds: string[] = [];
-    keyValues: KeyValue[] = [];
-    photoPerformance: Performance = new Performance();
-    namePerformance: Performance = new Performance();
-    descPerformance: Performance = new Performance();
-    socialNets: SocialNet[] = [];
-    events: Event[]  = [] ;
-    relationships: Relationship[] = [];
-    nickName: string = "";
-    maidenName: string = "";
-    isArchived: boolean = false;
-    firstName: string = "";
-    firstPhonetic: string = "";
-    lastName: string = "";
-    lastPhonetic: string = "";
-    fullMaidenName: string = "";
-    fullNickName: string = "";
-    alternateName: string = "";
-    fullAternateName: string = "";
-    personId: string | null = null;
-    description: string = "";
-    creationDate: number | string = "";
-    searchCache?: string | null;
+    photoFilenames: string[];
+    temptags: string[];  // LARS REMOVE
+    tagIds: string[];
+    keyValues: KeyValue[];
+    photoPerformance: Performance;
+    namePerformance: Performance;
+    descPerformance: Performance;
+    socialNets: SocialNet[];
+    events: Event[];
+    relationships: Relationship[];
+    nickName: string;
+    maidenName: string;
+    isArchived: boolean;
+    firstName: string;
+    firstPhonetic: string;
+    lastName: string;
+    lastPhonetic: string;
+    fullMaidenName: string;
+    fullNickName: string;
+    alternateName: string;
+    fullAternateName: string;
+    personId: string | null;
+    description: string;
+    creationDate: number | string;
+    searchCache?: string;
     
-    public constructor(init?: Partial<Person>) {
+    constructor(init: Partial<Person> | null) {
+        this.photoFilenames = [];
+        this.temptags = [];  // LARS REMOVE
+        this.tagIds = [];
+        this.keyValues = [];
+        this.photoPerformance = new Performance();
+        this.namePerformance = new Performance();
+        this.descPerformance = new Performance();
+        this.socialNets = [];
+        this.events = [];
+        this.relationships = [];
+        this.nickName = "";
+        this.maidenName = "";
+        this.isArchived = false;
+        this.firstName = "";
+        this.firstPhonetic = "";
+        this.lastName = "";
+        this.lastPhonetic = "";
+        this.fullMaidenName = "";
+        this.fullNickName = "";
+        this.alternateName = "";
+        this.fullAternateName = "";
+        this.personId = null;
+        this.description = "";
+        this.creationDate = "";
+
         Object.assign(this, init)
 
         if (init) {
@@ -47,26 +72,29 @@ export class Person {
         }
     }
 
-    public fullName(): string {
+    fullName(): string {
         return `${this.firstName} ${this.lastName}`
     }
 
-    public expandedName(): string {
+    expandedName(): string {
         return `${this.firstName} ${this.nickName ? `"${this.nickName}"` : ""} ${this.lastName} ${this.maidenName ? `(${this.maidenName})` : ""}`
     }
 
-    public phoneticName(): string {
+    phoneticName(): string {
         if (!this.firstPhonetic && !this.lastPhonetic) {
             return ""
         } 
         return `${this.firstPhonetic} ${this.lastPhonetic}`
     }
 
-    public get getKey(): string {
-        return this.personId![0].toUpperCase()
+    get getKey(): string {
+        if (!this.personId) {
+            throw new Error("PersonId is null")
+        }
+        return this.personId[0].toUpperCase()
     } 
 
-    public performance(perfType: PerfType): Performance {
+    performance(perfType: PerfType): Performance {
         switch (perfType) {
             case PerfType.PHOTO: 
                 return new Performance(this.photoPerformance)
@@ -77,14 +105,13 @@ export class Person {
             default:
                 throw new Error("Invalid Performance Type")
         }
-        throw new Error("invalid perfType")
     }
 
-    public searchNames(): string {
+    searchNames(): string {
         return `${this.firstName} ${this.lastName} ${this.nickName} ${this.maidenName} ${this.alternateName}`
     }
 
-    public searchData(allPeople: Person[], allTags: Tag[]): string {
+    searchData(allPeople: Person[], allTags: Tag[]): string {
         if (!this.searchCache) {
             const keyValues = this.keyValues.map(k => k.value).join(' ')
             const relationships = this.relationships.map(r => {
@@ -99,7 +126,7 @@ export class Person {
         return this.searchCache
     }
     // Does person have data to take test type?
-    public hasTestData(perfType: PerfType): boolean {
+    hasTestData(perfType: PerfType): boolean {
         // TODO: separate function for actual testing
         return true
         /*

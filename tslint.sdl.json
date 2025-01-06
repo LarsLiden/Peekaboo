@@ -23,6 +23,7 @@
         "no-string-based-set-interval": true,
         "no-string-based-set-timeout": true,
 
+        "no-unused-vars": false,
         "align": false,
         "comment-format": false,
         "cyclomatic-complexity": false,

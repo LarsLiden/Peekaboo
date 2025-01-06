@@ -10,12 +10,12 @@ import '../fabric.css'
 
 export interface ReceivedProps {
   events: Event[];
-  inEdit?: boolean;
+  inEdit: boolean | null;
 }
 
 class DetailEvents extends React.Component<ReceivedProps, {}> {
 
-  public render() {
+  render() {
       if (!this.props.inEdit && this.props.events.length === 0) {
         return null
       }

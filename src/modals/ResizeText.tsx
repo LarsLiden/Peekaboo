@@ -34,7 +34,7 @@ class ResizeText extends React.Component<ReceivedProps, {}> {
     }
   }
 
-  public render() {
+  render() {
 
     return (
       <div className="DetailName" style={this.getStyle()}>

@@ -6,6 +6,7 @@ import * as React from 'react';
 import * as OF from 'office-ui-fabric-react'
 import { Person } from '../models/person'
 import { Tag, Filter, SortType, SortDirection } from '../models/models'
+// eslint-disable-next-line 
 import { autobind } from 'core-decorators'
 
 export interface ReceivedProps {
@@ -25,10 +26,10 @@ class SortPage extends React.Component<ReceivedProps, ComponentState> {
 
   state: ComponentState = {
     sortTypes: Object.keys(SortType).map(e => {
-      return {key: SortType[e], text: SortType[e]}
+      return {key: SortType[e as keyof typeof SortType], text: SortType[e as keyof typeof SortType]}
     }),
     sortDirections: Object.keys(SortDirection).map(e => {
-      return {key: SortDirection[e], text: SortDirection[e]}
+      return {key: SortDirection[e as keyof typeof SortDirection], text: SortDirection[e as keyof typeof SortDirection]}
     }),
     filter: {...this.props.filter}
   }
@@ -47,18 +48,18 @@ class SortPage extends React.Component<ReceivedProps, ComponentState> {
   @autobind 
   onSortTypeChange(option: OF.IDropdownOption) {
     this.setState({ 
-      filter: {...this.state.filter, sortType: SortType[option.text]}
+      filter: {...this.state.filter, sortType: SortType[option.text as keyof typeof SortType]}
     })
   }
 
   @autobind 
   onSortDirectionChange(option: OF.IDropdownOption) {
     this.setState({
-       filter: {...this.state.filter, sortDirection: SortDirection[option.text]}
+       filter: {...this.state.filter, sortDirection: SortDirection[option.text as keyof typeof SortDirection]}
     })
   }
 
-  public render() {
+  render() {
     return (
       <div className="ModalPage">
         <div className="HeaderHolder">

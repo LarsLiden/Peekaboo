@@ -8,6 +8,7 @@ import DetailEditText from '../Detail/DetailEditText'
 import { Person } from '../models/person'
 import { SocialNet, SocialNetType, SocialNetSearchIcon, SocialNetSearch } from '../models/models'
 import { generateGUID } from '../Util'
+// eslint-disable-next-line 
 import { autobind } from 'core-decorators'
 
 export interface ReceivedProps {
@@ -25,8 +26,9 @@ class EditSocialNetworks extends React.Component<ReceivedProps, ComponentState> 
 
   state: ComponentState = {
     socialNets: [],
-    types: Object.keys(SocialNetType).map(e => {
-      return {key: SocialNetType[e], text: SocialNetType[e]}
+    types: Object.keys(SocialNetType).map(key => {
+      const value = SocialNetType[key as keyof typeof SocialNetType];
+      return { key: value, text: value };
     }),
   }
 
@@ -35,7 +37,7 @@ class EditSocialNetworks extends React.Component<ReceivedProps, ComponentState> 
 
       let socialNets: SocialNet[] = []
       Object.keys(SocialNetType).forEach(key => {
-        let snt = SocialNetType[key]
+        let snt = SocialNetType[key as keyof typeof SocialNetType]
         let exists = this.props.person.socialNets.find(sn => sn.netType === snt)
         if (exists) {
           socialNets.push({...exists})
@@ -86,14 +88,18 @@ class EditSocialNetworks extends React.Component<ReceivedProps, ComponentState> 
   onURLChanged(url: string | undefined, socialNetType: SocialNetType) {
     if (url) {
       let changed = this.state.socialNets.find(r => r.netType === socialNetType)
-      changed!.URL = url
+      if (changed) {
+        changed.URL = url
+      }
     }
   }
 
   @autobind 
   onTypeChange(option: OF.IDropdownOption, socialNet: SocialNet) {
     let changed = this.state.socialNets.find(r => r.socialNetId === socialNet.socialNetId)
-    changed!.netType = SocialNetType[option.text]
+    if (changed) {
+      changed.netType = SocialNetType[option.text as keyof typeof SocialNetType]
+    }
   }
 
   @autobind
@@ -138,7 +144,7 @@ class EditSocialNetworks extends React.Component<ReceivedProps, ComponentState> 
     );
   }
 
-  public render() {
+  render() {
     return (
       <div className="ModalPage">
         <div className="HeaderHolder">
@@ -156,7 +162,7 @@ class EditSocialNetworks extends React.Component<ReceivedProps, ComponentState> 
             {
               Object.keys(SocialNetType).map(key => { 
                   return (
-                    this.onRenderCell(SocialNetType[key])
+                    this.onRenderCell(SocialNetType[key as keyof typeof SocialNetType])
                   )
                 }
             )}

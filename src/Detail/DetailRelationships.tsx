@@ -5,6 +5,7 @@
 import * as React from 'react';
 import { Relationship } from '../models/relationship'
 import { Person } from '../models/person'
+// eslint-disable-next-line 
 import { autobind } from 'core-decorators'
 import * as OF from 'office-ui-fabric-react'
 import '../fabric.css'
@@ -19,7 +20,10 @@ export interface ReceivedProps {
 class DetailRelationships extends React.Component<ReceivedProps, {}> {
 
   @autobind
-  onRenderCell(relationship: Relationship, index: number, isScrolling: boolean): JSX.Element {
+  onRenderCell(relationship?: Relationship, index?: number, isScrolling?: boolean): JSX.Element {
+    if (!relationship) {
+      return <div>No Relationship Provided</div>
+    }
     const person = this.props.allPeople.find(p => p.personId === relationship.personId)
     const name = person ? person.fullName() : relationship.personId.split("_")[0]
     return (
@@ -39,7 +43,7 @@ class DetailRelationships extends React.Component<ReceivedProps, {}> {
     )
   }
 
-  public render() {
+  render() {
     if (!this.props.inEdit && this.props.relationships.length === 0) {
       return null
     }

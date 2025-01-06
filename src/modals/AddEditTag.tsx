@@ -9,6 +9,7 @@ import '../fabric.css'
 import { isValid, MAX_TAG_LENGTH, generateGUID } from '../Util'
 import DetailEditText from '../Detail/DetailEditText'
 import { expandTagIds } from '../convert'
+// eslint-disable-next-line 
 import { autobind } from 'core-decorators'
 import "../Pages/ViewPage.css"
 
@@ -48,14 +49,18 @@ class AddEditTag extends React.Component<ReceivedProps, ComponentState> {
         if (t === this.props.tag) {
           return false
         }
-        const parentIds = expandTagIds([t.tagId!], this.props.allTags).filter(et => et !== t.tagId)
-        return (parentIds.find(eid => eid === this.props.tag!.tagId!) === undefined)
+        const parentIds = expandTagIds([t.tagId ?? ""], this.props.allTags).filter(et => et !== t.tagId)
+        if (!this.props.tag) {
+          throw new Error("Tag is null")
+        }
+        let tagId = this.props.tag.tagId ?? ""
+        return (parentIds.find(eid => eid === tagId) === undefined)
         }
       )
     }
       
     let types = allowedTags.map(t => {
-      return {key: t.tagId!, text: t.name}
+      return {key: t.tagId ?? "", text: t.name}
     })
     types = types.sort((a, b) => {
       if (a.text < b.text) { return -1 }
@@ -87,7 +92,8 @@ class AddEditTag extends React.Component<ReceivedProps, ComponentState> {
 
   @autobind 
   onParentChange(option: OF.IDropdownOption) {
-    this.setState({ parentId: option.key as string })
+    let parentId = String(option.key)
+    this.setState({ parentId: parentId });
   }
   
   @autobind
@@ -113,7 +119,7 @@ class AddEditTag extends React.Component<ReceivedProps, ComponentState> {
     this.props.onDelete()
   }
 
-  public render() {
+  render() {
     return (
       <div className="ModalPage">
           <div className="HeaderHolder">
@@ -139,6 +145,7 @@ class AddEditTag extends React.Component<ReceivedProps, ComponentState> {
                     onEnter={this.onClickSave}
                     autoFocus={true}
                     maxLength={MAX_TAG_LENGTH}
+                    multiline={false}
                   />
                   <div className="DetailTitle DetailTitlePlain">
                   Parent Tag

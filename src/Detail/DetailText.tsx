@@ -16,7 +16,7 @@ export interface ReceivedProps {
 
 class DetailText extends React.Component<ReceivedProps, {}> {
 
-  public render() {
+  render() {
     if (!this.props.text && !this.props.showEmpty) {
       return null
     }

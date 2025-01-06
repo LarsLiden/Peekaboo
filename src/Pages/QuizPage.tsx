@@ -11,6 +11,7 @@ import ScaledColor from '../modals/ScaledColor'
 import { getRandomInt, PHOTO_HEIGHT, PHOTO_WIDTH, baseBlob } from '../Util'
 import { TestResult } from '../models/performance'
 import { MAX_TIME } from '../models/const'
+// eslint-disable-next-line 
 import { autobind } from 'core-decorators'
 
 export interface ReceivedProps {
@@ -19,7 +20,7 @@ export interface ReceivedProps {
   hidden: boolean;
   allPeople: Person[];
   onQuizDone: (testResults: TestResult[]) => Promise<void>;
-  onViewDetail: (quizperson: QuizPerson) => void;
+  onViewDetail: (quizperson: QuizPerson | null) => void;
 }
 
 const timerInterval = 100
@@ -46,8 +47,9 @@ class QuizPage extends React.Component<ReceivedProps, ComponentState> {
 
   componentDidUpdate() {
     // Check the quizPerson is still in the set (may have been archived)
-    if (this.props.quizSet && this.state.quizPerson) {
-      if (!this.props.quizSet.quizPeople.find(q => q.personId === this.state.quizPerson!.personId)) {
+    if (this.props.quizSet && this.state.quizPerson != null) {
+      let personId = this.state.quizPerson.personId
+      if (!this.props.quizSet.quizPeople.find(q => q.personId === personId)) {
         this.selectNextPerson()
       }
     }
@@ -101,8 +103,11 @@ class QuizPage extends React.Component<ReceivedProps, ComponentState> {
   }
 
   addTestResult(result: number) {
+    if (!this.state.quizPerson) {
+      throw new Error("No quizPerson")
+    }
     const testResult: TestResult = {
-      personId: this.state.quizPerson!.personId,
+      personId: this.state.quizPerson.personId,
       result
     }
     this.setState({
@@ -176,7 +181,7 @@ class QuizPage extends React.Component<ReceivedProps, ComponentState> {
     })
   }
 
-  public render() {
+  render() {
 
     if (!this.state.quizPerson || this.props.hidden) {
       return null
@@ -239,7 +244,7 @@ class QuizPage extends React.Component<ReceivedProps, ComponentState> {
             {this.state.showName ? 
               <OF.IconButton
                 className="ButtonIcon ButtonPrimary"
-                onClick={() => this.props.onViewDetail(this.state.quizPerson!)}
+                onClick={() => this.props.onViewDetail(this.state.quizPerson)}
                 iconProps={{ iconName: 'ContactInfo' }}
               />
             :

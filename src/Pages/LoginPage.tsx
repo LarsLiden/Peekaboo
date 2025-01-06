@@ -8,6 +8,7 @@ import * as OF from 'office-ui-fabric-react'
 import Client from '../service/client'
 import { HEAD_IMAGE } from '../Util'
 import { User } from '../models/models'
+// eslint-disable-next-line 
 import { autobind } from 'core-decorators'
 import { GoogleOAuthProvider, GoogleLogin } from '@react-oauth/google';
 
@@ -24,17 +25,21 @@ interface ComponentState {
 }
 
 class LoginPage extends React.Component<ReceivedProps, ComponentState> {
+  startButtonElement: React.RefObject<HTMLElement>;
 
-  private _startButtonElement = React.createRef<HTMLElement>();
+  constructor(props: ReceivedProps) {
+    super(props);
+    this.startButtonElement = React.createRef<HTMLElement>();
 
-  state: ComponentState = {
-    waitingCalloutText: null,
-    userLoginValue: "",
-    loginDisable: false
+    this.state = {
+      waitingCalloutText: null,
+      userLoginValue: "",
+      loginDisable: false
+    };
   }
 
   @autobind
-  private async loginSuccess(response: any) {
+  async loginSuccess(response: any) {
     this.setState({loginDisable: true})
     try {
       const profile = response.profileObj;
@@ -55,7 +60,7 @@ class LoginPage extends React.Component<ReceivedProps, ComponentState> {
       }
       catch (error) {
         this.setState({
-          waitingCalloutText: error.response.statusText,
+          waitingCalloutText: (error as any).response.statusText,
           loginDisable: false
         })
       }
@@ -69,11 +74,11 @@ class LoginPage extends React.Component<ReceivedProps, ComponentState> {
   }
 
   @autobind
-  private onWaitCalloutDismiss(): void {
+  onWaitCalloutDismiss(): void {
     this.setState({waitingCalloutText: null})
   }
 
-  public render() {
+  render() {
   
     return (
       <div className="ModalPage">
@@ -102,7 +107,7 @@ class LoginPage extends React.Component<ReceivedProps, ComponentState> {
           gapSpace={0}
           calloutWidth={200}
           backgroundColor={'#555555'}
-          target={this._startButtonElement.current}
+          target={this.startButtonElement.current}
           onDismiss={this.onWaitCalloutDismiss}
           setInitialFocus={true}
           hidden={this.state.waitingCalloutText === null}
